@@ -2716,6 +2716,67 @@ html { color-scheme: light; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* Floating tags around the portrait */
+@keyframes tagfloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(2.5deg); }
+}
+
+.orbit-tag {
+  position: absolute;
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: rgba(6, 8, 11, 0.74);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 14px 34px rgba(4, 8, 14, 0.32);
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  white-space: nowrap;
+  color: var(--text-soft);
+  animation: tagfloat 7s ease-in-out infinite;
+}
+.orbit-tag::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--blue);
+  box-shadow: 0 0 7px currentColor;
+  color: var(--blue);
+}
+.orbit-tag--green::before { background: var(--green); color: var(--green); }
+.orbit-tag--amber::before { background: var(--amber); color: var(--amber); }
+
+.orbit-tag--1 { top: 2%; left: -13%; animation-duration: 7s; }
+.orbit-tag--2 { top: 6%; right: -15%; animation-duration: 8.5s; animation-delay: 0.8s; }
+.orbit-tag--3 { top: 45%; left: -22%; animation-duration: 6.5s; animation-delay: 1.6s; }
+.orbit-tag--4 { top: 45%; right: -20%; animation-duration: 7.5s; animation-delay: 2.4s; }
+.orbit-tag--5 { bottom: 3%; left: -6%; animation-duration: 9s; animation-delay: 1.2s; }
+.orbit-tag--6 { bottom: 5%; right: -14%; animation-duration: 8s; animation-delay: 0.4s; }
+
+[data-theme="light"] .orbit-tag {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: var(--line-strong);
+  box-shadow: 0 12px 30px rgba(14, 22, 35, 0.14);
+}
+
+@media (max-width: 700px) {
+  .orbit-tag { font-size: 0.5rem; padding: 0.3rem 0.5rem; }
+  .orbit-tag--3, .orbit-tag--4 { display: none; }
+  .orbit-tag--1 { left: -4%; }
+  .orbit-tag--2 { right: -4%; }
+  .orbit-tag--5 { left: -2%; }
+  .orbit-tag--6 { right: -4%; }
+}
+
 .portrait-ring {
   position: relative;
   width: 76%;
