@@ -2728,19 +2728,22 @@ html { color-scheme: light; }
   display: inline-flex;
   align-items: center;
   gap: 0.42rem;
+  --tag-color: var(--blue);
+  --tag-tint: rgba(109, 155, 255, 0.13);
+  --tag-ring: rgba(109, 155, 255, 0.32);
   padding: 0.4rem 0.7rem;
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--tag-ring);
   border-radius: 999px;
-  background: rgba(6, 8, 11, 0.74);
+  background: var(--tag-tint);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 14px 34px rgba(4, 8, 14, 0.32);
+  box-shadow: 0 14px 34px rgba(4, 8, 14, 0.28);
   font-family: var(--mono);
   font-size: 0.6rem;
   font-weight: 500;
   letter-spacing: 0.07em;
   white-space: nowrap;
-  color: var(--text-soft);
+  color: var(--tag-color);
   animation: tagfloat 7s ease-in-out infinite;
 }
 .orbit-tag::before {
@@ -2748,12 +2751,19 @@ html { color-scheme: light; }
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--blue);
-  box-shadow: 0 0 7px currentColor;
-  color: var(--blue);
+  background: var(--tag-color);
+  box-shadow: 0 0 7px var(--tag-color);
 }
-.orbit-tag--green::before { background: var(--green); color: var(--green); }
-.orbit-tag--amber::before { background: var(--amber); color: var(--amber); }
+.orbit-tag--green {
+  --tag-color: var(--green);
+  --tag-tint: rgba(90, 217, 166, 0.11);
+  --tag-ring: rgba(90, 217, 166, 0.32);
+}
+.orbit-tag--amber {
+  --tag-color: var(--amber);
+  --tag-tint: rgba(255, 180, 92, 0.12);
+  --tag-ring: rgba(255, 180, 92, 0.34);
+}
 
 .orbit-tag--1 { top: 2%; left: -13%; animation-duration: 7s; }
 .orbit-tag--2 { top: 6%; right: -15%; animation-duration: 8.5s; animation-delay: 0.8s; }
@@ -2763,9 +2773,17 @@ html { color-scheme: light; }
 .orbit-tag--6 { bottom: 5%; right: -14%; animation-duration: 8s; animation-delay: 0.4s; }
 
 [data-theme="light"] .orbit-tag {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: var(--line-strong);
+  --tag-tint: rgba(47, 91, 208, 0.10);
+  --tag-ring: rgba(47, 91, 208, 0.34);
   box-shadow: 0 12px 30px rgba(14, 22, 35, 0.14);
+}
+[data-theme="light"] .orbit-tag--green {
+  --tag-tint: rgba(21, 122, 86, 0.10);
+  --tag-ring: rgba(21, 122, 86, 0.32);
+}
+[data-theme="light"] .orbit-tag--amber {
+  --tag-tint: rgba(169, 102, 15, 0.10);
+  --tag-ring: rgba(169, 102, 15, 0.34);
 }
 
 @media (max-width: 700px) {
