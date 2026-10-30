@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>One vehicle, thirteen cameras — Mahmoud Mostafa Tayee</title>
+  <meta name="description" content="Case study: cross-camera vehicle identity with per-camera tracking, Re-ID, topology-aware association, and a vision-language arbiter.">
+  <link rel="canonical" href="https://mahmoudmostafatayee.github.io/work/multi-camera-identity.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="One vehicle, thirteen cameras — Mahmoud Mostafa Tayee">
+  <meta property="og:description" content="Case study: cross-camera vehicle identity with per-camera tracking, Re-ID, topology-aware association, and a vision-language arbiter.">
+  <meta property="og:url" content="https://mahmoudmostafatayee.github.io/work/multi-camera-identity.html">
+  <meta property="og:image" content="https://mahmoudmostafatayee.github.io/assets/img/og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="One vehicle, thirteen cameras — Mahmoud Mostafa Tayee">
+  <meta name="twitter:description" content="Case study: cross-camera vehicle identity with per-camera tracking, Re-ID, topology-aware association, and a vision-language arbiter.">
+  <meta name="twitter:image" content="https://mahmoudmostafatayee.github.io/assets/img/og.jpg">
+  <meta name="theme-color" content="#06080b">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="../assets/fonts/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="../index.html" aria-label="Mahmoud Mostafa Tayee — home">
+      <span class="brand-mark">MT</span>
+      <span class="brand-text">
+        <span class="brand-name">Mahmoud Tayee</span>
+        <span class="brand-role">CV / AI Systems</span>
+      </span>
+    </a>
+    <nav class="nav-links" id="nav-links" aria-label="Primary">
+      <a class="nav-link" href="../index.html#work" aria-current="page">Work</a>
+      <a class="nav-link" href="../index.html#about">About</a>
+      <a class="nav-link" href="../index.html#experience">Experience</a>
+      <a class="nav-link" href="../index.html#contact">Contact</a>
+      <a class="nav-cta" href="../assets/Mahmoud_Mostafa_Tayee_CV.pdf" download>CV
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 19h16"/></svg>
+      </a>
+    </nav>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="case-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html">Home</a><span class="sep">/</span>
+        <a href="../index.html#work">Work</a><span class="sep">/</span>
+        <span class="current">Multi-camera identity</span>
+      </nav>
+
+      <div class="case-eyebrow">
+        <span class="client">URCA AI</span><span class="dot"></span>
+        <span>2026</span><span class="dot"></span>
+        <span>Senior AI Engineer</span>
+      </div>
+      <h1 class="case-title">One vehicle, thirteen cameras.</h1>
+      <p class="case-deck">
+        A single persistent identity for vehicles moving through an industrial site — across occlusion, appearance
+        change, and the ambiguous hand-offs that embeddings alone cannot settle.
+      </p>
+
+      <div class="case-meta">
+        <div class="meta-item"><span class="meta-label">Role</span><span class="meta-value">Architecture · MTMC · VLM arbitration</span></div>
+        <div class="meta-item"><span class="meta-label">Context</span><span class="meta-value">Industrial site · 13-camera testbed</span></div>
+        <div class="meta-item"><span class="meta-label">Timeline</span><span class="meta-value">2026</span></div>
+        <div class="meta-item"><span class="meta-label">Stack</span><span class="meta-value">DeepStream · TensorRT · PyTorch · Qwen3-VL · ONNX Runtime · Redis</span></div>
+      </div>
+
+      <div class="case-hero-visual identity-map">
+        <div class="viz-top"><span><i class="dot"></i> IDENTITY GRAPH / TESTBED</span><span>13 CAMERAS · 1 GLOBAL ID</span></div>
+        <div class="identity-map-grid">
+          <svg viewBox="0 0 800 520" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Abstract site map with camera nodes, a tracked vehicle route, and identity hand-offs.">
+            <defs>
+              <pattern id="mapgrid2" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M40 0H0V40" fill="none" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
+              </pattern>
+            </defs>
+            <rect width="800" height="520" fill="#070b10"/>
+            <rect width="800" height="520" fill="url(#mapgrid2)"/>
+            <path d="M40 430H280V180H590V330H770" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M280 300H470V440H630" fill="none" stroke="rgba(255,255,255,.055)" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M40 430H280V180H590V330H770" fill="none" stroke="rgba(255,255,255,.035)" stroke-width="2" stroke-dasharray="4 10"/>
+            <path class="map-route-glow" d="M72 430H270V190H580V330H742"/>
+            <path class="map-route" d="M72 430H270V190H580V330H742"/>
+            <circle class="map-pulse" r="3"><animateMotion dur="10s" repeatCount="indefinite" path="M72 430H270V190H580V330H742"/></circle>
+            <circle class="map-pulse" r="2.2" opacity=".55"><animateMotion dur="10s" begin="5s" repeatCount="indefinite" path="M72 430H270V190H580V330H742"/></circle>
+
+            <g>
+              <path class="cam-cone" d="M118 430 80 372 156 372Z"/>
+              <circle class="cam-ring" cx="118" cy="430" r="9"/><circle class="cam-node cam-node--active" cx="118" cy="430" r="4"/>
+              <text class="cam-label" x="128" y="446">CAM-01</text>
+            </g>
+            <g>
+              <path class="cam-cone" d="M280 268 232 236 232 300Z"/>
+              <circle class="cam-ring" cx="280" cy="268" r="8"/><circle class="cam-node" cx="280" cy="268" r="3.5"/>
+              <text class="cam-label" x="290" y="264">CAM-04</text>
+            </g>
+            <g>
+              <path class="cam-cone" d="M430 180 398 132 462 132Z"/>
+              <circle class="cam-ring" cx="430" cy="180" r="8"/><circle class="cam-node cam-node--active" cx="430" cy="180" r="3.5"/>
+              <text class="cam-label" x="440" y="176">CAM-07</text>
+            </g>
+            <g>
+              <path class="cam-cone" d="M590 238 542 206 542 270Z"/>
+              <circle class="cam-ring" cx="590" cy="238" r="8"/><circle class="cam-node" cx="590" cy="238" r="3.5"/>
+              <text class="cam-label" x="600" y="234">CAM-09</text>
+            </g>
+            <g>
+              <path class="cam-cone" d="M590 412 542 380 542 444Z"/>
+              <circle class="cam-ring" cx="590" cy="412" r="8"/><circle class="cam-node cam-node--active" cx="590" cy="412" r="3.5"/>
+              <text class="cam-label" x="600" y="426">CAM-11</text>
+            </g>
+            <g>
+              <path class="cam-cone" d="M720 330 672 298 672 362Z"/>
+              <circle class="cam-ring" cx="720" cy="330" r="8"/><circle class="cam-node" cx="720" cy="330" r="3.5"/>
+              <text class="cam-label" x="730" y="344">CAM-13</text>
+            </g>
+            <g transform="translate(470 128)">
+              <rect class="vehicle-chip" x="0" y="0" width="128" height="38" rx="3"/>
+              <text class="vehicle-chip-text" x="9" y="15">GID 0x2F</text>
+              <text class="vehicle-chip-sub" x="9" y="27">TRK 042 · 94% match · 3 cams</text>
+            </g>
+            <path d="M470 166 470 190" stroke="rgba(109,155,255,.45)" stroke-width="1" stroke-dasharray="2 3"/>
+          </svg>
+          <div class="identity-side">
+            <h4>Identity timeline</h4>
+            <div class="identity-step"><b>CAM-01 → GID 0x2F</b><span class="t">14:31:02</span><span>entered site · plate read</span></div>
+            <div class="identity-step"><b>CAM-04 → GID 0x2F</b><span class="t">14:31:44</span><span>appearance match 0.91</span></div>
+            <div class="identity-step identity-step--amber"><b>CAM-07 → ambiguous</b><span class="t">14:32:19</span><span>VLM: same vehicle, 0.93</span></div>
+            <div class="identity-step"><b>CAM-11 → GID 0x2F</b><span class="t">14:33:06</span><span>hand-off confirmed</span></div>
+            <div class="identity-step identity-step--green"><b>CAM-13 → exit</b><span class="t">14:33:48</span><span>plate + direction logged</span></div>
+          </div>
+        </div>
+        <div class="caption">Illustrative identity timeline. The site map is abstract; no customer footage or identifiers are shown.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container case-layout">
+    <aside class="case-toc" aria-label="On this page">
+      <div class="toc-label">On this page</div>
+      <ul class="toc-list">
+        <li><a class="toc-link" href="#problem">The problem</a></li>
+        <li><a class="toc-link" href="#approach">The approach</a></li>
+        <li><a class="toc-link" href="#architecture">Architecture</a></li>
+        <li><a class="toc-link" href="#owned">What I owned</a></li>
+        <li><a class="toc-link" href="#results">Results</a></li>
+        <li><a class="toc-link" href="#reflection">Reflection</a></li>
+      </ul>
+    </aside>
+
+    <div class="case-main">
+      <section class="case-section" id="problem">
+        <h2><span class="num">01</span>The problem</h2>
+        <p class="lead">The testbed had thirteen cameras and no single answer to “where did that truck go?”</p>
+        <p>
+          Each camera ran its own tracker. IDs reset at occlusion, changed when a vehicle turned, and multiplied when
+          the same white truck passed two cameras a minute apart. Plates were often unreadable at distance or at an
+          angle. The operations team needed a journey, not a wall of feeds.
+        </p>
+        <p>
+          The hard constraint was trust. Merging two different vehicles is worse than leaving them separate: a wrong
+          global ID contaminates every event, visit, and report built on top of it. The system had to be fast, but
+          above all it had to know when <em>not</em> to guess.
+        </p>
+        <div class="callout">
+          <strong>Design target:</strong> one persistent global identity per vehicle, resolved in real time, on the
+          same GPU that runs detection, Re-ID, plate OCR, and the VLM.
+        </div>
+      </section>
+
+      <section class="case-section" id="approach">
+        <h2><span class="num">02</span>The approach</h2>
+        <p>
+          I treated identity as a decision that accumulates evidence, not a label attached to a detection. Each layer
+          answers a different question, and each can say “I don't know.”
+        </p>
+
+        <div class="decisions">
+          <div class="decision">
+            <div class="decision-num">01</div>
+            <div>
+              <h3>Build the detector around the site, not the benchmark</h3>
+              <p>
+                A single-class vehicle detector at 1280 px, fine-tuned on testbed footage with hard negatives — shadows,
+                parked cars, reflections, partial views. The engine is INT8, calibrated for the target GPU, with a custom
+                parser for the output layout the pipeline expects.
+              </p>
+            </div>
+          </div>
+          <div class="decision">
+            <div class="decision-num">02</div>
+            <div>
+              <h3>Track locally, associate globally</h3>
+              <p>
+                An IoU tracker per camera turns detections into tracklets. Appearance embeddings from vehicle crops
+                provide the Re-ID signal. Association is gated by the camera topology: only cameras that can
+                plausibly follow one another, within a travel-time window, become candidates. Hierarchical clustering
+                over the candidate tracklets produces the global assignment.
+              </p>
+            </div>
+          </div>
+          <div class="decision">
+            <div class="decision-num">03</div>
+            <div>
+              <h3>Ask a VLM only in the ambiguous band</h3>
+              <p>
+                If cosine similarity is clearly high or clearly low, the embedding decides. In the narrow band between
+                the gate and the match threshold, a Qwen3-VL 4B model compares the two crops directly and returns
+                <strong>same</strong>, <strong>different</strong>, or <strong>uncertain</strong>, with confidence and
+                the features it used. Calls run on background workers; the tracklet waits across frames for a verdict.
+                If the wait budget expires, it becomes a new ID rather than a bad merge.
+              </p>
+            </div>
+          </div>
+          <div class="decision">
+            <div class="decision-num">04</div>
+            <div>
+              <h3>Read the plate, keep the best crop per camera</h3>
+              <p>
+                A plate detector finds candidates on each vehicle crop. A PP-OCRv5 model, fine-tuned on Egyptian
+                plates, reads the text through ONNX Runtime. The system keeps the best plate crop seen for each
+                global ID in each camera, so a later clear view can replace an early blurry one. The plate is
+                evidence, not the primary key — because the primary key cannot depend on a readable plate.
+              </p>
+            </div>
+          </div>
+          <div class="decision">
+            <div class="decision-num">05</div>
+            <div>
+              <h3>Make state survive restarts, and make changes provable</h3>
+              <p>
+                The next free global ID lives in Redis, not in process memory, so a sidecar restart cannot reuse an
+                ID the app already attributes to another vehicle. Modules are isolated, model weights are versioned,
+                and a golden replay checks that a pipeline change did not silently alter what gets published.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="case-section" id="architecture">
+        <h2><span class="num">03</span>Architecture</h2>
+        <p>
+          The perception sidecar runs on the GPU; the application consumes metadata from Redis. MTMC, plates, and box
+          stabilization are independent modules, and a product is a YAML list of the modules it wants. That isolation
+          is what let the same pipeline serve a different camera set without rewriting the engine.
+        </p>
+
+        <div class="flow" aria-label="Pipeline architecture">
+          <div class="flow-node"><b>Cameras</b><span>RTSP · 13 feeds</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Detect</b><span>INT8 vehicle model</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Track</b><span>per-camera tracklets</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Associate</b><span>Re-ID + topology</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Arbitrate</b><span>VLM on ambiguity</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Publish</b><span>global ID · plate</span></div>
+        </div>
+
+        <p>
+          The VLM is deliberately outside the per-frame path. A call takes seconds, while a frame budget is
+          milliseconds; putting it inline would stall the tracker. Instead, the association layer submits a job,
+          keeps the tracklet in a pending state, and resolves it when the verdict arrives or the budget expires.
+        </p>
+
+        <div class="callout callout--amber">
+          <strong>Why a VLM at all?</strong> Embeddings are good at “same colour, same shape.” They are bad at
+          “same truck, different angle, one crop shows only the cab.” The VLM is used exactly there — a small,
+          expensive adjudication layer over a cheap, high-recall candidate generator.
+        </div>
+      </section>
+
+      <section class="case-section" id="owned">
+        <h2><span class="num">04</span>What I owned</h2>
+        <ul class="case-list">
+          <li><strong>MTMC architecture:</strong> tracklet management, topology-aware candidate generation, global ID lifecycle, and the pending-verdict state machine.</li>
+          <li><strong>VLM arbitration:</strong> prompt and schema design, background worker integration, wait budgets, repetition-loop mitigation, and fallback behaviour.</li>
+          <li><strong>Detector integration:</strong> testbed-specific fine-tuning, INT8 engine build, custom output parser, and threshold calibration.</li>
+          <li><strong>Plate pipeline:</strong> detector integration, fine-tuned OCR, best-crop-per-camera bookkeeping, and evidence output.</li>
+          <li><strong>Reliability:</strong> Redis-backed ID persistence, module isolation, golden-replay checks, and per-model GPU budget measurement.</li>
+        </ul>
+      </section>
+
+      <section class="case-section" id="results">
+        <h2><span class="num">05</span>Results</h2>
+        <div class="metric-grid">
+          <div class="metric-card"><div class="metric-value">13</div><span class="metric-label">cameras in the testbed</span></div>
+          <div class="metric-card"><div class="metric-value">1</div><span class="metric-label">persistent global ID</span></div>
+          <div class="metric-card"><div class="metric-value">4.1<span>s</span></div><span class="metric-label">mean VLM verdict</span></div>
+          <div class="metric-card"><div class="metric-value">INT8</div><span class="metric-label">INT8 engine</span></div>
+        </div>
+        <p>
+          On the 13-camera recorded testbed, the module produced one persistent global ID per vehicle across
+          hand-offs. Ambiguous pairs were either confirmed by the VLM or deliberately left as new tracks; the system
+          never forced a merge it could not justify. Global IDs survived sidecar restarts, and plate reads were
+          attached to the identity rather than to a single camera.
+        </p>
+        <p>
+          The VLM path was bounded: after fixing repetition loops in the model output, the mean verdict dropped to
+          about 4.1 seconds over the benchmark pairs. That is still too slow for a frame loop — which is exactly why
+          it runs asynchronously, outside the tracker.
+        </p>
+      </section>
+
+      <section class="case-section" id="reflection">
+        <h2><span class="num">06</span>Reflection</h2>
+        <p class="lead">The most important design choice was refusing to guess.</p>
+        <p>
+          A duplicate ID is recoverable: an operator can merge two tracks later. A wrong merge is not: every event,
+          visit, and report attached to that identity is now contaminated. Designing the uncertain path first made
+          the rest of the system easier to reason about.
+        </p>
+        <p>
+          The next improvements are calibration and active learning: ground-plane speed to tighten travel-time gates,
+          plate confidence fused across cameras and time, and a review queue for the uncertain band so the model
+          learns from the cases it cannot solve.
+        </p>
+        <div class="case-tags">
+          <span class="chip chip--accent">DeepStream</span><span class="chip">TensorRT</span><span class="chip">PyTorch</span>
+          <span class="chip">Qwen3-VL</span><span class="chip">Re-ID</span><span class="chip">PP-OCRv5</span>
+          <span class="chip">Redis</span><span class="chip">ONNX Runtime</span>
+        </div>
+      </section>
+
+      <a class="next-project" href="streamtrack.html">
+        <div>
+          <div class="next-label">Next case study / 02</div>
+          <div class="next-title">STREAMTRACK — tracking as a data system.</div>
+        </div>
+        <span class="next-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span>© <span data-year>2026</span> Mahmoud Mostafa Tayee</span>
+    <span>Client work shown without customer footage or site identifiers.</span>
+    <div class="footer-links">
+      <a href="https://github.com/MahmoudMostafaTayee" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/MahmoudMostafaTayee" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="../index.html#contact">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>

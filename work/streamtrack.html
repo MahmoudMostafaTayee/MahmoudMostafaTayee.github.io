@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>STREAMTRACK — Mahmoud Mostafa Tayee</title>
+  <meta name="description" content="Case study: STREAMTRACK, a streams-and-tables architecture for scalable, reconfigurable multi-camera object tracking.">
+  <link rel="canonical" href="https://mahmoudmostafatayee.github.io/work/streamtrack.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="STREAMTRACK — Mahmoud Mostafa Tayee">
+  <meta property="og:description" content="Case study: STREAMTRACK, a streams-and-tables architecture for scalable, reconfigurable multi-camera object tracking.">
+  <meta property="og:url" content="https://mahmoudmostafatayee.github.io/work/streamtrack.html">
+  <meta property="og:image" content="https://mahmoudmostafatayee.github.io/assets/img/og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="STREAMTRACK — Mahmoud Mostafa Tayee">
+  <meta name="twitter:description" content="Case study: STREAMTRACK, a streams-and-tables architecture for scalable, reconfigurable multi-camera object tracking.">
+  <meta name="twitter:image" content="https://mahmoudmostafatayee.github.io/assets/img/og.jpg">
+  <meta name="theme-color" content="#06080b">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="../assets/fonts/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="../index.html" aria-label="Mahmoud Mostafa Tayee — home">
+      <span class="brand-mark">MT</span>
+      <span class="brand-text">
+        <span class="brand-name">Mahmoud Tayee</span>
+        <span class="brand-role">CV / AI Systems</span>
+      </span>
+    </a>
+    <nav class="nav-links" id="nav-links" aria-label="Primary">
+      <a class="nav-link" href="../index.html#work" aria-current="page">Work</a>
+      <a class="nav-link" href="../index.html#about">About</a>
+      <a class="nav-link" href="../index.html#experience">Experience</a>
+      <a class="nav-link" href="../index.html#contact">Contact</a>
+      <a class="nav-cta" href="../assets/Mahmoud_Mostafa_Tayee_CV.pdf" download>CV
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 19h16"/></svg>
+      </a>
+    </nav>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="case-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html">Home</a><span class="sep">/</span>
+        <a href="../index.html#work">Work</a><span class="sep">/</span>
+        <span class="current">STREAMTRACK</span>
+      </nav>
+
+      <div class="case-eyebrow">
+        <span class="client">MSc thesis · Nile University</span><span class="dot"></span>
+        <span>2026</span><span class="dot"></span>
+        <span>First author</span>
+      </div>
+      <h1 class="case-title">Tracking as a data system.</h1>
+      <p class="case-deck">
+        Multi-camera tracking is usually written as one long pipeline. STREAMTRACK asks a different question: what if
+        detections were streams, identities were tables, and association were a continuous query?
+      </p>
+
+      <div class="case-meta">
+        <div class="meta-item"><span class="meta-label">Role</span><span class="meta-value">First author · architecture, implementation, evaluation</span></div>
+        <div class="meta-item"><span class="meta-label">Venue</span><span class="meta-value">NILES 2026 · accepted<br>FGCS · under review</span></div>
+        <div class="meta-item"><span class="meta-label">Evaluation</span><span class="meta-value">WTS 4 cameras · NVIDIA SmartSpaces 9 cameras</span></div>
+        <div class="meta-item"><span class="meta-label">Stack</span><span class="meta-value">Java 17 · Esper 9 · MOA · Maven · Python</span></div>
+      </div>
+
+      <div class="case-hero-visual">
+        <img src="../assets/img/streamtrack-grid.jpg" alt="Four synchronized camera views from the WTS dataset with tracked people and global IDs." width="1920" height="1080">
+        <div class="caption">Four synchronized WTS camera views during the streaming evaluation. Track labels are global identities; frames from the public WTS dataset.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container case-layout">
+    <aside class="case-toc" aria-label="On this page">
+      <div class="toc-label">On this page</div>
+      <ul class="toc-list">
+        <li><a class="toc-link" href="#problem">The problem</a></li>
+        <li><a class="toc-link" href="#approach">The approach</a></li>
+        <li><a class="toc-link" href="#architecture">Architecture</a></li>
+        <li><a class="toc-link" href="#results">Results</a></li>
+        <li><a class="toc-link" href="#evaluation">Evaluation</a></li>
+        <li><a class="toc-link" href="#publication">Publication</a></li>
+        <li><a class="toc-link" href="#reflection">Reflection</a></li>
+      </ul>
+    </aside>
+
+    <div class="case-main">
+      <section class="case-section" id="problem">
+        <h2><span class="num">01</span>The problem</h2>
+        <p class="lead">Multi-camera tracking is a state-management problem disguised as a computer-vision problem.</p>
+        <p>
+          A typical MCOT pipeline keeps tracklets in Python objects, recomputes association over a growing archive
+          every window, and treats the camera network as configuration baked in at startup. That works in a notebook.
+          It does not work on an edge gateway with a 256 MB heap, and it makes reconfiguration a restart.
+        </p>
+        <p>
+          The research question was not “can we cluster appearances better?” The clustering algorithm was already
+          good enough. The question was whether a different <strong>execution model</strong> could produce the same
+          identities, faster, while making the system's state inspectable and its camera network changeable at
+          runtime.
+        </p>
+        <div class="callout">
+          <strong>Hypothesis:</strong> if detections are append-only streams and identity/topology are relational
+          tables, then association becomes a continuous join — and the cost stops growing with the archive.
+        </div>
+      </section>
+
+      <section class="case-section" id="approach">
+        <h2><span class="num">02</span>The approach</h2>
+
+        <div class="decisions">
+          <div class="decision">
+            <div class="decision-num">01</div>
+            <div>
+              <h3>Streams for facts, tables for state</h3>
+              <p>
+                Detections, tracklet updates, and expirations are immutable events on streams. Global identities,
+                camera topology, and runtime parameters are mutable rows in tables. Nothing about a detection is
+                rewritten; identity is a mapping that evolves beside it.
+              </p>
+            </div>
+          </div>
+          <div class="decision">
+            <div class="decision-num">02</div>
+            <div>
+              <h3>Association as a continuous join</h3>
+              <p>
+                Esper continuous queries consume the streams, read the tables, and emit <code>GlobalPersonEvent</code>
+                records. Topology groups are compiled into <code>IN (...)</code> predicates at query-plan time, so
+                pruning candidate camera pairs costs nothing on the per-tuple hot path. Hierarchical clustering runs
+                only over the surviving candidates.
+              </p>
+            </div>
+          </div>
+          <div class="decision">
+            <div class="decision-num">03</div>
+            <div>
+              <h3>Same algorithm, different execution model</h3>
+              <p>
+                The batch baseline uses the same JVM, the same libraries, and the same clustering code. Only the
+                orchestration differs: the baseline recomputes state from the archive each window, while the
+                streaming path maintains it incrementally. That isolates the architectural effect and makes the
+                parity claim meaningful: <strong>100% global-ID agreement</strong>, not “close enough.”
+              </p>
+            </div>
+          </div>
+          <div class="decision">
+            <div class="decision-num">04</div>
+            <div>
+              <h3>Reconfiguration as an event</h3>
+              <p>
+                Camera transitions and tracker parameters arrive as <code>MCPTConfig</code> events. The control plane
+                deploys new queries and preserves identity state, so the camera network can change without stopping
+                the engine. The measured outage and recovery are part of the evaluation, not an afterthought.
+              </p>
+            </div>
+          </div>
+          <div class="decision">
+            <div class="decision-num">05</div>
+            <div>
+              <h3>Evaluate at edge scale</h3>
+              <p>
+                The evaluation runs on an Intel Core i7-10610U with 32 GB RAM and the JVM capped at 256 MB — a
+                deliberate stand-in for a resource-constrained edge gateway. Two public datasets cover different
+                camera counts: WTS with 4 cameras and NVIDIA SmartSpaces with 9.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="case-section" id="architecture">
+        <h2><span class="num">03</span>Architecture</h2>
+        <p>
+          The system has three kinds of state. Streams carry what happened. Tables hold what is true now. Continuous
+          queries are the only place where the two meet.
+        </p>
+
+        <div class="flow" aria-label="STREAMTRACK architecture">
+          <div class="flow-node"><b>Streams</b><span>features · tracklets · expirations</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>SCPT</b><span>single-camera pre-clustering</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>MCPT</b><span>topology-aware association</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Tables</b><span>global IDs · topology · config</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Events</b><span>global person records</span></div>
+        </div>
+
+        <p>
+          Esper owns the lightweight relational state. Heavy feature tensors live in JVM memory and are shared
+          zero-copy between operators. A small socket exposes the tables for live inspection, which is how identity
+          changes can be watched while the engine is running — the system's state is SQL, not a debug print.
+        </p>
+
+        <div class="callout">
+          <strong>The bet:</strong> state should be queryable. Once identity and topology are tables, association is
+          a join, reconfiguration is an upsert, and debugging is a <code>SELECT</code>.
+        </div>
+      </section>
+
+      <section class="case-section" id="results">
+        <h2><span class="num">04</span>Results</h2>
+        <div class="metric-grid">
+          <div class="metric-card"><div class="metric-value">9.8<span>×</span></div><span class="metric-label">end-to-end speedup</span></div>
+          <div class="metric-card"><div class="metric-value">4.16<span>×</span></div><span class="metric-label">lower association latency</span></div>
+          <div class="metric-card"><div class="metric-value">100<span>%</span></div><span class="metric-label">global-ID parity</span></div>
+          <div class="metric-card"><div class="metric-value">337<span>ms</span></div><span class="metric-label">reconfiguration outage</span></div>
+        </div>
+
+        <p>
+          Against the functionally equivalent batch baseline, the streaming path delivered a <strong>9.8×</strong>
+          end-to-end speedup, with <strong>12.0×</strong> in representative selection and <strong>9.5×</strong> in
+          hierarchical clustering. Every stage passed parity: the final global-ID mapping was identical.
+        </p>
+        <p>
+          Topology-aware partitioning reduced mean association latency from <strong>41.96 ms to 10.10 ms</strong> at
+          9 cameras — a <strong>4.16×</strong> reduction, or 4.27× after discarding the JIT warm-up window. Runtime
+          reconfiguration completed with a <strong>337 ms</strong> outage and <strong>190 ms</strong> recovery, with
+          identity state preserved and no engine restart.
+        </p>
+
+        <figure class="figure figure--light">
+          <img src="../assets/img/streamtrack-speedup.jpg" alt="Bar chart comparing batch and streaming processing times across five pipeline stages." loading="lazy" width="2661" height="1310">
+          <figcaption>Five-stage comparison, log scale. The architectural win is largest where the batch baseline re-reads history: similarity generation, zeroing, and global-ID assignment.</figcaption>
+        </figure>
+
+        <p>
+          The interesting result is not the speedup by itself. It is that the speedup comes from the execution model,
+          not from a cheaper algorithm: the clustering code is the same. As the archive grows, the batch curve grows
+          with it; the streaming curve stays shallow.
+        </p>
+      </section>
+
+      <section class="case-section" id="evaluation">
+        <h2><span class="num">05</span>Evaluation</h2>
+        <p>
+          Every headline number is reproducible from the repository. The harness includes the batch baseline, the
+          topology benchmark, the reconfiguration experiment, stage-by-stage parity checkers, and a script that
+          extracts the reported figures from the logs.
+        </p>
+        <ul class="case-list">
+          <li><strong>Hardware:</strong> Intel Core i7-10610U (4C/8T, 1.80 GHz), 32 GB RAM, JVM heap capped at 256 MB.</li>
+          <li><strong>Datasets:</strong> Woven VisionAI WTS (4 cameras) for parity and stage speedups; NVIDIA SmartSpaces / AI City 2025 Track 1 (9 cameras) for topology pruning and reconfiguration.</li>
+          <li><strong>Baseline:</strong> the same JVM, libraries, and clustering code, with batch orchestration that recomputes state per window.</li>
+          <li><strong>Parity:</strong> stage-by-stage Java-vs-Python dumps and an end-to-end global-ID comparison.</li>
+        </ul>
+
+        <figure class="figure">
+          <img src="../assets/img/streamtrack-topology.jpg" alt="Top-down map of the nine-camera SmartSpaces scene with camera fields of view and topology groups." loading="lazy" width="1920" height="1080">
+          <figcaption>The 9-camera SmartSpaces scene. Coloured groups are the topology partitions used to prune candidate associations. Map from the public NVIDIA SmartSpaces dataset.</figcaption>
+        </figure>
+      </section>
+
+      <section class="case-section" id="publication">
+        <h2><span class="num">06</span>Publication</h2>
+        <p class="lead">STREAMTRACK: A Streams-and-Tables Architecture for Scalable and Reconfigurable Multi-Camera Object Tracking</p>
+        <p>
+          Mahmoud Tayee, Mohamed ElHelw, Ahmed Awad. Accepted at <strong>NILES 2026</strong>; IEEE Xplore publication
+          pending. A related journal manuscript is under review at <em>Future Generation Computer Systems</em>.
+        </p>
+        <div class="callout">
+          The reference implementation is public: <a href="https://github.com/MahmoudMostafaTayee/STREAMTRACK" target="_blank" rel="noopener">github.com/MahmoudMostafaTayee/STREAMTRACK</a>.
+          It ships with the benchmark harnesses, parity checkers, scene configurations, and figure-generation scripts.
+        </div>
+        <div class="case-tags">
+          <span class="chip chip--accent">Java 17</span><span class="chip">Esper 9</span><span class="chip">Complex event processing</span>
+          <span class="chip">MOA</span><span class="chip">Hierarchical clustering</span><span class="chip">Edge systems</span>
+        </div>
+      </section>
+
+      <section class="case-section" id="reflection">
+        <h2><span class="num">07</span>Reflection</h2>
+        <p>
+          This project changed how I think about computer vision systems. The model is one component; the hard part
+          is often the state around it — who is who, what changed, and what happens when the camera network changes
+          underneath you.
+        </p>
+        <p>
+          The next step is distribution: sharding the stream across machines, preserving the same table semantics,
+          and testing whether the architectural advantage survives network partitions. The second is learned
+          association: replacing fixed similarity thresholds with a model that can explain its merges.
+        </p>
+      </section>
+
+      <a class="next-project" href="cognitive-video-platform.html">
+        <div>
+          <div class="next-label">Next case study / 03</div>
+          <div class="next-title">A video platform that can explain itself.</div>
+        </div>
+        <span class="next-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span>© <span data-year>2026</span> Mahmoud Mostafa Tayee</span>
+    <span>Research case study · public datasets only.</span>
+    <div class="footer-links">
+      <a href="https://github.com/MahmoudMostafaTayee/STREAMTRACK" target="_blank" rel="noopener">Repository</a>
+      <a href="https://github.com/MahmoudMostafaTayee" target="_blank" rel="noopener">GitHub</a>
+      <a href="../index.html#contact">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>
