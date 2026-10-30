@@ -838,6 +838,7 @@ hr {
 
 .work-visual {
   position: relative;
+  width: 100%;
   aspect-ratio: 16 / 10.5;
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -2950,6 +2951,7 @@ html { color-scheme: light; }
 
 .work-card {
   grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
   gap: clamp(0.9rem, 1.6vw, 1.2rem);
   padding: clamp(0.75rem, 1.3vw, 1rem);
   align-items: start;
@@ -2957,7 +2959,7 @@ html { color-scheme: light; }
 .work-card--flip .work-visual,
 .work-card--flip .work-body { order: initial; }
 
-.work-visual { aspect-ratio: 16 / 9; overflow: hidden; }
+.work-visual { width: 100%; aspect-ratio: 16 / 9; overflow: hidden; align-self: start; }
 .work-body { display: flex; flex-direction: column; padding: 0.2rem 0.35rem 0.3rem; }
 .work-top { font-size: 0.52rem; margin-bottom: 0.7rem; }
 .work-title {
@@ -2974,6 +2976,7 @@ html { color-scheme: light; }
 .work-foot { margin-top: 0.95rem; }
 
 .work-card--case { align-items: stretch; }
+.work-card--case .work-visual { width: 100%; max-width: 100%; align-self: start; }
 .work-card--case .work-foot {
   margin-top: auto;
   padding-top: 0.85rem;
