@@ -91,6 +91,7 @@
       <a class="nav-link" href="#experience">Experience</a>
       <a class="nav-link" href="#work">Work</a>
       <a class="nav-link" href="#research">Research</a>
+      <a class="nav-link" href="#publications">Publications</a>
       <a class="nav-link" href="#contact">Contact</a>
       <a class="nav-cta" href="assets/Mahmoud_Mostafa_Tayee_CV.pdf" download>
         CV <svg aria-hidden="true"><use href="#i-download"/></svg>
@@ -111,22 +112,20 @@
   <!-- ======================================================================
        About — name, photo, short introduction
        ====================================================================== -->
-  <section class="hero" id="about">
+  <section class="hero hero--full" id="about">
     <div class="container">
       <div class="hero-grid">
         <div class="hero-copy">
-          <div class="hero-name">AI Engineer <span>Computer vision · Giza, Egypt</span></div>
+          <div class="hero-name">Hi, I'm <span>Giza · Egypt</span></div>
           <h1 class="hero-title hero-title--name">Mahmoud Mostafa Tayee</h1>
-          <p class="hero-sub">
-            I build the perception layer of real products: <strong>detection, tracking, cross-camera identity</strong>,
-            and the inference pipelines underneath them. I've spent the last three years on production computer vision,
-            first on traffic safety at <strong>Ottonomi AI</strong>, now on surveillance platforms at
-            <strong>URCA AI</strong>.
+          <p class="hero-type">
+            <span class="type-prefix">I build</span>
+            <span class="type-target" data-words='["real-time perception systems","multi-camera identity","production inference pipelines","video analytics platforms"]'></span><span class="type-caret" aria-hidden="true"></span>
           </p>
           <p class="hero-sub">
-            Before that I wrote secure firmware and tooling at <strong>Thirdwayv</strong>, and taught computer vision
-            and systems courses at <strong>Nile University</strong>, where I'm finishing an MSc on multi-camera
-            tracking.
+            Three years of production computer vision — traffic safety at <strong>Ottonomi AI</strong>, surveillance
+            platforms at <strong>URCA AI</strong> — on top of firmware at <strong>Thirdwayv</strong> and teaching at
+            <strong>Nile University</strong>, where I'm finishing an MSc on multi-camera tracking.
           </p>
           <div class="hero-actions">
             <a class="btn btn--primary" href="assets/Mahmoud_Mostafa_Tayee_CV.pdf" download>
@@ -147,36 +146,21 @@
         </div>
 
         <div class="hero-portrait">
-          <div class="portrait-wrap">
-            <img class="portrait" src="assets/img/portrait.jpg" alt="Portrait of Mahmoud Mostafa Tayee" width="800" height="800">
-            <div class="portrait-overlay"></div>
-            <span class="portrait-tag">Giza · Egypt</span>
-            <div class="portrait-meta">
-              <span><b>Mahmoud Mostafa Tayee</b>Computer vision · AI systems</span>
-              <span style="text-align:right">30.01° N<br>31.21° E</span>
+          <div class="portrait-orbit">
+            <span class="portrait-glow" aria-hidden="true"></span>
+            <span class="orbit orbit--outer" aria-hidden="true"></span>
+            <span class="orbit orbit--mid" aria-hidden="true"></span>
+            <span class="orbit orbit--arc" aria-hidden="true"></span>
+            <span class="orbit-track" aria-hidden="true"><i class="orbit-dot"></i></span>
+            <span class="orbit-track orbit-track--rev" aria-hidden="true"><i class="orbit-dot orbit-dot--sm"></i></span>
+            <div class="portrait-ring">
+              <img src="assets/img/portrait.jpg" alt="Portrait of Mahmoud Mostafa Tayee" width="800" height="800">
             </div>
           </div>
         </div>
       </div>
 
-      <div class="hero-stats" aria-label="At a glance">
-        <div class="stat">
-          <span class="stat-value">9<span>+</span></span>
-          <span class="stat-label">Years writing<br>production software</span>
-        </div>
-        <div class="stat">
-          <span class="stat-value">3</span>
-          <span class="stat-label">Engineering teams since 2023<br>Ottonomi · URCA · Thirdwayv</span>
-        </div>
-        <div class="stat">
-          <span class="stat-value">1st</span>
-          <span class="stat-label">Author, IEEE NILES 2026<br>journal manuscript under review</span>
-        </div>
-        <div class="stat">
-          <span class="stat-value">9.8<span>×</span></span>
-          <span class="stat-label">Speedup measured<br>in my MSc thesis</span>
-        </div>
-      </div>
+      <a class="hero-scroll" href="#path" aria-label="Scroll to the path">Scroll</a>
     </div>
   </section>
 
@@ -186,12 +170,9 @@
   <section class="section section-line" id="path">
     <div class="container">
       <div class="section-head reveal">
-        <div class="section-kicker"><span>01</span> / The path</div>
+        <div class="section-kicker"><span>01</span> / Timeline</div>
         <div>
-          <h2 class="section-title">A decade from telecom networks to perception systems.</h2>
-          <p class="section-copy">
-            Each step added something I still use: signals and systems, teaching, firmware, then production vision.
-          </p>
+          <h2 class="section-title">The path</h2>
         </div>
       </div>
 
@@ -258,6 +239,25 @@
           </div>
         </div>
       </div>
+
+      <div class="hero-stats hero-stats--path" aria-label="At a glance">
+        <div class="stat">
+          <span class="stat-value">9<span>+</span></span>
+          <span class="stat-label">Years writing<br>production software</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">3</span>
+          <span class="stat-label">Engineering teams since 2023<br>Ottonomi · URCA · Thirdwayv</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">1st</span>
+          <span class="stat-label">Author, IEEE NILES 2026<br>journal manuscript under review</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">9.8<span>×</span></span>
+          <span class="stat-label">Speedup measured<br>in my MSc thesis</span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -269,11 +269,7 @@
       <div class="section-head reveal">
         <div class="section-kicker"><span>02</span> / Experience</div>
         <div>
-          <h2 class="section-title">Where I've worked, and what I actually did.</h2>
-          <p class="section-copy">
-            Research taught me to ask why. Embedded systems taught me to respect memory and timing. Production
-            taught me that both matter at once.
-          </p>
+          <h2 class="section-title">Experience</h2>
         </div>
       </div>
 
@@ -385,13 +381,9 @@
   <section class="section section-line" id="work">
     <div class="container">
       <div class="section-head reveal">
-        <div class="section-kicker"><span>03</span> / Selected work</div>
+        <div class="section-kicker"><span>03</span> / Work</div>
         <div>
-          <h2 class="section-title">Projects I can talk about in detail.</h2>
-          <p class="section-copy">
-            Two from my current role, one from my previous company, and one from my thesis. Each started with a
-            constraint — latency, GPU memory, ambiguous identity, missing labels — and each has a full write-up.
-          </p>
+          <h2 class="section-title">Projects</h2>
         </div>
       </div>
 
@@ -674,11 +666,7 @@
       <div class="section-head reveal">
         <div class="section-kicker"><span>04</span> / Research</div>
         <div>
-          <h2 class="section-title">My thesis, and what came out of it.</h2>
-          <p class="section-copy">
-            An MSc thesis on multi-camera object tracking, written as a systems paper: same clustering algorithm,
-            different execution model, measured end to end.
-          </p>
+          <h2 class="section-title">Research</h2>
         </div>
       </div>
 
@@ -722,18 +710,67 @@
   </section>
 
   <!-- ======================================================================
+       Publications
+       ====================================================================== -->
+  <section class="section section-line" id="publications">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="section-kicker"><span>05</span> / Publications</div>
+        <div>
+          <h2 class="section-title">Publications</h2>
+        </div>
+      </div>
+
+      <div class="pub-list">
+        <article class="pub-item reveal">
+          <div class="pub-year">2026</div>
+          <div>
+            <h3 class="pub-title">STREAMTRACK: A Streams-and-Tables Architecture for Scalable and Reconfigurable Multi-Camera Object Tracking</h3>
+            <div class="pub-authors">Mahmoud Tayee, Mohamed ElHelw, Ahmed Awad</div>
+            <div class="pub-venue">IEEE NILES 2026 · accepted · Xplore publication pending</div>
+          </div>
+          <div class="pub-links">
+            <a class="text-link" href="work/streamtrack.html">Case study</a>
+            <a class="text-link" href="https://github.com/MahmoudMostafaTayee/STREAMTRACK" target="_blank" rel="noopener">Code</a>
+          </div>
+        </article>
+
+        <article class="pub-item reveal">
+          <div class="pub-year">2026</div>
+          <div>
+            <h3 class="pub-title">Journal manuscript extending STREAMTRACK to distributed stream processing</h3>
+            <div class="pub-authors">Mahmoud Tayee, Mohamed ElHelw, Ahmed Awad</div>
+            <div class="pub-venue">Future Generation Computer Systems · under review</div>
+          </div>
+          <div class="pub-links">
+            <a class="text-link" href="#research">Summary</a>
+          </div>
+        </article>
+
+        <article class="pub-item reveal">
+          <div class="pub-year">2026</div>
+          <div>
+            <h3 class="pub-title">A Streams-and-Tables Architecture for Scalable and Reconfigurable Multi-Camera Object Tracking</h3>
+            <div class="pub-authors">MSc thesis · Nile University · advisor Mohamed ElHelw</div>
+            <div class="pub-venue">Thesis · in progress</div>
+          </div>
+          <div class="pub-links">
+            <a class="text-link" href="work/streamtrack.html">Case study</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================================
        Toolkit and earlier work
        ====================================================================== -->
   <section class="section section-line" id="background">
     <div class="container">
       <div class="section-head reveal">
-        <div class="section-kicker"><span>05</span> / Background</div>
+        <div class="section-kicker"><span>06</span> / Background</div>
         <div>
-          <h2 class="section-title">What I work with, and where I came from.</h2>
-          <p class="section-copy">
-            Embedded systems taught me to respect memory, timing, and failure modes. That is still how I approach
-            inference pipelines.
-          </p>
+          <h2 class="section-title">Skills</h2>
         </div>
       </div>
 
@@ -768,9 +805,9 @@
       </div>
 
       <div class="section-head reveal" style="margin-top:clamp(3rem,6vw,4.5rem);margin-bottom:clamp(1.5rem,3vw,2.2rem)">
-        <div class="section-kicker"><span>05.1</span> / Earlier projects</div>
+        <div class="section-kicker"><span>06.1</span> / Earlier projects</div>
         <div>
-          <h3 class="section-title" style="font-size:clamp(1.5rem,2.8vw,2.1rem)">Smaller projects from university and self-study.</h3>
+          <h3 class="section-title" style="font-size:clamp(1.4rem,2.6vw,1.9rem)">Earlier projects</h3>
         </div>
       </div>
 
@@ -821,7 +858,7 @@
   <section class="contact" id="contact">
     <div class="container contact-inner">
       <div class="reveal">
-        <div class="contact-kicker">06 / Contact</div>
+        <div class="contact-kicker">07 / Contact</div>
         <h2 class="contact-title">Let's talk about <span>hard perception problems.</span></h2>
         <p class="contact-copy">
           Multi-camera systems, real-time inference, or the gap between a model and a product — those are the

@@ -165,6 +165,46 @@
     updatePath();
   }
 
+  /* Hero typewriter */
+  var typeTarget = doc.querySelector(".type-target");
+  if (typeTarget) {
+    var typed = [];
+    try { typed = JSON.parse(typeTarget.getAttribute("data-words") || "[]"); } catch (e) { typed = []; }
+    if (typed.length) {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        typeTarget.textContent = typed[0];
+      } else {
+        typeTarget.textContent = "";
+        var wordIndex = 0;
+        var charIndex = 0;
+        var deleting = false;
+        var step = function () {
+          var word = typed[wordIndex];
+          if (!deleting) {
+            charIndex += 1;
+            typeTarget.textContent = word.slice(0, charIndex);
+            if (charIndex === word.length) {
+              deleting = true;
+              window.setTimeout(step, 1900);
+              return;
+            }
+          } else {
+            charIndex -= 1;
+            typeTarget.textContent = word.slice(0, charIndex);
+            if (charIndex === 0) {
+              deleting = false;
+              wordIndex = (wordIndex + 1) % typed.length;
+              window.setTimeout(step, 320);
+              return;
+            }
+          }
+          window.setTimeout(step, deleting ? 38 : 62);
+        };
+        window.setTimeout(step, 800);
+      }
+    }
+  }
+
   /* Current year */
   doc.querySelectorAll("[data-year]").forEach(function (el) {
     el.textContent = String(new Date().getFullYear());
