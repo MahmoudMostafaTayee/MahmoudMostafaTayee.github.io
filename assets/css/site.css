@@ -2957,7 +2957,7 @@ html { color-scheme: light; }
 .work-card--flip .work-visual,
 .work-card--flip .work-body { order: initial; }
 
-.work-visual { aspect-ratio: 16 / 9; }
+.work-visual { aspect-ratio: 16 / 9; overflow: hidden; }
 .work-body { display: flex; flex-direction: column; padding: 0.2rem 0.35rem 0.3rem; }
 .work-top { font-size: 0.52rem; margin-bottom: 0.7rem; }
 .work-title {
