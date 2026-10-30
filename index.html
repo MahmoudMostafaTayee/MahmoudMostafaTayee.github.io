@@ -390,6 +390,7 @@
         <div class="section-kicker"><span>03</span> / Work</div>
         <div>
           <h2 class="section-title">Projects</h2>
+          <p class="section-copy">Four case studies, and twelve use cases in short.</p>
         </div>
       </div>
 
@@ -660,6 +661,99 @@
           </div>
         </article>
 
+      </div>
+
+      <div class="section-head reveal" style="margin-top:clamp(3rem,6vw,4.5rem);margin-bottom:clamp(1.5rem,3vw,2.2rem)">
+        <div class="section-kicker"><span>03.1</span> / Use cases</div>
+        <div>
+          <h3 class="section-title" style="font-size:clamp(1.4rem,2.6vw,1.9rem)">Twelve use cases</h3>
+        </div>
+      </div>
+
+      <div class="earlier-grid reveal">
+        <a class="mini-card" href="work/traffic-safety.html">
+          <div class="mini-top"><span class="mini-icon"><svg aria-hidden="true"><use href="#i-activity"/></svg></span><span class="mini-index">01 / SAFETY</span></div>
+          <h3>Fall detection</h3>
+          <p>Pose keypoints, torso angle and bounding-box aspect ratio. A state machine waits for the transition and the stillness afterwards, so sitting down does not fire an alert.</p>
+          <div class="chips"><span class="chip">YOLOv8-Pose</span><span class="chip">MediaPipe</span></div>
+        </a>
+
+        <a class="mini-card" href="work/traffic-safety.html">
+          <div class="mini-top"><span class="mini-icon"><svg aria-hidden="true"><use href="#i-radar"/></svg></span><span class="mini-index">02 / TRAFFIC</span></div>
+          <h3>Automatic wrong-way driving</h3>
+          <p>Lane direction priors checked against a vehicle's motion vector and confirmed across several frames before anything is reported.</p>
+          <div class="chips"><span class="chip">Lane geometry</span><span class="chip">Motion vector</span></div>
+        </a>
+
+        <a class="mini-card" href="work/traffic-safety.html">
+          <div class="mini-top"><span class="mini-icon"><svg aria-hidden="true"><use href="#i-radar"/></svg></span><span class="mini-index">03 / TRAFFIC</span></div>
+          <h3>Unsafe lane changes</h3>
+          <p>Lateral velocity and conflict checks against lane geometry, tuned to catch dangerous swerves rather than ordinary lane changes.</p>
+          <div class="chips"><span class="chip">Lane geometry</span><span class="chip">Temporal logic</span></div>
+        </a>
+
+        <a class="mini-card" href="work/multi-camera-identity.html">
+          <div class="mini-top"><span class="mini-icon"><svg aria-hidden="true"><use href="#i-grid"/></svg></span><span class="mini-index">04 / IDENTITY</span></div>
+          <h3>Multicamera tracking</h3>
+          <p>One identity across thirteen cameras: per-camera tracklets, appearance Re-ID, topology-aware association and a VLM for the hand-offs embeddings cannot settle.</p>
+          <div class="chips"><span class="chip">Re-ID</span><span class="chip">Topology</span></div>
+        </a>
+
+        <div class="mini-card">
+          <div class="mini-top"><span class="mini-icon"><svg aria-hidden="true"><use href="#i-shield"/></svg></span><span class="mini-index">05 / SAFETY</span></div>
+          <h3>PPE detection</h3>
+          <p>Helmet and vest compliance on live feeds, packaged as its own compose stack so a site can switch the use case on independently.</p>
+          <div class="chips"><span class="chip">YOLO</span><span class="chip">DeepStream</span></div>
+        </div>
+
+        <a class="mini-card" href="work/cognitive-video-platform.html">
+          <div class="mini-top"><span class="mini-icon"><svg aria-hidden="true"><use href="#i-cpu"/></svg></span><span class="mini-index">06 / VLM</span></div>
+          <h3>VLM live monitoring</h3>
+          <p>Frame batches with detection metadata go to a vision-language model that turns live streams into temporal events an operator can read.</p>
+          <div class="chips"><span class="chip">Qwen VLM</span><span class="chip">Live streams</span></div>
+        </a>
+
+        <div class="mini-card">
+          <div class="mini-top"><span class="mini-icon"><svg aria-hidden="true"><use href="#i-shield"/></svg></span><span class="mini-index">07 / VLM</span></div>
+          <h3>Alert validation with VLMs</h3>
+          <p>Every alarm is re-read by a model and given a verdict with evidence, benchmarked across model sizes for latency, accuracy and hardware cost.</p>
+          <div class="chips"><span class="chip">Qwen3-VL</span><span class="chip">Benchmarks</span></div>
+        </div>
+
+        <div class="mini-card">
+          <div class="mini-top"><span class="mini-icon"><svg aria-hidden="true"><use href="#i-activity"/></svg></span><span class="mini-index">08 / ANALYTICS</span></div>
+          <h3>Wait time analysis</h3>
+          <p>Queue length and wait-time analytics derived from tracked people over time instead of manual counting at the counter.</p>
+          <div class="chips"><span class="chip">Tracking</span><span class="chip">Analytics</span></div>
+        </div>
+
+        <div class="mini-card">
+          <div class="mini-top"><span class="mini-icon"><svg aria-hidden="true"><use href="#i-layers"/></svg></span><span class="mini-index">09 / SAFETY</span></div>
+          <h3>Intrusion detection</h3>
+          <p>Background subtraction and YOLO tracking against zones and schedules, tuned to keep the false-alarm rate somewhere operators still read alerts.</p>
+          <div class="chips"><span class="chip">Background subtraction</span><span class="chip">Zones</span></div>
+        </div>
+
+        <div class="mini-card">
+          <div class="mini-top"><span class="mini-icon"><svg aria-hidden="true"><use href="#i-copy"/></svg></span><span class="mini-index">10 / IDENTITY</span></div>
+          <h3>Attendance with face recognition</h3>
+          <p>Face detection followed by embedding matching against a roster, with the same pipeline serving access control rather than a separate system.</p>
+          <div class="chips"><span class="chip">Face embeddings</span><span class="chip">Matching</span></div>
+        </div>
+
+        <div class="mini-card">
+          <div class="mini-top"><span class="mini-icon"><svg aria-hidden="true"><use href="#i-code"/></svg></span><span class="mini-index">11 / PARKING</span></div>
+          <h3>Plate detection and OCR</h3>
+          <p>Find a vehicle in a parking lot by its plate and compute how long it has been parked — from detections, not from a manual log.</p>
+          <div class="chips"><span class="chip">Plate OCR</span><span class="chip">Search</span></div>
+        </div>
+
+        <div class="mini-card">
+          <div class="mini-top"><span class="mini-icon"><svg aria-hidden="true"><use href="#i-activity"/></svg></span><span class="mini-index">12 / REPORTING</span></div>
+          <h3>Safety agent</h3>
+          <p>An agent that watches for unsafe events, gathers the frames that matter, and writes up what it saw as a report a supervisor can act on.</p>
+          <div class="chips"><span class="chip">Agent</span><span class="chip">Reporting</span></div>
+        </div>
       </div>
     </div>
   </section>
