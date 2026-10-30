@@ -114,6 +114,57 @@
     });
   });
 
+  /* Stagger: neighbours in the same container enter one after another */
+  revealItems.forEach(function (el) {
+    if (!el.parentElement) return;
+    var siblings = Array.prototype.filter.call(el.parentElement.children, function (node) {
+      return node.classList && node.classList.contains("reveal");
+    });
+    var index = siblings.indexOf(el);
+    if (index > 0) el.style.setProperty("--d", String(Math.min(index, 6)));
+  });
+
+  /* Theme toggle */
+  var root = doc.documentElement;
+  var themeToggle = doc.querySelector(".theme-toggle");
+  var themeMeta = doc.querySelector('meta[name="theme-color"]');
+
+  function syncThemeUi() {
+    var light = root.getAttribute("data-theme") === "light";
+    if (themeToggle) {
+      themeToggle.setAttribute("aria-label", light ? "Switch to dark theme" : "Switch to light theme");
+      themeToggle.setAttribute("aria-pressed", String(light));
+    }
+    if (themeMeta) themeMeta.setAttribute("content", light ? "#f6f7f9" : "#06080b");
+  }
+
+  syncThemeUi();
+
+  if (themeToggle) {
+    themeToggle.addEventListener("click", function () {
+      var next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+      root.setAttribute("data-theme", next);
+      try { localStorage.setItem("theme", next); } catch (e) {}
+      syncThemeUi();
+    });
+  }
+
+  /* The path: draw the rail as far as the reader has scrolled */
+  var path = doc.querySelector(".path");
+  var pathLine = path ? path.querySelector(".path-line") : null;
+  if (path && pathLine) {
+    var updatePath = function () {
+      var rect = path.getBoundingClientRect();
+      var trigger = window.innerHeight * 0.62;
+      var progress = (trigger - rect.top) / rect.height;
+      progress = Math.max(0, Math.min(1, progress));
+      pathLine.style.setProperty("--path-progress", progress.toFixed(3));
+    };
+    window.addEventListener("scroll", updatePath, { passive: true });
+    window.addEventListener("resize", updatePath);
+    updatePath();
+  }
+
   /* Current year */
   doc.querySelectorAll("[data-year]").forEach(function (el) {
     el.textContent = String(new Date().getFullYear());

@@ -40,20 +40,33 @@ and the CV download behave more predictably over HTTP.
 
 ## Deploy (GitHub Pages)
 
-The canonical URL in the markup is `https://mahmoudmostafatayee.github.io/`.
+The canonical URL in the markup is `https://mahmoudmostafatayee.github.io/`, which is the
+user site for the personal account `MahmoudMostafaTayee`. That account owns the
+repository `MahmoudMostafaTayee/MahmoudMostafaTayee.github.io`, and Pages serves its
+`main` branch root. Nothing is built: the committed HTML is the deployed HTML.
+
+This machine's `gh` login is the URCA account, so publishing from here needs the
+personal account selected first:
 
 ```sh
-git init
-git add .
-git commit -m "Portfolio site"
-git branch -M main
-git remote add origin git@github.com:MahmoudMostafaTayee/MahmoudMostafaTayee.github.io.git
+gh auth login              # if the personal account is not logged in yet
+gh auth switch --user MahmoudMostafaTayee
+./scripts/publish.sh
+```
+
+`scripts/publish.sh` refuses to run under any other account, points git at HTTPS with
+the gh token (no SSH key needed), creates the repository if it does not exist, pushes
+`main`, and prints the Pages URL once the build settles.
+
+Manual equivalent:
+
+```sh
+git remote add origin https://github.com/MahmoudMostafaTayee/MahmoudMostafaTayee.github.io.git
 git push -u origin main
 ```
 
-Pushing to the `MahmoudMostafaTayee.github.io` repository publishes the site at the
-root URL. If you host it under a project repository instead, update the canonical and
-`og:url` values in `index.html`, the four case studies, and `sitemap.xml`.
+If you host it under a project repository instead, update the canonical, `og:url` and
+`sitemap.xml` values to the `/repo-name/` path.
 
 ## Editing notes
 
