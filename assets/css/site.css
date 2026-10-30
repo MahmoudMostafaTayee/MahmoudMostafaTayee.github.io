@@ -1265,6 +1265,7 @@ hr {
   gap: clamp(2rem, 5vw, 4rem);
   padding: clamp(1.8rem, 4vw, 3.2rem);
 }
+.research-main { min-width: 0; }
 .research-label {
   font-family: var(--mono);
   font-size: 0.6rem;
@@ -1280,6 +1281,63 @@ hr {
   letter-spacing: -0.03em;
   line-height: 1.15;
 }
+.research-title a {
+  color: inherit;
+  transition: color 0.25s ease;
+}
+.research-title a:hover { color: var(--blue); }
+
+.research-aside {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.2rem, 2.5vw, 1.8rem);
+}
+.research-visual {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #080c11;
+  transition: border-color 0.35s ease;
+}
+.research-visual:hover { border-color: rgba(255, 255, 255, 0.22); }
+.research-visual img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.86) contrast(1.03) brightness(0.9);
+  transition: transform 0.7s var(--ease);
+}
+.research-visual:hover img { transform: scale(1.035); }
+.research-open {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  padding: 1.4rem 0.9rem 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.52rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(transparent, rgba(4, 6, 9, 0.92));
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.3s ease, transform 0.3s var(--ease);
+}
+.research-open svg { width: 13px; height: 13px; transition: transform 0.25s var(--ease); }
+.research-visual:hover .research-open,
+.research-visual:focus-visible .research-open { opacity: 1; transform: none; }
+.research-visual:hover .research-open svg { transform: translateX(4px); }
 .research-authors {
   margin-top: 0.8rem;
   font-family: var(--mono);
@@ -2877,10 +2935,17 @@ html { color-scheme: light; }
    -------------------------------------------------------------------------- */
 
 .work-list {
+  --wl-gap: clamp(1.2rem, 2.4vw, 1.9rem);
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(1.2rem, 2.4vw, 1.9rem);
+  gap: var(--wl-gap);
   align-items: stretch;
+}
+/* Odd card out — centre the lone last card so the grid never trails off */
+.work-list > .work-card:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+  width: calc((100% - var(--wl-gap)) / 2);
+  justify-self: center;
 }
 
 .work-card {
@@ -3014,6 +3079,7 @@ html { color-scheme: light; }
 
 @media (max-width: 900px) {
   .work-list { grid-template-columns: minmax(0, 1fr); }
+  .work-list > .work-card:last-child:nth-child(odd) { grid-column: auto; width: auto; }
 }
 
 /* --------------------------------------------------------------------------
