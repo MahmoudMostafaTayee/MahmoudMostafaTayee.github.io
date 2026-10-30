@@ -2349,7 +2349,8 @@ hr {
    Theme: dark by default, light via [data-theme="light"]
    -------------------------------------------------------------------------- */
 
-html { color-scheme: dark; }
+html { color-scheme: light; }
+[data-theme="dark"] { color-scheme: dark; }
 
 [data-theme="light"] {
   color-scheme: light;
@@ -2559,6 +2560,22 @@ html { color-scheme: dark; }
   padding: clamp(5.5rem, 10vh, 7.5rem) 0 clamp(3.5rem, 7vh, 5rem);
 }
 .hero--full .container { width: 100%; }
+
+/* Portrait in the left middle, copy centred in the right */
+.hero--full .hero-grid {
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+}
+.hero--full .hero-portrait { order: -1; }
+.hero--full .hero-copy {
+  justify-self: center;
+  width: 100%;
+  max-width: 35rem;
+}
+
+@media (max-width: 1100px) {
+  .hero--full .hero-portrait { order: 0; }
+  .hero--full .hero-copy { justify-self: start; max-width: none; }
+}
 
 .hero--full .hero-portrait {
   justify-self: center;

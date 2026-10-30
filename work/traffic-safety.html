@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,15 +15,15 @@
   <meta name="twitter:title" content="Four safety behaviours, one tracking core — Mahmoud Mostafa Tayee">
   <meta name="twitter:description" content="Case study: real-time fall detection, wrong-way driving, unsafe lane-change analysis, and multi-camera tracking on a shared perception core.">
   <meta name="twitter:image" content="https://mahmoudmostafatayee.github.io/assets/img/og.jpg">
-  <meta name="theme-color" content="#06080b">
+  <meta name="theme-color" content="#f6f7f9">
   <meta name="color-scheme" content="dark light">
   <script>
   (function () {
     try {
       var stored = localStorage.getItem("theme");
-      var theme = stored || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+      var theme = stored || "light";
       document.documentElement.setAttribute("data-theme", theme);
-    } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); }
+    } catch (e) { document.documentElement.setAttribute("data-theme", "light"); }
   })();
   </script>
   <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
