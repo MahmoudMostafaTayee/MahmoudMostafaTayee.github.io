@@ -321,9 +321,12 @@
    Space scene: canvas-based cosmos behind the whole site (port of the
    interstellar background — twinkling drifting stars, gravity comets,
    pulsing sun, orbiting planets with moons, asteroid belt, binary
-   black holes, supernova shockwave, corona). The mouse spaceship of the
-   original is intentionally omitted — the CV bounding box owns the
-   cursor. Dark theme only; static single frame under reduced motion.
+   black holes, supernova shockwave, corona) read through a
+   computer-vision overlay: detector brackets and confidence chips on
+   every celestial object, speed readouts on the comets and on the
+   scout ship, a drifting astronaut, and the mouse spaceship from the
+   helper portfolio trailing the cursor while the DOM CV box frames it.
+   Dark theme only; static single frame under reduced motion.
    --------------------------------------------------------------------- */
 (function () {
   if (!window.matchMedia) return;
@@ -349,6 +352,11 @@
     canvas.style.width = w + "px";
     canvas.style.height = h + "px";
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    if (!ship.seeded) {
+      ship.seeded = true;
+      ship.x = ship.tx = w * 0.2;
+      ship.y = ship.ty = h * 0.5;
+    }
     if (!raf) { render(false); }
   }
 
@@ -407,8 +415,55 @@
   var coronaAngle = 0;
   var t = 0;
 
+  /* 5. Mouse scout ship (ported from the helper portfolio's mouseShip):
+     inertia-follows the pointer, then swings out to a core orbit. */
+  var ship = { x: 0, y: 0, tx: 0, ty: 0, angle: 0, speed: 0.05, seeded: false, kmh: 0 };
+
+  window.addEventListener("pointermove", function (e) {
+    ship.tx = e.clientX;
+    ship.ty = e.clientY;
+  }, { passive: true });
+
+  /* 6. Detector readouts: confidences re-sampled a few times a second
+     so the chips read as live inference instead of a static label. */
+  var DET = {
+    star:  { base: 1.0,  val: "1.00" },
+    bh:    { base: 0.99, val: "0.99" },
+    belt:  { base: 0.87, val: "0.87" },
+    astro: { base: 0.96, val: "0.96" }
+  };
+  var DET_BASE = [0.97, 0.94, 0.96, 0.93];      /* per-planet confidence */
+  var COMET_BASE = [0.92, 0.88];                /* per-comet confidence */
+
+  function jitterDets() {
+    for (var key in DET) {
+      DET[key].val = Math.max(0.4, DET[key].base - Math.random() * 0.045).toFixed(2);
+    }
+    planets.forEach(function (p, i) {
+      p.c = Math.max(0.4, DET_BASE[i] - Math.random() * 0.045).toFixed(2);
+    });
+    comets.forEach(function (c, i) {
+      c.c = Math.max(0.4, COMET_BASE[i] - Math.random() * 0.045).toFixed(2);
+    });
+  }
+  jitterDets();
+
   function step() {
     t++;
+    if (t % 12 === 0) jitterDets();
+
+    /* scout ship: chase the pointer, orbit the core when it has arrived */
+    var sdx = ship.tx - ship.x, sdy = ship.ty - ship.y;
+    var sdist = Math.sqrt(sdx * sdx + sdy * sdy) || 1;
+    if (sdist < 40) {
+      ship.tx = w / 2 + Math.cos(binaryAngle * 0.4) * 340;
+      ship.ty = h / 2 + Math.sin(binaryAngle * 0.4) * 340;
+    }
+    ship.x += sdx * ship.speed;
+    ship.y += sdy * ship.speed;
+    if (sdist > 2) ship.angle = Math.atan2(sdy, sdx);
+    ship.kmh = sdist * ship.speed * 9.4;
+
     binaryAngle += BINARY_SPEED;
     shockRadius += 1.2;
     shockAlpha -= 0.0018;
@@ -474,6 +529,215 @@
     ctx.arc(0, 0, 8, 0, Math.PI * 2);
     ctx.fillStyle = "#000000";
     ctx.fill();
+    ctx.restore();
+  }
+
+  /* ---- CV overlay: detector brackets, confidence chips, sprites ---- */
+
+  function rr(x, y, rw, rh, r) {
+    r = Math.min(r, rw / 2, rh / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + rw, y, x + rw, y + rh, r);
+    ctx.arcTo(x + rw, y + rh, x, y + rh, r);
+    ctx.arcTo(x, y + rh, x, y, r);
+    ctx.arcTo(x, y, x + rw, y, r);
+    ctx.closePath();
+  }
+
+  /* corner-bracket detection box, top-left origin */
+  function hudBox(bx, by, bw, bh, color) {
+    var arm = Math.max(6, Math.min(14, bw * 0.3, bh * 0.3));
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(bx, by + arm); ctx.lineTo(bx, by); ctx.lineTo(bx + arm, by);
+    ctx.moveTo(bx + bw - arm, by); ctx.lineTo(bx + bw, by); ctx.lineTo(bx + bw, by + arm);
+    ctx.moveTo(bx + bw, by + bh - arm); ctx.lineTo(bx + bw, by + bh); ctx.lineTo(bx + bw - arm, by + bh);
+    ctx.moveTo(bx + arm, by + bh); ctx.lineTo(bx, by + bh); ctx.lineTo(bx, by + bh - arm);
+    ctx.stroke();
+  }
+
+  /* label chip in the CV-HUD style */
+  function hudChip(x, y, text, color) {
+    ctx.font = "9px \"JetBrains Mono\", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "left";
+    var cw = ctx.measureText(text).width + 10;
+    var ch = 14;
+    if (x + cw > w - 4) x = Math.max(4, x - cw);
+    if (y < 4) y = 4;
+    if (y + ch > h - 4) y = h - ch - 4;
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, cw, ch);
+    ctx.fillStyle = "rgba(3, 3, 8, 0.92)";
+    ctx.fillText(text, x + 5, y + ch / 2 + 0.5);
+  }
+
+  /* Drifting astronaut: suit, backpack, visor and a slack tether. */
+  function drawAstronaut(x, y, rot, alpha) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rot);
+    ctx.globalAlpha = alpha;
+
+    ctx.strokeStyle = "rgba(255,255,255,0.16)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(-8, 3);
+    ctx.quadraticCurveTo(-26, 8 + Math.sin(t * 0.05) * 5, -46, 4 + Math.sin(t * 0.05 + 1.4) * 7);
+    ctx.stroke();
+
+    /* legs + boots */
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "#dde5ef";
+    ctx.lineWidth = 5;
+    ctx.beginPath(); ctx.moveTo(-5, 3); ctx.lineTo(-15, 8); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-5, -3); ctx.lineTo(-15, -7); ctx.stroke();
+    ctx.fillStyle = "#8fa0b4";
+    ctx.beginPath(); ctx.arc(-16.5, 9, 2.8, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(-16.5, -8, 2.8, 0, Math.PI * 2); ctx.fill();
+
+    /* arms + gloves */
+    ctx.strokeStyle = "#e6ecf5";
+    ctx.lineWidth = 4.4;
+    ctx.beginPath(); ctx.moveTo(3, -5); ctx.lineTo(9, -13); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(3, 5); ctx.lineTo(8, 13); ctx.stroke();
+    ctx.fillStyle = "#cbd6e4";
+    ctx.beginPath(); ctx.arc(10, -14.5, 2.6, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(9, 14.5, 2.6, 0, Math.PI * 2); ctx.fill();
+
+    /* life-support backpack */
+    ctx.fillStyle = "#9fb0c4";
+    rr(-7, 6, 15, 5.5, 2.5);
+    ctx.fill();
+
+    /* torso */
+    ctx.fillStyle = "#e9eff7";
+    rr(-6, -7.5, 16, 15, 6.5);
+    ctx.fill();
+
+    /* chest pack */
+    ctx.fillStyle = "#0a1119";
+    rr(-1, -4, 7.5, 8.5, 2);
+    ctx.fill();
+    ctx.fillStyle = "#00d2ff";
+    ctx.beginPath(); ctx.arc(4.6, -1.6, 1.2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#5ad9a6";
+    ctx.beginPath(); ctx.arc(4.6, 2.2, 1.2, 0, Math.PI * 2); ctx.fill();
+
+    /* helmet + visor */
+    ctx.fillStyle = "#f2f6fb";
+    ctx.beginPath(); ctx.arc(13, 0, 8.2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#04070e";
+    ctx.beginPath(); ctx.arc(14.4, 0, 5.9, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "rgba(0,210,255,0.5)";
+    ctx.beginPath(); ctx.arc(16.4, -2, 1.7, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "rgba(0,210,255,0.28)";
+    ctx.beginPath(); ctx.arc(15, 2.6, 1, 0, Math.PI * 2); ctx.fill();
+
+    ctx.restore();
+  }
+
+  /* Mouse scout ship: arrow hull, cockpit glint, plasma trail. */
+  function drawShip() {
+    ctx.save();
+    ctx.translate(ship.x, ship.y);
+    ctx.rotate(ship.angle);
+
+    var jet = ctx.createLinearGradient(-12, 0, -32, 0);
+    jet.addColorStop(0, "rgba(255, 0, 127, 0.95)");
+    jet.addColorStop(1, "rgba(77, 0, 153, 0)");
+    ctx.fillStyle = jet;
+    ctx.beginPath();
+    ctx.moveTo(-8, -2.5);
+    ctx.lineTo(-24 - Math.random() * 10, 0);
+    ctx.lineTo(-8, 2.5);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(14, 0);
+    ctx.lineTo(-9, -7);
+    ctx.lineTo(-5, 0);
+    ctx.lineTo(-9, 7);
+    ctx.closePath();
+    ctx.fillStyle = "#ffffff";
+    ctx.shadowBlur = 12;
+    ctx.shadowColor = "#00d2ff";
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    ctx.beginPath();
+    ctx.moveTo(3, -1.5);
+    ctx.lineTo(7, 0);
+    ctx.lineTo(3, 1.5);
+    ctx.closePath();
+    ctx.fillStyle = "#00d2ff";
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  /* What the detector sees in the cosmos. The ship gets a velocity chip
+     only — the DOM CV box already frames the cursor it flies to. */
+  function drawCvOverlay(cx, cy) {
+    ctx.save();
+    ctx.globalAlpha = 0.88;
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "left";
+
+    /* planets */
+    planets.forEach(function (p) {
+      var px = cx + Math.cos(p.angle) * p.radius;
+      var py = cy + Math.sin(p.angle) * p.radius;
+      var s = (p.size + 7) * 2;
+      hudBox(px - s / 2, py - s / 2, s, s, "#00d2ff");
+      hudChip(px - s / 2, py - s / 2 - 17, "planet " + p.c, "#00d2ff");
+    });
+
+    /* comets — speed detection */
+    comets.forEach(function (c) {
+      var kmh = Math.sqrt(c.vx * c.vx + c.vy * c.vy) * 9.4;
+      hudBox(c.x - 15, c.y - 15, 30, 30, "#ffb45c");
+      hudChip(c.x - 15, c.y + 17, "comet " + c.c + " · " + kmh.toFixed(1) + " km/s", "#ffb45c");
+    });
+
+    /* star core */
+    hudBox(cx - 34, cy - 34, 68, 68, "#ffb45c");
+    hudChip(cx - 34, cy - 51, "star " + DET.star.val, "#ffb45c");
+
+    /* binary black holes */
+    var bsx = w * 0.82, bsy = h * 0.25, bs = SEPARATION * 2 + 46;
+    hudBox(bsx - bs / 2, bsy - bs / 2, bs, bs, "#ff007f");
+    hudChip(bsx - bs / 2, bsy - bs / 2 - 17, "binary_bh " + DET.bh.val, "#ff007f");
+
+    /* asteroid belt as one cluster detection */
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    ctx.strokeStyle = "rgba(0,210,255,0.7)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 7]);
+    ctx.strokeRect(cx - 224, cy - 224, 448, 448);
+    ctx.setLineDash([]);
+    hudChip(cx - 224, cy - 241, "cluster \"belt\" · " + asteroids.length + " obj " + DET.belt.val, "#00d2ff");
+    ctx.restore();
+
+    /* astronaut on a slow lissajous drift */
+    var ax = w * (0.5 + 0.34 * Math.sin(t * 0.0016));
+    var ay = h * (0.52 + 0.28 * Math.sin(t * 0.0023 + 1.2));
+    var arot = Math.sin(t * 0.0011) * 0.35 + 0.2;
+    drawAstronaut(ax, ay, arot, 0.75);
+    ctx.globalAlpha = 0.8;
+    hudBox(ax - 30, ay - 24, 62, 48, "#5ad9a6");
+    hudChip(ax - 30, ay - 41, "astronaut " + DET.astro.val, "#5ad9a6");
+
+    /* scout ship speed readout */
+    drawShip();
+    if (ship.kmh > 0.5) {
+      ctx.globalAlpha = 0.9;
+      hudChip(ship.x - 18, ship.y + 20, "scout_ship " + ship.kmh.toFixed(1) + " km/s", "#ffb45c");
+    }
+
     ctx.restore();
   }
 
@@ -579,6 +843,8 @@
         ctx.fill();
       });
     });
+
+    drawCvOverlay(cx, cy);
   }
 
   function loop() {
