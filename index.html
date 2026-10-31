@@ -10,11 +10,18 @@
   <meta name="color-scheme" content="dark light">
   <script>
   (function () {
+    var stored = null;
     try {
-      var stored = localStorage.getItem("theme");
-      var theme = stored || "dark";
-      document.documentElement.setAttribute("data-theme", theme);
-    } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); }
+      stored = localStorage.getItem("theme");
+      if (!localStorage.getItem("themeV3")) {
+        // one-time: drop a theme choice saved before the space-HUD retheme
+        // so the new dark default takes effect; later choices stay sticky
+        localStorage.removeItem("theme");
+        localStorage.setItem("themeV3", "1");
+        stored = null;
+      }
+    } catch (e) {}
+    document.documentElement.setAttribute("data-theme", stored || "dark");
   })();
   </script>
   <link rel="canonical" href="https://mahmoudmostafatayee.github.io/">
