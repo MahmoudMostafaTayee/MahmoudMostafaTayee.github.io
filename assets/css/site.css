@@ -167,8 +167,10 @@ body::after {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 50% 35% at 78% 4%, rgba(77, 0, 153, 0.22), transparent 70%),
-    radial-gradient(ellipse 35% 30% at 12% 18%, rgba(0, 210, 255, 0.06), transparent 70%);
+    radial-gradient(ellipse 55% 42% at 80% 0%, rgba(77, 0, 153, 0.4), transparent 72%),
+    radial-gradient(ellipse 42% 34% at 8% 24%, rgba(0, 210, 255, 0.12), transparent 70%),
+    radial-gradient(ellipse 60% 30% at 50% 112%, rgba(255, 0, 127, 0.13), transparent 76%),
+    radial-gradient(ellipse 34% 44% at 100% 78%, rgba(77, 0, 153, 0.28), transparent 72%);
 }
 
 ::selection {
@@ -3343,7 +3345,30 @@ html { color-scheme: light; }
   box-shadow: 0 0 8px rgba(0, 210, 255, 0.5);
 }
 
-/* Starfield: a slowly drifting field of faint stars behind everything */
+/* Starfield: two parallax layers of drifting, twinkling stars. */
+html[data-theme="dark"]::before {
+  content: "";
+  position: fixed;
+  inset: -60%;
+  z-index: -4;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1.4px 1.4px at 62px 90px, rgba(255, 255, 255, 0.55), transparent 2px),
+    radial-gradient(1px 1px at 190px 40px, rgba(255, 255, 255, 0.4), transparent 2px),
+    radial-gradient(1.8px 1.8px at 276px 150px, rgba(125, 232, 255, 0.5), transparent 2.5px),
+    radial-gradient(1.2px 1.2px at 120px 250px, rgba(255, 255, 255, 0.35), transparent 2px),
+    radial-gradient(1px 1px at 330px 200px, rgba(255, 255, 255, 0.45), transparent 2px),
+    radial-gradient(1.6px 1.6px at 40px 330px, rgba(255, 255, 255, 0.5), transparent 2px),
+    radial-gradient(1px 1px at 250px 320px, rgba(125, 232, 255, 0.4), transparent 2px),
+    radial-gradient(1.2px 1.2px at 360px 90px, rgba(255, 255, 255, 0.3), transparent 2px),
+    radial-gradient(1px 1px at 170px 170px, rgba(255, 255, 255, 0.35), transparent 2px),
+    radial-gradient(1.4px 1.4px at 320px 390px, rgba(255, 255, 255, 0.42), transparent 2px);
+  background-size: 420px 420px;
+  background-repeat: repeat;
+  opacity: 0.95;
+  animation: star-drift-far 300s linear infinite, star-twinkle 9s ease-in-out infinite alternate;
+}
+
 html[data-theme="dark"]::after {
   content: "";
   position: fixed;
@@ -3351,22 +3376,34 @@ html[data-theme="dark"]::after {
   z-index: -3;
   pointer-events: none;
   background-image:
-    radial-gradient(1px 1px at 22px 34px, rgba(255, 255, 255, 0.5), transparent 2px),
-    radial-gradient(1px 1px at 148px 88px, rgba(255, 255, 255, 0.34), transparent 2px),
-    radial-gradient(1.4px 1.4px at 84px 176px, rgba(255, 255, 255, 0.24), transparent 2px),
-    radial-gradient(1px 1px at 196px 140px, rgba(255, 255, 255, 0.4), transparent 2px),
-    radial-gradient(1px 1px at 58px 110px, rgba(255, 255, 255, 0.2), transparent 2px),
-    radial-gradient(1.2px 1.2px at 232px 52px, rgba(255, 255, 255, 0.28), transparent 2px),
-    radial-gradient(1px 1px at 112px 224px, rgba(255, 255, 255, 0.32), transparent 2px),
-    radial-gradient(1px 1px at 250px 190px, rgba(255, 255, 255, 0.18), transparent 2px);
+    radial-gradient(1px 1px at 22px 34px, rgba(255, 255, 255, 0.85), transparent 2px),
+    radial-gradient(1.3px 1.3px at 148px 88px, rgba(255, 255, 255, 0.7), transparent 2px),
+    radial-gradient(1.6px 1.6px at 84px 176px, rgba(125, 232, 255, 0.75), transparent 2.2px),
+    radial-gradient(1px 1px at 196px 140px, rgba(255, 255, 255, 0.8), transparent 2px),
+    radial-gradient(1.2px 1.2px at 58px 110px, rgba(255, 255, 255, 0.6), transparent 2px),
+    radial-gradient(1.4px 1.4px at 232px 52px, rgba(255, 255, 255, 0.72), transparent 2px),
+    radial-gradient(1px 1px at 112px 224px, rgba(255, 255, 255, 0.78), transparent 2px),
+    radial-gradient(1.7px 1.7px at 250px 190px, rgba(255, 255, 255, 0.6), transparent 2.4px),
+    radial-gradient(1.1px 1.1px at 40px 250px, rgba(125, 232, 255, 0.55), transparent 2px),
+    radial-gradient(1px 1px at 180px 40px, rgba(255, 255, 255, 0.65), transparent 2px),
+    radial-gradient(1.3px 1.3px at 260px 260px, rgba(255, 255, 255, 0.55), transparent 2px),
+    radial-gradient(1px 1px at 130px 140px, rgba(255, 255, 255, 0.7), transparent 2px);
   background-size: 280px 280px;
   background-repeat: repeat;
-  opacity: 0.7;
-  animation: star-drift 160s linear infinite;
+  opacity: 0.95;
+  animation: star-drift 110s linear infinite, star-twinkle 6s ease-in-out infinite alternate;
 }
 @keyframes star-drift {
   from { transform: translate3d(0, 0, 0); }
   to   { transform: translate3d(-140px, -140px, 0); }
+}
+@keyframes star-drift-far {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-210px, 210px, 0); }
+}
+@keyframes star-twinkle {
+  from { opacity: 0.75; }
+  to   { opacity: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
   html[data-theme="dark"]::after,
