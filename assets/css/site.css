@@ -3482,6 +3482,15 @@ html[data-theme="dark"]::after {
   color: #fff;
   box-shadow: 0 0 16px rgba(255, 0, 127, 0.45);
 }
+/* Space canvas sits between the CSS star layers and the nebula glows */
+.space-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+}
+[data-theme="light"] .space-canvas { display: none; }
+
 @media (prefers-reduced-motion: reduce) {
   [data-theme="dark"] .cv-box,
   [data-theme="dark"] .cv-dot,
