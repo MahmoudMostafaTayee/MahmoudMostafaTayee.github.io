@@ -135,7 +135,7 @@
       themeToggle.setAttribute("aria-label", light ? "Switch to dark theme" : "Switch to light theme");
       themeToggle.setAttribute("aria-pressed", String(light));
     }
-    if (themeMeta) themeMeta.setAttribute("content", light ? "#f6f7f9" : "#06080b");
+    if (themeMeta) themeMeta.setAttribute("content", light ? "#f6f7f9" : "#030308");
   }
 
   syncThemeUi();
