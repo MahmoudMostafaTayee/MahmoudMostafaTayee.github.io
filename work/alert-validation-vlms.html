@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alert validation with VLMs — Mahmoud Mostafa Tayee</title>
+  <meta name="description" content="Use case: a second VLM pass that confirms or rejects detector alarms with evidence — plus a logit-level validator benchmarked across model builds and an offline record/replay methodology.">
+  <link rel="canonical" href="https://mahmoudmostafatayee.github.io/work/alert-validation-vlms.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Alert validation with VLMs — Mahmoud Mostafa Tayee">
+  <meta property="og:description" content="A second VLM pass that confirms or rejects detector alarms with evidence, a logit-level validator, and offline record/replay evaluation.">
+  <meta property="og:url" content="https://mahmoudmostafatayee.github.io/work/alert-validation-vlms.html">
+  <meta property="og:image" content="https://mahmoudmostafatayee.github.io/assets/img/og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Alert validation with VLMs — Mahmoud Mostafa Tayee">
+  <meta name="twitter:description" content="A second VLM pass that confirms or rejects detector alarms with evidence, a logit-level validator, and offline record/replay evaluation.">
+  <meta name="twitter:image" content="https://mahmoudmostafatayee.github.io/assets/img/og.jpg">
+  <meta name="theme-color" content="#f6f7f9">
+  <meta name="color-scheme" content="dark light">
+  <script>
+  (function () {
+    try {
+      var stored = localStorage.getItem("theme");
+      var theme = stored || "light";
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) { document.documentElement.setAttribute("data-theme", "light"); }
+  })();
+  </script>
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="../assets/fonts/Sora-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/css/site.css?v=2">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="../index.html" aria-label="Mahmoud Mostafa Tayee — home">
+      <span class="brand-mark">MT</span>
+      <span class="brand-text">
+        <span class="brand-name">Mahmoud Tayee</span>
+        <span class="brand-role">CV / AI Systems</span>
+      </span>
+    </a>
+    <nav class="nav-links" id="nav-links" aria-label="Primary">
+      <a class="nav-link" href="../index.html#work" aria-current="page">Work</a>
+      <a class="nav-link" href="../index.html#about">About</a>
+      <a class="nav-link" href="../index.html#experience">Experience</a>
+      <a class="nav-link" href="../index.html#publications">Publications</a>
+      <a class="nav-link" href="../index.html#contact">Contact</a>
+      <a class="nav-cta" href="../assets/Mahmoud_Mostafa_Tayee_CV.pdf" download>CV
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 19h16"/></svg>
+      </a>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="Switch to light theme" aria-pressed="false" title="Switch theme">
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
+    </button>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="case-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html">Home</a><span class="sep">/</span>
+        <a href="../index.html#work">Work</a><span class="sep">/</span>
+        <span class="current">Alert validation with VLMs</span>
+      </nav>
+
+      <div class="case-eyebrow">
+        <span class="client">Surveillance platform</span><span class="dot"></span>
+        <span>Use case · verdict + evidence, before the operator is disturbed</span>
+      </div>
+      <h1 class="case-title">Every alarm deserves a second reader. Not every alarm deserves an operator.</h1>
+      <p class="case-deck">
+        Noisy classical analytics bury teams until they stop reading alerts. A validation stage re-reads each alarm
+        with a vision-language model before it is surfaced — plain verdict, grounded evidence — and its own accuracy
+        is measured with a logit-level benchmark and an offline record/replay harness that separates model quality
+        from GPU contention.
+      </p>
+
+      <div class="case-meta">
+        <div class="meta-item"><span class="meta-label">Live path</span><span class="meta-value">4 s context · framed verdict · evidence attached</span></div>
+        <div class="meta-item"><span class="meta-label">Validator</span><span class="meta-value">Forced-choice logits · ~0.17 s/window on a laptop GPU</span></div>
+        <div class="meta-item"><span class="meta-label">Evaluation</span><span class="meta-value">Record/replay · gold labels · policy swaps</span></div>
+        <div class="meta-item"><span class="meta-label">Stack</span><span class="meta-value">Qwen3-VL · OpenAI-compatible serving · JSONL traces</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container case-layout">
+    <aside class="case-toc" aria-label="On this page">
+      <div class="toc-label">On this page</div>
+      <ul class="toc-list">
+        <li><a class="toc-link" href="#problem">The problem</a></li>
+        <li><a class="toc-link" href="#second-pass">The second pass</a></li>
+        <li><a class="toc-link" href="#validator">The validator</a></li>
+        <li><a class="toc-link" href="#record-replay">Record / replay evaluation</a></li>
+        <li><a class="toc-link" href="#results">Numbers</a></li>
+        <li><a class="toc-link" href="#reflection">Reflection</a></li>
+      </ul>
+    </aside>
+
+    <div class="case-main">
+      <section class="case-section" id="problem">
+        <h2><span class="num">01</span>The problem</h2>
+        <p class="lead">
+          Precision is a trust budget. False positives spend it.
+        </p>
+        <p>
+          Classical analytics — motion triggers, line crossings, thermal fire heuristics — are cheap, constant, and
+          confidently wrong: steam reads as smoke, headlights read as movement, shadows read as intrusion. The social
+          failure is worse than the technical one: each false alarm is small, but a cadence of them teaches
+          operators that the system speaks before thinking — and the real alerts get lost in the same channel.
+        </p>
+        <div class="callout">
+          <strong>Design target:</strong> nothing reaches an operator without a machine-readable verdict and the
+          frames that justify it — and the validator itself is benchmarked, with uncertainty handled explicitly
+          rather than hidden.
+        </div>
+      </section>
+
+      <section class="case-section" id="second-pass">
+        <h2><span class="num">02</span>The second pass</h2>
+        <ul class="case-list">
+          <li>
+            <strong>Interrogate, don't embellish.</strong> The validation prompt lists a taxonomy of classic
+            false-positive causes for the phenomenon and asks the model to state plainly what is visible — a
+            confident, well-grounded negative is explicitly framed as more useful than a hedge.
+          </li>
+          <li>
+            <strong>Grounded evidence.</strong> Frames are selected around the event timestamp, with the triggering
+            zone's polygon drawn onto them, so the verdict is anchored to what a human would see in the same crop.
+            No frames, no call — a fallback resolves the event with text instead of hallucinating evidence.
+          </li>
+          <li>
+            <strong>Confidence gating.</strong> On the search path a self-reported FOUND confidence below a threshold
+            rejects the match: "when in doubt, not found" is encoded in the prompt, because a missed match is
+            recoverable and a fabricated one is not.
+          </li>
+          <li>
+            <strong>Delivery.</strong> The verdict sentence attaches to the stored event and reaches the UI as an
+            event-update over WebSocket — the operator reads the confirmation sentence and the evidence together.
+          </li>
+        </ul>
+      </section>
+
+      <section class="case-section" id="validator">
+        <h2><span class="num">03</span>The validator</h2>
+        <p>
+          The standalone validator reviews alarms from motion/line-crossing analytics before an operator is
+          disturbed, and is built as a benchmarked component rather than a prompt:
+        </p>
+        <ul class="case-list">
+          <li>
+            <strong>Input.</strong> Exactly what the validator would see at alarm time: the last 4 seconds as 3
+            timestamped frames — either as an ordered image sequence or a tiled "strip" image (a few hundred visual
+            tokens). Prompt and input format were treated as first-class benchmark variables.
+          </li>
+          <li>
+            <strong>Forced-choice logits.</strong> Instead of generating text, a single forward pass reads the logits
+            of the first answer token (ALERT vs FALSE). Cheapest possible verdict, yields a calibrated score for
+            AUC-style analysis, and cannot produce an unparsable answer.
+          </li>
+          <li>
+            <strong>Live shape.</strong> Feeds are sampled at 1 fps; each new sample triggers one verdict over the
+            trailing window. One shared worker serves all feeds oldest-first; stale samples are dropped and counted
+            (never queued forever). A small per-feed debounce requires consecutive above-threshold verdicts to flip
+            to alert — and to clear again.
+          </li>
+        </ul>
+      </section>
+
+      <section class="case-section" id="record-replay">
+        <h2><span class="num">04</span>Record / replay evaluation</h2>
+        <p>
+          On live runs, the same model call sometimes answered in seconds and sometimes hung for minutes under
+          shared-GPU contention — which conflates "the model's judgment is not good enough" with "the model never got
+          GPU time". The harness separates them:
+        </p>
+        <div class="flow" aria-label="Record/replay harness">
+          <div class="flow-node"><b>Gold</b><span>human-verified identity labels</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Record</b><span>every eligible pair · JSONL + crops</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Replay</b><span>pluggable verdicts · no deadlines</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Policy</b><span>topology/Re-ID/VLM swaps</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Report</b><span>P/R/F1 · false-merge count</span></div>
+        </div>
+        <p>
+          Phase 1 records <em>every</em> candidate pair the decision point would ever face — including pairs today's
+          gates silently decline — with crops, at full pipeline speed. Phase 3 replays verdicts through a pluggable
+          provider interface (the deployed model with no deadline; a Re-ID-only threshold baseline; a paid-API stub)
+          at temperature 0 to also measure verdict stability. Phase 4 re-clusters under policy swaps and scores
+          against gold with pairwise precision/recall/F1, per-chain completion, and a false-merge count — the
+          stakeholder-critical number. If the shipped policy matches gold once contention is removed, the fix is
+          latency engineering, not a model upgrade.
+        </p>
+      </section>
+
+      <section class="case-section" id="results">
+        <h2><span class="num">05</span>Numbers</h2>
+        <div class="metric-grid">
+          <div class="metric-card"><div class="metric-value">100%</div><span class="metric-label">verdict accuracy on the 25-window test set (strip input · 2B model)</span></div>
+          <div class="metric-card"><div class="metric-value">~0.17 s</div><span class="metric-label">per window (~6 windows/s) · ~4.4 GB VRAM</span></div>
+          <div class="metric-card"><div class="metric-value">48→84→100%</div><span class="metric-label">same model across prompt/input formats — format was the lever</span></div>
+          <div class="metric-card"><div class="metric-value">0.3%</div><span class="metric-label">windows dropped in a 5-feed real-time soak (12 min)</span></div>
+        </div>
+        <p>
+          Honest caveats are part of the design: the accuracy test set is small and deliberately scoped — it
+          demonstrates feasibility, not generalization, and the written-report mode is a different regime (near 10×
+          the cost, and only one model build produced correct reports). The soak numbers include the headroom verdict:
+          ~13% headroom is not a capacity claim, and cost depends on input shape.
+        </p>
+      </section>
+
+      <section class="case-section" id="reflection">
+        <h2><span class="num">06</span>Reflection</h2>
+        <p class="lead">A validator that hasn't been benchmarked is a prompt, not a component.</p>
+        <p>
+          The three things that made alert validation real were: making the verdict cheap and parsable (logit choice
+          instead of generation), making evidence mandatory (frames drawn with the zone before any judgment), and
+          making evaluation replayable (record everything, judge offline, swap policies). Recording every eligible
+          pair — not just the greedy pick — turned out to be the discipline that made model upgrades A/B-able.
+        </p>
+        <div class="case-tags">
+          <span class="chip chip--accent">Qwen3-VL</span><span class="chip">Logit scoring</span>
+          <span class="chip">JSONL traces</span><span class="chip">Record/replay</span>
+          <span class="chip">Backpressure</span><span class="chip">False-merge metric</span>
+        </div>
+      </section>
+
+      <a class="next-project" href="wait-time-analysis.html">
+        <div>
+          <div class="next-label">Next use case / 11</div>
+          <div class="next-title">Wait time analysis.</div>
+        </div>
+        <span class="next-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span>© <span data-year>2026</span> Mahmoud Mostafa Tayee</span>
+    <span>Client work generalized · no customer footage or site identifiers.</span>
+    <div class="footer-links">
+      <a href="https://github.com/MahmoudMostafaTayee" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/MahmoudMostafaTayee" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="../index.html#contact">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>

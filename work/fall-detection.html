@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fall detection — Mahmoud Mostafa Tayee</title>
+  <meta name="description" content="Use case: pose keypoints, bounding-box aspect-ratio change and a stillness state machine that emit one event per real fall — not one alert per horizontal frame.">
+  <link rel="canonical" href="https://mahmoudmostafatayee.github.io/work/fall-detection.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Fall detection — Mahmoud Mostafa Tayee">
+  <meta property="og:description" content="Pose keypoints, box aspect-ratio change and a stillness state machine — one event per real fall.">
+  <meta property="og:url" content="https://mahmoudmostafatayee.github.io/work/fall-detection.html">
+  <meta property="og:image" content="https://mahmoudmostafatayee.github.io/assets/img/og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Fall detection — Mahmoud Mostafa Tayee">
+  <meta name="twitter:description" content="Pose keypoints, box aspect-ratio change and a stillness state machine — one event per real fall.">
+  <meta name="twitter:image" content="https://mahmoudmostafatayee.github.io/assets/img/og.jpg">
+  <meta name="theme-color" content="#f6f7f9">
+  <meta name="color-scheme" content="dark light">
+  <script>
+  (function () {
+    try {
+      var stored = localStorage.getItem("theme");
+      var theme = stored || "light";
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) { document.documentElement.setAttribute("data-theme", "light"); }
+  })();
+  </script>
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="../assets/fonts/Sora-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/css/site.css?v=2">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="../index.html" aria-label="Mahmoud Mostafa Tayee — home">
+      <span class="brand-mark">MT</span>
+      <span class="brand-text">
+        <span class="brand-name">Mahmoud Tayee</span>
+        <span class="brand-role">CV / AI Systems</span>
+      </span>
+    </a>
+    <nav class="nav-links" id="nav-links" aria-label="Primary">
+      <a class="nav-link" href="../index.html#work" aria-current="page">Work</a>
+      <a class="nav-link" href="../index.html#about">About</a>
+      <a class="nav-link" href="../index.html#experience">Experience</a>
+      <a class="nav-link" href="../index.html#publications">Publications</a>
+      <a class="nav-link" href="../index.html#contact">Contact</a>
+      <a class="nav-cta" href="../assets/Mahmoud_Mostafa_Tayee_CV.pdf" download>CV
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 19h16"/></svg>
+      </a>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="Switch to light theme" aria-pressed="false" title="Switch theme">
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
+    </button>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="case-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html">Home</a><span class="sep">/</span>
+        <a href="../index.html#work">Work</a><span class="sep">/</span>
+        <span class="current">Fall detection</span>
+      </nav>
+
+      <div class="case-eyebrow">
+        <span class="client">Indoor safety · surveillance platform</span><span class="dot"></span>
+        <span>Use case · pose + temporal logic</span>
+      </div>
+      <h1 class="case-title">One event per real fall. Not one alert per horizontal frame.</h1>
+      <p class="case-deck">
+        A fall is a transition, not a posture. Sitting, crouching, bending and collapsing all look horizontal in a
+        single frame — so the detector is only the sensor, and the product lives in the state machine that watches
+        the change over time.
+      </p>
+
+      <div class="case-meta">
+        <div class="meta-item"><span class="meta-label">Signal</span><span class="meta-value">Pose keypoints · box aspect · vertical velocity</span></div>
+        <div class="meta-item"><span class="meta-label">Decision</span><span class="meta-value">Torso angle + aspect change + post-drop stillness</span></div>
+        <div class="meta-item"><span class="meta-label">Output</span><span class="meta-value">One event · evidence clip window</span></div>
+        <div class="meta-item"><span class="meta-label">Stack</span><span class="meta-value">YOLOv8-Pose · MediaPipe · OpenCV · Python</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container case-layout">
+    <aside class="case-toc" aria-label="On this page">
+      <div class="toc-label">On this page</div>
+      <ul class="toc-list">
+        <li><a class="toc-link" href="#problem">The problem</a></li>
+        <li><a class="toc-link" href="#signals">The signals</a></li>
+        <li><a class="toc-link" href="#state-machine">The state machine</a></li>
+        <li><a class="toc-link" href="#architecture">Architecture</a></li>
+        <li><a class="toc-link" href="#hard-parts">The hard parts</a></li>
+        <li><a class="toc-link" href="#reflection">Reflection</a></li>
+      </ul>
+    </aside>
+
+    <div class="case-main">
+      <section class="case-section" id="problem">
+        <h2><span class="num">01</span>The problem</h2>
+        <p class="lead">Single-frame detection cannot tell a fall from sitting down.</p>
+        <p>
+          "A person is lying down" is a description of a pose; "a person fell" is a description of a
+          <em>change</em>. The first is cheap — any detector can produce it — and also wrong most of the time:
+          resting, cleaning, praying, stretching and sleeping all match it. The hard part was not detecting
+          horizontal. It was distinguishing a fall from lying down, bending, and being occluded by furniture.
+        </p>
+        <p>
+          The failure modes that matter are symmetric: alerting on every reclined person buries the operator, and
+          staying silent on a real collapse defeats the point of the camera. Both errors come from the same source —
+          evaluating one frame instead of a transition.
+        </p>
+        <div class="callout">
+          <strong>Design target:</strong> every fall fires once, early enough to matter, with a clip window around
+          the transition; ordinary postures never fire, no matter how horizontal they look.
+        </div>
+      </section>
+
+      <section class="case-section" id="signals">
+        <h2><span class="num">02</span>The signals</h2>
+        <p>
+          The evaluator reads three independent witnesses of the same event. Each one is individually fooled by
+          something; together they narrow the space.
+        </p>
+        <ul class="case-list">
+          <li>
+            <strong>Pose keypoints.</strong> YOLOv8-Pose and MediaPipe give the body's geometry: torso vector,
+            shoulder-to-hip angle, head position relative to the hips. Torso angle rotating from vertical toward
+            horizontal is the cleanest single signature of a fall.
+          </li>
+          <li>
+            <strong>Bounding-box geometry.</strong> The detector's box aspect ratio flips from tall to wide, and the
+            vertical centroid velocity spikes downward. This is the cheap fallback that still works when keypoints
+            are missing or degenerate (from behind, at distance, or heavy occlusion).
+          </li>
+          <li>
+            <strong>Post-drop stillness.</strong> A fall ends in an abnormal state: the box stops moving where and
+            how a standing person's box never would. Sustained stillness after the drop is what separates a fall
+            from a dance move or a fast slide into a chair.
+          </li>
+          <li>
+            <strong>An action classifier as corroboration.</strong> A spatial-temporal GCN over keypoint windows
+            classifies short action clips (walking, sitting, lying, instability, fall) in unit-normalized space.
+            It is used as a supporting vote — never alone — because a classifier over 25 Hz resampled windows is
+            slow to confirm and confident to be wrong; kinematics plus the classifier beats either witness by itself.
+          </li>
+        </ul>
+        <p>
+          Everything is measured against a per-track rolling reference scale (a percentile of the box's recent
+          geometry, outlier-clamped), so the same thresholds mean the same thing whether the person is five metres
+          from the lens or 30.
+        </p>
+      </section>
+
+      <section class="case-section" id="state-machine">
+        <h2><span class="num">03</span>The state machine</h2>
+        <p>
+          The evaluator is a small, explicit state machine per track — not a classifier over frames.
+        </p>
+        <div class="flow" aria-label="Fall state machine">
+          <div class="flow-node"><b>Upright</b><span>baseline posture</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node" style="outline-color:#ffb45c"><b>Transition</b><span>angle + aspect + downward v</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node" style="outline-color:#ff6f6f"><b>Down</b><span>low centroid · horizontal torso</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node" style="outline-color:#ff6f6f"><b>Still</b><span>sustained · no recovery</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Event</b><span>one alert · clip window</span></div>
+        </div>
+        <p>
+          The transition must be a <em>transition</em>: angle, aspect and velocity all moving together within a short
+          window<span style="color:inherit"></span>. The end state must be <em>sustained</em>: stillness is confirmed across frames before the event
+          fires, which is what excludes sitting down or crouching — both cross the angle threshold briefly and then
+          recover. Recovery at any point before confirmation resets the machine, silently. Controlled motions get
+          explicit vetoes: small torso angle with the head still high is a bend, not a collapse; a deep knee bend
+          inside a plausible sitting range is a sit, not a fall. And when a down candidate stands back up inside the
+          confirmation window, a "recovered" outcome is recorded — valuable for tuning, deliberately not routed to alerts.
+        </p>
+        <p>
+          Thresholds are calibrated per camera. A ceiling view and a wall view disagree about what "horizontal" is;
+          fitting thresholds per view — as part of the configuration, not as a preprocessing afterthought — was worth
+          far more than any extra signal.
+        </p>
+      </section>
+
+      <section class="case-section" id="architecture">
+        <h2><span class="num">04</span>Architecture</h2>
+        <p>
+          The fall evaluator is one behaviour over a shared detection-and-tracking substrate, side-effect free with
+          respect to the tracker: it reads track history and emits events.
+        </p>
+        <div class="flow" aria-label="Fall detection pipeline">
+          <div class="flow-node"><b>Video</b><span>live stream · recorded</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Detect</b><span>person · pose keypoints</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Track</b><span>stable IDs · history</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Evaluate</b><span>state machine per track</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Alert</b><span>event · clip · track context</span></div>
+        </div>
+        <p>
+          Because the evaluator is disconnected from live inference, it is reproducible: record the tracks, replay
+          them, tune the confirmation window honestly against labelled event sequences. That replay loop is also how
+          regressions were caught when the detector or pose model was swapped under the evaluator.
+        </p>
+      </section>
+
+      <section class="case-section" id="hard-parts">
+        <h2><span class="num">05</span>The hard parts</h2>
+        <div class="decisions">
+          <div class="decision">
+            <div class="decision-num">01</div>
+            <div>
+              <h3>Furniture and occlusion</h3>
+              <p>
+                A couch is a machine for generating false positives: people lower themselves into it slowly and end
+                horizontal. Combining zone context and the recovery rule — a person who ends low but stands back up
+                shortly after is sitting, not fallen — kept this manageable without hand-tuning for every floor plan.
+              </p>
+            </div>
+          </div>
+          <div class="decision">
+            <div class="decision-num">02</div>
+            <div>
+              <h3>Keyholes and distance</h3>
+              <p>
+                Small or partially visible people produce unusable keypoints. The box-geometry witness exists
+                specifically for this: it is worse than pose when available and better than nothing when pose
+                collapses, and the evaluator degrades from the strong witness to the weak one instead of going silent.
+              </p>
+            </div>
+          </div>
+          <div class="decision">
+            <div class="decision-num">03</div>
+            <div>
+              <h3>Latency vs. certainty</h3>
+              <p>
+                Confirming stillness costs exactly the seconds that matter in a real fall. The fix is staging: fire an
+                early <em>review</em> state at the transition and a confirmed <em>alert</em> after stillness, so the
+                alert always carries evidence instead of pretending certainty it does not have — while surfaces that
+                care about speed can start looking at the review stage.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="case-section" id="reflection">
+        <h2><span class="num">06</span>Reflection</h2>
+        <p class="lead">The model sees the pose; the state machine sees the fall.</p>
+        <p>
+          Everything that made this useful was temporal: windowing, sustainment, recovery, cooldown. Those four words
+          are where the product lived. The pose model was a commodity — the discipline of what counts as evidence was
+          not.
+        </p>
+        <p>
+          If I rebuilt it, I would record per-track decision traces (what each witness said, frame by frame) as a
+          first-class output from day one. Debugging "why did/didn't it fire?" from decision traces is minutes; from
+          raw video it is an afternoon.
+        </p>
+        <div class="case-tags">
+          <span class="chip chip--accent">YOLOv8-Pose</span><span class="chip">MediaPipe</span>
+          <span class="chip">OpenCV</span><span class="chip">State machine</span>
+          <span class="chip">Temporal logic</span><span class="chip">Per-camera calibration</span>
+        </div>
+      </section>
+
+      <a class="next-project" href="wrong-way-driving.html">
+        <div>
+          <div class="next-label">Next use case / 05</div>
+          <div class="next-title">Automatic wrong-way driving.</div>
+        </div>
+        <span class="next-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span>© <span data-year>2026</span> Mahmoud Mostafa Tayee</span>
+    <span>Client work generalized · no customer footage or site identifiers.</span>
+    <div class="footer-links">
+      <a href="https://github.com/MahmoudMostafaTayee" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/MahmoudMostafaTayee" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="../index.html#contact">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>

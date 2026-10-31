@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Multicamera tracking — Mahmoud Mostafa Tayee</title>
+  <meta name="description" content="Use case: per-camera tracklets, appearance Re-ID, topology and travel-time gating, and VLM arbitration for the merges embeddings cannot settle — one global ID per vehicle.">
+  <link rel="canonical" href="https://mahmoudmostafatayee.github.io/work/multicamera-tracking.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Multicamera tracking — Mahmoud Mostafa Tayee">
+  <meta property="og:description" content="Per-camera tracklets, appearance Re-ID, topology and travel-time gating, and VLM arbitration — one global ID per vehicle.">
+  <meta property="og:url" content="https://mahmoudmostafatayee.github.io/work/multicamera-tracking.html">
+  <meta property="og:image" content="https://mahmoudmostafatayee.github.io/assets/img/og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Multicamera tracking — Mahmoud Mostafa Tayee">
+  <meta name="twitter:description" content="Per-camera tracklets, appearance Re-ID, topology and travel-time gating, and VLM arbitration — one global ID per vehicle.">
+  <meta name="twitter:image" content="https://mahmoudmostafatayee.github.io/assets/img/og.jpg">
+  <meta name="theme-color" content="#f6f7f9">
+  <meta name="color-scheme" content="dark light">
+  <script>
+  (function () {
+    try {
+      var stored = localStorage.getItem("theme");
+      var theme = stored || "light";
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) { document.documentElement.setAttribute("data-theme", "light"); }
+  })();
+  </script>
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="../assets/fonts/Sora-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/css/site.css?v=2">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="../index.html" aria-label="Mahmoud Mostafa Tayee — home">
+      <span class="brand-mark">MT</span>
+      <span class="brand-text">
+        <span class="brand-name">Mahmoud Tayee</span>
+        <span class="brand-role">CV / AI Systems</span>
+      </span>
+    </a>
+    <nav class="nav-links" id="nav-links" aria-label="Primary">
+      <a class="nav-link" href="../index.html#work" aria-current="page">Work</a>
+      <a class="nav-link" href="../index.html#about">About</a>
+      <a class="nav-link" href="../index.html#experience">Experience</a>
+      <a class="nav-link" href="../index.html#publications">Publications</a>
+      <a class="nav-link" href="../index.html#contact">Contact</a>
+      <a class="nav-cta" href="../assets/Mahmoud_Mostafa_Tayee_CV.pdf" download>CV
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 19h16"/></svg>
+      </a>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="Switch to light theme" aria-pressed="false" title="Switch theme">
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
+    </button>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="case-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html">Home</a><span class="sep">/</span>
+        <a href="../index.html#work">Work</a><span class="sep">/</span>
+        <span class="current">Multicamera tracking</span>
+      </nav>
+
+      <div class="case-eyebrow">
+        <span class="client">On-site surveillance platform</span><span class="dot"></span>
+        <span>Use case · Re-ID + topology + VLM arbitration</span>
+      </div>
+      <h1 class="case-title">One global ID per vehicle, no matter how many cameras it crosses.</h1>
+      <p class="case-deck">
+        Track IDs reset at every camera boundary, duplicate when one vehicle enters two views, and lie when an
+        occlusion ends a track. The system pairs per-camera tracklets with appearance embeddings, gates candidates
+        with a site topology and travel time, and asks a vision-language model to judge the merges the numbers
+        cannot settle.
+      </p>
+
+      <div class="case-meta">
+        <div class="meta-item"><span class="meta-label">Association</span><span class="meta-value">Gate-then-score: topology · timing · appearance</span></div>
+        <div class="meta-item"><span class="meta-label">Arbiter</span><span class="meta-value">Qwen3-VL · verdicts on real crops · token-capped</span></div>
+        <div class="meta-item"><span class="meta-label">Identity</span><span class="meta-value">Union-Find global tracks · per-camera conflict check</span></div>
+        <div class="meta-item"><span class="meta-label">Stack</span><span class="meta-value">DeepStream · TensorRT · ResNet50 Re-ID · Redis · VLM</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container case-layout">
+    <aside class="case-toc" aria-label="On this page">
+      <div class="toc-label">On this page</div>
+      <ul class="toc-list">
+        <li><a class="toc-link" href="#problem">The problem</a></li>
+        <li><a class="toc-link" href="#per-camera">Per-camera layer</a></li>
+        <li><a class="toc-link" href="#association">Cross-camera association</a></li>
+        <li><a class="toc-link" href="#arbitration">VLM arbitration</a></li>
+        <li><a class="toc-link" href="#architecture">Architecture</a></li>
+        <li><a class="toc-link" href="#results">Numbers</a></li>
+        <li><a class="toc-link" href="#reflection">Reflection</a></li>
+      </ul>
+    </aside>
+
+    <div class="case-main">
+      <section class="case-section" id="problem">
+        <h2><span class="num">01</span>The problem</h2>
+        <p class="lead">Three failure modes: IDs reset, IDs duplicate, IDs lie.</p>
+        <p>
+          Every camera runs its own tracker, so identity is local by construction. A vehicle seen by three cameras
+          becomes three IDs. A vehicle that pauses for two minutes returns with a new ID — and a visit with no start
+          or end. Worse, distant or partially-occluded views make the tracker split one vehicle into two boxes moving
+          together.
+        </p>
+        <p>
+          Naive fixes fail in production. Merging on nearest-in-time merges everything near a shared edge. Merging on
+          appearance alone is genuinely weak for box-trucks and vans, which look identical cross-camera — measured on
+          real footage, same-vehicle crops produce similarity distributions that overlap the negatives by a lot. The
+          honest number: cross-camera true pairs and false pairs in the published vehicle-ReID world sit around
+          0.54 vs 0.36 mean similarity — a real signal, but not a line you can draw once and ship.
+        </p>
+        <div class="callout">
+          <strong>Design target:</strong> never merge when in doubt; judge doubtful merges explicitly; never split
+          one vehicle inside one camera; never merge one vehicle with itself.
+        </div>
+      </section>
+
+      <section class="case-section" id="per-camera">
+        <h2><span class="num">02</span>Per-camera layer</h2>
+        <ul class="case-list">
+          <li>
+            <strong>Detection.</strong> A single-class vehicle detector fine-tuned for the site's geometry, exported
+            through ONNX and running as TensorRT FP16 (INT8 for capacity) inside a batched DeepStream pipeline —
+            ~15 concurrent 1440p streams on one consumer-class GPU with the detector on every 2nd–3rd frame.
+          </li>
+          <li>
+            <strong>Stabilizing before identity.</strong> A box stabilizer holds detections across detector flicker
+            and drops nested/part boxes, and a lightweight IoU tracker produces the internal per-camera tracklets —
+            deliberately decoupled from the platform tracker whose IDs proved unstable on distant views.
+          </li>
+          <li>
+            <strong>Crops.</strong> Tracklets accumulate representative vehicle crops asynchronously (strided,
+            size-gated, batch-embedded) instead of embedding every frame.
+          </li>
+          <li>
+            <strong>Direction.</strong> At entrance cameras, a VLM verdict on the vehicle's end-orientation versus
+            camera geometry decides arriving/leaving — only confirmed arrivals open a new visit; a leaving sight
+            closes one.
+          </li>
+        </ul>
+      </section>
+
+      <section class="case-section" id="association">
+        <h2><span class="num">03</span>Cross-camera association</h2>
+        <p>
+          Association is <em>gate then score then judge</em>. The gates are cheap and physical; the score is the
+          appearance signal; the judge handles the residual ambiguity.
+        </p>
+        <ul class="case-list">
+          <li>
+            <strong>Entrance rule.</strong> Only vehicles first seen at designated entrance cameras, confirmed
+            arriving, may open a global track. Every other camera may only <em>join</em> an existing one. That single
+            rule eliminates a whole class of duplicated identities.
+          </li>
+          <li>
+            <strong>Topology gate.</strong> The site is declared as a graph: overlapping-view groups and adjacency
+            edges with minimum travel times. Unconnected groups can never hand off; adjacent pairs gate on minimum
+            disappearance time; same-camera re-entry (occlusion regain) has its own window.
+          </li>
+          <li>
+            <strong>Timing gates.</strong> A max-absence TTL closes stale tracks; an exited track can never be a
+            candidate again — a returning vehicle is a new visit, not a resurrection.
+          </li>
+          <li>
+            <strong>Two-zone scoring.</strong> Cosine similarity against each candidate's per-camera and combined
+            mean embeddings falls into three outcomes: below a low gate → never merge; above a high match threshold →
+            merge; in between → the <em>ambiguous zone</em>, which is never auto-merged. "Don't gamble on a merge" is
+            the explicit principle — that zone exists for the arbiter.
+          </li>
+          <li>
+            <strong>Cluster constraint.</strong> Union-Find over tracklets with one invariant: a cluster may never
+            hold two tracklets simultaneously on the same camera, so one vehicle can never grow two simultaneous IDs
+            in a single view.
+          </li>
+        </ul>
+      </section>
+
+      <section class="case-section" id="arbitration">
+        <h2><span class="num">04</span>VLM arbitration</h2>
+        <p>
+          With the arbiter enabled, topology and timing become eligibility filters only — they say who it
+          <em>could</em> be, never who it <em>is</em>. For every new tracklet, up to a few ranked candidates (by
+          Re-ID similarity and temporal closeness) get their per-camera, time-spread crops compared side by side by
+          a small Qwen3-VL-class model at temperature 0, answering structured <em>same / different / uncertain</em>
+          with matched and conflicting traits. The prompt encodes multi-camera commonsense: "not visible" is not a
+          contradiction, apparent size is not identity, partial crops are allowed — and <em>uncertain</em> is
+          preferred over forcing a decision.
+        </p>
+        <p>
+          Latency engineering mattered as much as prompt quality. Greedy decoding occasionally looped until the
+          context cap, and shared-GPU contention could stretch one call by orders of magnitude. Hard token caps, a
+          concise output instruction, image shrink-retries, worker pools, and a per-request wall-clock timeout got
+          arbitration to roughly four seconds per candidate pair in the normal case — and any track that stays
+          unresolved past the wait cap simply starts as a new track. Unresolved is preferred over wrong.
+        </p>
+        <p>
+          Every arbitration is logged — crops, exact prompt, verdict, latency — so "why didn't this merge?" is
+          answerable from records, not re-runs.
+        </p>
+      </section>
+
+      <section class="case-section" id="architecture">
+        <h2><span class="num">05</span>Architecture</h2>
+        <div class="flow" aria-label="Multicamera tracking pipeline">
+          <div class="flow-node"><b>Ingest</b><span>batched decode · ≤15 streams</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Detect</b><span>vehicle TRT + plate SGIE</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Track</b><span>NvDCF + IoU tracklets</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Embed</b><span>ResNet50 crops · async</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Gate</b><span>topology · timing · similarity</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Arbitrate</b><span>VLM on borderline pairs</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Publish</b><span>global ID · best shots · journeys</span></div>
+        </div>
+        <p>
+          Outputs: one stable global ID with per-camera aliases and visit history, published in every frame's
+          metadata; a best-shot gallery (one quality-scored crop per camera per vehicle); per-vehicle plate readings;
+          and journey events — sightings, transitions, travel times — consumed by the operator dashboard. A global ID
+          is never rewritten once assigned.
+        </p>
+      </section>
+
+      <section class="case-section" id="results">
+        <h2><span class="num">06</span>Numbers</h2>
+        <div class="metric-grid">
+          <div class="metric-card"><div class="metric-value">0.61</div><span class="metric-label">IDF1 · public MTMC benchmark (GT detections)</span></div>
+          <div class="metric-card"><div class="metric-value">0.32</div><span class="metric-label">IDF1 with real detector output (baselines ≈ 0.25)</span></div>
+          <div class="metric-card"><div class="metric-value">31% vs 7%</div><span class="metric-label">Rank@1 · shipped Re-ID vs vehicle-trained model, on site footage</span></div>
+          <div class="metric-card"><div class="metric-value">~4 s</div><span class="metric-label">mean arbitration latency after latency engineering</span></div>
+        </div>
+        <p>
+          Benchmarked on a public academic dataset with the official IDF1 protocol. The gap between the
+          ground-truth-detection and real-detection runs is honest and diagnostic: detection over-production, not
+          association, dominated the loss — which re-aimed the optimization work at detection cleanup.
+        </p>
+        <p>
+          Two measured negative results shaped the design. An opt-in homography spatial model — ground-plane
+          projection as "spatial proof" — was instrumented and found net-negative: of 28 merges it made on
+          opposite-side camera pairs, 27 were wrong vehicles, because bottom-centre projections are orientation-biased
+          (front vs rear of the vehicle). It was demoted to opt-in for verified tight pairs only. Meanwhile the
+          <em>shipped</em> Re-ID encoder was an ImageNet-pretrained ResNet50, not a formally vehicle-trained one — the
+          benchmark harness on real site footage showed it beat the domain-trained model handily, so domain training
+          lost to measurement.
+        </p>
+      </section>
+
+      <section class="case-section" id="reflection">
+        <h2><span class="num">07</span>Reflection</h2>
+        <p class="lead">Topology decides who could be who; appearance is an opinion; the VLM is a judge, not an oracle.</p>
+        <p>
+          The system's quality came from refusing to optimize one number. Comparator thresholds, a candidate cap, an
+          uncertain verdict, an unresolved fallback, and an invariant cluster rule each trade a little recall for a
+          lot of trust. A false merge is silent — it corrupts every event downstream for that vehicle — which is why
+          the whole preference order exists.
+        </p>
+        <p>
+          The next iteration is methodological: a record/replay harness that logs <em>every</em> eligible candidate
+          pair (not just the greedy pick) at full pipeline speed, then replays verdicts offline and re-clusters under
+          swappable policies against a human-verified gold mapping. Live latency under GPU contention conflates "the
+          model isn't good enough" with "the model never got GPU time"; replay separates them.
+        </p>
+        <div class="case-tags">
+          <span class="chip chip--accent">DeepStream</span><span class="chip">TensorRT</span><span class="chip">Re-ID</span>
+          <span class="chip">Qwen3-VL</span><span class="chip">Site topology</span><span class="chip">Union-Find</span>
+          <span class="chip">Record/replay eval</span>
+        </div>
+      </section>
+
+      <a class="next-project" href="ppe-detection.html">
+        <div>
+          <div class="next-label">Next use case / 08</div>
+          <div class="next-title">PPE detection.</div>
+        </div>
+        <span class="next-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span>© <span data-year>2026</span> Mahmoud Mostafa Tayee</span>
+    <span>Client work generalized · no customer footage or site identifiers.</span>
+    <div class="footer-links">
+      <a href="https://github.com/MahmoudMostafaTayee" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/MahmoudMostafaTayee" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="../index.html#contact">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>

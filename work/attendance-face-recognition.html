@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Attendance with face recognition — Mahmoud Mostafa Tayee</title>
+  <meta name="description" content="Use case: tracked-person face crops, aligned and embedded, vote-stabilised against a gallery and coalesced into sighting facts; attendance is derived, never stored.">
+  <link rel="canonical" href="https://mahmoudmostafatayee.github.io/work/attendance-face-recognition.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Attendance with face recognition — Mahmoud Mostafa Tayee">
+  <meta property="og:description" content="Tracked-person face crops, aligned and embedded, vote-stabilised against a gallery; attendance derived from sighting facts.">
+  <meta property="og:url" content="https://mahmoudmostafatayee.github.io/work/attendance-face-recognition.html">
+  <meta property="og:image" content="https://mahmoudmostafatayee.github.io/assets/img/og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Attendance with face recognition — Mahmoud Mostafa Tayee">
+  <meta name="twitter:description" content="Tracked-person face crops, aligned and embedded, vote-stabilised against a gallery; attendance derived from sighting facts.">
+  <meta name="twitter:image" content="https://mahmoudmostafatayee.github.io/assets/img/og.jpg">
+  <meta name="theme-color" content="#f6f7f9">
+  <meta name="color-scheme" content="dark light">
+  <script>
+  (function () {
+    try {
+      var stored = localStorage.getItem("theme");
+      var theme = stored || "light";
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) { document.documentElement.setAttribute("data-theme", "light"); }
+  })();
+  </script>
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="../assets/fonts/Sora-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/css/site.css?v=2">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="../index.html" aria-label="Mahmoud Mostafa Tayee — home">
+      <span class="brand-mark">MT</span>
+      <span class="brand-text">
+        <span class="brand-name">Mahmoud Tayee</span>
+        <span class="brand-role">CV / AI Systems</span>
+      </span>
+    </a>
+    <nav class="nav-links" id="nav-links" aria-label="Primary">
+      <a class="nav-link" href="../index.html#work" aria-current="page">Work</a>
+      <a class="nav-link" href="../index.html#about">About</a>
+      <a class="nav-link" href="../index.html#experience">Experience</a>
+      <a class="nav-link" href="../index.html#publications">Publications</a>
+      <a class="nav-link" href="../index.html#contact">Contact</a>
+      <a class="nav-cta" href="../assets/Mahmoud_Mostafa_Tayee_CV.pdf" download>CV
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 19h16"/></svg>
+      </a>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="Switch to light theme" aria-pressed="false" title="Switch theme">
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
+    </button>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="case-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html">Home</a><span class="sep">/</span>
+        <a href="../index.html#work">Work</a><span class="sep">/</span>
+        <span class="current">Attendance</span>
+      </nav>
+
+      <div class="case-eyebrow">
+        <span class="client">Identity platform</span><span class="dot"></span>
+        <span>Use case · alignment + gallery matching + derived sessions</span>
+      </div>
+      <h1 class="case-title">Attendance from reality: sightings in, sessions derived.</h1>
+      <p class="case-deck">
+        Hand-compiled rosters are slow to build and trivially gameable. The pipeline detects faces attached to
+        tracked people, aligns and embeds them, stabilises identity with a voting window, coalesces recognitions into
+        one sighting fact per person per place per minute — and derives attendance (breaks, lateness, absence) from
+        those facts in a policy pass. Sessions are never stored; they are recomputed.
+      </p>
+
+      <div class="case-meta">
+        <div class="meta-item"><span class="meta-label">Detection</span><span class="meta-value">Face secondary stage on tracked persons</span></div>
+        <div class="meta-item"><span class="meta-label">Recognition</span><span class="meta-value">Aligned embeddings · open-set margins · vote windows</span></div>
+        <div class="meta-item"><span class="meta-label">Data model</span><span class="meta-value">Facts in, views derived</span></div>
+        <div class="meta-item"><span class="meta-label">Stack</span><span class="meta-value">DeepStream · ArcFace-class embeddings · Redis · SQLite · WebSocket</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container case-layout">
+    <aside class="case-toc" aria-label="On this page">
+      <div class="toc-label">On this page</div>
+      <ul class="toc-list">
+        <li><a class="toc-link" href="#problem">The problem</a></li>
+        <li><a class="toc-link" href="#matching">Recognition quality</a></li>
+        <li><a class="toc-link" href="#derivation">Facts → attendance</a></li>
+        <li><a class="toc-link" href="#architecture">Architecture</a></li>
+        <li><a class="toc-link" href="#results">Numbers</a></li>
+        <li><a class="toc-link" href="#reflection">Reflection</a></li>
+      </ul>
+    </aside>
+
+    <div class="case-main">
+      <section class="case-section" id="problem">
+        <h2><span class="num">01</span>The problem</h2>
+        <p class="lead">
+          Recognition is easy; <em>stability</em> is the product.
+        </p>
+        <p>
+          A face matched once per minute produces a timeline of flickering labels and double-counted people. Every
+          stage had to respect the same reality: faces are small and tilted on CCTV, tracker IDs are unreliable
+          carriers of identity, and an attendance sheet that says a person left their desk for a ten-second break is
+          a system nobody believes.
+        </p>
+        <div class="callout">
+          <strong>Design target:</strong> names that stick once earned and are hard to displace; one sighting fact per
+          person per place per minute; attendance as a pure derivation over facts.
+        </div>
+      </section>
+
+      <section class="case-section" id="matching">
+        <h2><span class="num">02</span>Recognition quality</h2>
+        <ul class="case-list">
+          <li>
+            <strong>Ladder of models.</strong> Person detection and body tracking first, then a compact face detector
+            as a secondary stage on each tracked person — a face never exists without a person context — then
+            embedding and gallery match.
+          </li>
+          <li>
+            <strong>Alignment is the multiplier.</strong> Five-point landmarks straighten every face into the
+            canonical crop before embedding. Matching tilted live crops against upright enrollment photos measured a
+            similarity gap of ~0.15–0.2 versus ~0.35–0.4 aligned — alignment mattered more than the embedding model.
+          </li>
+          <li>
+            <strong>Floor filters.</strong> Minimum face size and confidence gates stop degraded faces from reaching
+            the recognizer at all; a wrong ID is worse than no ID.
+          </li>
+          <li>
+            <strong>Open-set guard.</strong> The best gallery identity must beat the runner-up by a real margin or the
+            face stays unknown, and temporal voting over a sliding window makes a label stick: minimum votes to earn
+            it, a supermajority to displace it, a re-earn rule when the face stops matching, and a spatial-jump guard
+            for recycled tracker IDs.
+          </li>
+        </ul>
+      </section>
+
+      <section class="case-section" id="derivation">
+        <h2><span class="num">03</span>Facts → attendance</h2>
+        <p>
+          Recognitions are coalesced into one <em>Sighting</em> row per person, camera and minute bucket before
+          storage. All higher-order state — sessions, breaks, lateness — is recomputed from sightings, never stored:
+        </p>
+        <div class="flow" aria-label="Attendance derivation">
+          <div class="flow-node"><b>Recognitions</b><span>per-track events</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Coalesce</b><span>1 sighting / person / camera / minute</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Sessionize</b><span>gap rules · break areas</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Derive</b><span>late · early · overtime · absent</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>View</b><span>live table · history · enrollment</span></div>
+        </div>
+        <p>
+          Gap semantics are the policy: sub-five-minute gaps are noise, five-to-thirty minutes become breaks, longer
+          closes the session — with break-area cameras exempted and a simultaneous office sighting winning over a
+          break-area one. Work hours, grace minutes and camera roles come from a small policy file, so changing the
+          rules never means rewriting the recognition. Bucketing is deliberately decoupled from video timestamps so a
+          looping replay can't poison wall-clock arithmetic.
+        </p>
+        <p>
+          Growth path: unknown faces above size/confidence floors are kept as candidate crops (novelty-filtered) and
+          surfaced in a gallery page for an operator to name — human-in-the-loop enrollment that expands coverage
+          from live footage instead of staged photo days.
+        </p>
+      </section>
+
+      <section class="case-section" id="architecture">
+        <h2><span class="num">04</span>Architecture</h2>
+        <p>
+          Three cooperating pieces, connected by a message queue — the recognition sidecar (GStreamer/DeepStream,
+          TensorRT), an independent attendance service, and a React frontend. A single adapter translates the wire
+          format: an anti-corruption layer that kept the streaming side and the business side free to evolve (and
+          break) independently.
+        </p>
+        <p>
+          Detections, annotated JPEGs and trim signals flow over bounded streams; the attendance service persists
+          sighting facts in SQLite and runs REST and WebSocket APIs. The live page renders the current attendance
+          table from full-state snapshots per flush — simple, atomic, and resilient to churn — alongside per-camera
+          video tiles with rescaled overlay timestamps.
+        </p>
+      </section>
+
+      <section class="case-section" id="results">
+        <h2><span class="num">05</span>Numbers</h2>
+        <div class="metric-grid">
+          <div class="metric-card"><div class="metric-value">3–4×</div><span class="metric-label">faster recognition path (crop embedding vs full re-detection)</span></div>
+          <div class="metric-card"><div class="metric-value">17.3 → 5.7 ms</div><span class="metric-label">per-crop recognition latency</span></div>
+          <div class="metric-card"><div class="metric-value">6.8 s</div><span class="metric-label">boot-to-first-frame (engine cache + INT8)</span></div>
+          <div class="metric-card"><div class="metric-value">30 fps</div><span class="metric-label">sustained on a single 720p replay (laptop GPU)</span></div>
+        </div>
+        <p>
+          The crop path is also the correct path: re-detecting faces inside already-tracked bodies both cost latency
+          and could silently miss a face the first pass had found. Reusing the tracked crop removed a whole failure
+          class, not just milliseconds.
+        </p>
+      </section>
+
+      <section class="case-section" id="reflection">
+        <h2><span class="num">06</span>Reflection</h2>
+        <p class="lead">Facts in, views derived — the same discipline as event sourcing, applied to a camera feed.</p>
+        <p>
+          Storing sightings and deriving everything else made policy changes free and history honest. The honest
+          gap: enhancement and filtering are not liveness. A printed photo is handled by size/quality rules and
+          temporal consistency, not by a dedicated anti-spoofing detector — that is the first thing I would bolt on
+          if this went into an uncontrolled space.
+        </p>
+        <div class="case-tags">
+          <span class="chip chip--accent">ArcFace-class embeddings</span><span class="chip">DeepStream</span>
+          <span class="chip">Landmark alignment</span><span class="chip">Vote stabilisation</span>
+          <span class="chip">Derived sessions</span><span class="chip">WebSocket UI</span>
+        </div>
+      </section>
+
+      <a class="next-project" href="plate-ocr.html">
+        <div>
+          <div class="next-label">Next use case / 14</div>
+          <div class="next-title">Plate detection and OCR.</div>
+        </div>
+        <span class="next-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span>© <span data-year>2026</span> Mahmoud Mostafa Tayee</span>
+    <span>Client work generalized · no customer footage or site identifiers.</span>
+    <div class="footer-links">
+      <a href="https://github.com/MahmoudMostafaTayee" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/MahmoudMostafaTayee" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="../index.html#contact">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>

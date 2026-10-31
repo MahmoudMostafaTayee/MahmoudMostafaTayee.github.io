@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wait time analysis — Mahmoud Mostafa Tayee</title>
+  <meta name="description" content="Use case: zone-based dwell measurement over tracked people — entry lines, waiting zones, seat attribution with backdating — reported as live state and percentile statistics.">
+  <link rel="canonical" href="https://mahmoudmostafatayee.github.io/work/wait-time-analysis.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Wait time analysis — Mahmoud Mostafa Tayee">
+  <meta property="og:description" content="Zone-based dwell measurement over tracked people — entry lines, waiting zones, seat attribution with backdating — as live state and percentile statistics.">
+  <meta property="og:url" content="https://mahmoudmostafatayee.github.io/work/wait-time-analysis.html">
+  <meta property="og:image" content="https://mahmoudmostafatayee.github.io/assets/img/og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Wait time analysis — Mahmoud Mostafa Tayee">
+  <meta name="twitter:description" content="Zone-based dwell measurement over tracked people — entry lines, waiting zones, seat attribution with backdating — as live state and percentile statistics.">
+  <meta name="twitter:image" content="https://mahmoudmostafatayee.github.io/assets/img/og.jpg">
+  <meta name="theme-color" content="#f6f7f9">
+  <meta name="color-scheme" content="dark light">
+  <script>
+  (function () {
+    try {
+      var stored = localStorage.getItem("theme");
+      var theme = stored || "light";
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) { document.documentElement.setAttribute("data-theme", "light"); }
+  })();
+  </script>
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="../assets/fonts/Sora-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/css/site.css?v=2">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="../index.html" aria-label="Mahmoud Mostafa Tayee — home">
+      <span class="brand-mark">MT</span>
+      <span class="brand-text">
+        <span class="brand-name">Mahmoud Tayee</span>
+        <span class="brand-role">CV / AI Systems</span>
+      </span>
+    </a>
+    <nav class="nav-links" id="nav-links" aria-label="Primary">
+      <a class="nav-link" href="../index.html#work" aria-current="page">Work</a>
+      <a class="nav-link" href="../index.html#about">About</a>
+      <a class="nav-link" href="../index.html#experience">Experience</a>
+      <a class="nav-link" href="../index.html#publications">Publications</a>
+      <a class="nav-link" href="../index.html#contact">Contact</a>
+      <a class="nav-cta" href="../assets/Mahmoud_Mostafa_Tayee_CV.pdf" download>CV
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 19h16"/></svg>
+      </a>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="Switch to light theme" aria-pressed="false" title="Switch theme">
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
+    </button>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="case-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html">Home</a><span class="sep">/</span>
+        <a href="../index.html#work">Work</a><span class="sep">/</span>
+        <span class="current">Wait time analysis</span>
+      </nav>
+
+      <div class="case-eyebrow">
+        <span class="client">On-site analytics platform</span><span class="dot"></span>
+        <span>Use case · zones + dwell + attribution</span>
+      </div>
+      <h1 class="case-title">Queue length and wait time, measured from the cameras that already watch the counter.</h1>
+      <p class="case-deck">
+        Waiting was counted by hand, per shift, at the counter. The system measures it from tracked trajectories:
+        an entrance line opens a visit, a dwell timer turns loitering into waiting, seat stillness starts service
+        — backdated to where it truly began — and every number survives camera handoffs.
+      </p>
+
+      <div class="case-meta">
+        <div class="meta-item"><span class="meta-label">Primitives</span><span class="meta-value">Entrance line · waiting zone · seats · staff votes</span></div>
+        <div class="meta-item"><span class="meta-label">Measurement</span><span class="meta-value">Dwell timers with debounce and gap tolerance</span></div>
+        <div class="meta-item"><span class="meta-label">Output</span><span class="meta-value">Live state over WebSocket · percentile reports</span></div>
+        <div class="meta-item"><span class="meta-label">Stack</span><span class="meta-value">Tracking · zone geometry · FastAPI · WebSocket · SQLite</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container case-layout">
+    <aside class="case-toc" aria-label="On this page">
+      <div class="toc-label">On this page</div>
+      <ul class="toc-list">
+        <li><a class="toc-link" href="#problem">The problem</a></li>
+        <li><a class="toc-link" href="#measurement">What counts as waiting</a></li>
+        <li><a class="toc-link" href="#attribution">Service attribution</a></li>
+        <li><a class="toc-link" href="#architecture">Architecture</a></li>
+        <li><a class="toc-link" href="#reflection">Reflection</a></li>
+      </ul>
+    </aside>
+
+    <div class="case-main">
+      <section class="case-section" id="problem">
+        <h2><span class="num">01</span>The problem</h2>
+        <p class="lead">
+          Operational metrics lead to disputed numbers the moment they must be computed by hand.
+        </p>
+        <p>
+          Hand-tallied queue lengths are a snapshot someone remembers, and wait-time targets were checked only after
+          complaints. A camera-based version sounds simple and is not: people walk through the waiting area without
+          waiting; they leave and come back; the counter and the waiting area are on different cameras; staff stand
+          where customers stand. Every one of those cases manufactures false metrics if it is not modelled.
+        </p>
+        <div class="callout">
+          <strong>Design target:</strong> a wait is a duration defined by behaviour, not by detection boxes — and the
+          same customer stays the same customer across cameras.
+        </div>
+      </section>
+
+      <section class="case-section" id="measurement">
+        <h2><span class="num">02</span>What counts as waiting</h2>
+        <ul class="case-list">
+          <li>
+            <strong>Zones matched to anatomy, not pixels.</strong> The entrance is a floor line tested against the
+            feet; waiting zones are polygons tested against the lower torso. The same polygons pair across cameras,
+            so one visit survives a camera handoff unchanged.
+          </li>
+          <li>
+            <strong>Dwell, not presence.</strong> A wait only starts once a track has dwelt in the waiting zone for a
+            threshold time, and it restarts if the person goes out of sight too long to still plausibly be in line.
+            A person walking through contributes zero.
+          </li>
+          <li>
+            <strong>Gap tolerance.</strong> Short detector dropouts do not restart the clock; the stay state is keyed
+            on the stable track ID and upgraded to a cross-camera global ID when one becomes available.
+          </li>
+          <li>
+            <strong>Targets snapshot at visit time.</strong> Each visit records which target policy was in force when
+            it began — so today's policy edits can never reinterpret last week's reports.
+          </li>
+        </ul>
+      </section>
+
+      <section class="case-section" id="attribution">
+        <h2><span class="num">03</span>Service attribution</h2>
+        <p>
+          The subtlest problem was deciding when a wait <em>ended</em>. A person sitting down looks identical to a
+          person waiting while seated, and the counter staff are indistinguishable from customers by appearance alone.
+          Two mechanisms carry it:
+        </p>
+        <ul class="case-list">
+          <li>
+            <strong>Backdating by stillness.</strong> A still-in-seat dwell above the seat threshold latches the
+            customer, and the service start is backdated to when the stillness began — the report reads the truth,
+            not the first frame the box happened to be comfortable.
+          </li>
+          <li>
+            <strong>Staff-vote logic.</strong> Seats the staff occupy are excluded from customer attribution by a
+            per-cam vote mechanism, and cross-camera claim logic guarantees one physical customer is never counted
+            twice.
+          </li>
+        </ul>
+        <p>
+          Alerts open when a running wait crosses its target (no operator waits for the customer to complain), close
+          cleanly when the wait ends, and feed a live view of the floor state with per-camera data freshness shown —
+          stale tiles are labelled stale rather than silently misread.
+        </p>
+      </section>
+
+      <section class="case-section" id="architecture">
+        <h2><span class="num">04</span>Architecture</h2>
+        <div class="flow" aria-label="Wait-time pipeline">
+          <div class="flow-node"><b>Video</b><span>overlapping cameras</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Detect + track</b><span>stable IDs · ground point</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Zones</b><span>editable · paired across cameras</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Dwell</b><span>timers · debounce · gap rules</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Visit</b><span>wait · service · attribution</span></div>
+          <div class="flow-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-node"><b>Report</b><span>live WS · percentiles · history</span></div>
+        </div>
+        <p>
+          Reports compute wait distributions over the day — percentiles, not just averages, because a mean wait says
+          nothing about the driver at the 95th who decides how the venue feels. Stats are saved and exportable, and
+          all zones are editable at runtime through a REST zone-editor; configuration changes take effect without
+          touching code.
+        </p>
+      </section>
+
+      <section class="case-section" id="reflection">
+        <h2><span class="num">05</span>Reflection</h2>
+        <p class="lead">Definitions, not detections, decided whether the numbers were trusted.</p>
+        <p>
+          The interesting engineering was almost entirely semantic: what threshold turns standing into waiting, what
+          gap rules out a re-entry, whose stillness starts the clock. Zone dwell measured with grace and debounce
+          turned out to be the most reused primitive in the platform — the same timer that waits for a customer powers
+          vehicle-dwell and compliance variants elsewhere.
+        </p>
+        <div class="case-tags">
+          <span class="chip chip--accent">Tracking</span><span class="chip">Zone geometry</span>
+          <span class="chip">Dwell timers</span><span class="chip">Cross-camera identity</span>
+          <span class="chip">WebSocket</span><span class="chip">Percentile reports</span>
+        </div>
+      </section>
+
+      <a class="next-project" href="intrusion-detection.html">
+        <div>
+          <div class="next-label">Next use case / 12</div>
+          <div class="next-title">Intrusion detection.</div>
+        </div>
+        <span class="next-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span>© <span data-year>2026</span> Mahmoud Mostafa Tayee</span>
+    <span>Client work generalized · no customer footage or site identifiers.</span>
+    <div class="footer-links">
+      <a href="https://github.com/MahmoudMostafaTayee" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/MahmoudMostafaTayee" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="../index.html#contact">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>
