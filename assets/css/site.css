@@ -3372,3 +3372,81 @@ html[data-theme="dark"]::after {
   html[data-theme="dark"]::after,
   [data-theme="dark"] .type-target { animation: none; }
 }
+
+/* CV-HUD cursor: object-detection framing for the pointer (dark theme only) */
+[data-theme="dark"] .cv-box {
+  position: fixed;
+  left: 0; top: 0;
+  width: 44px; height: 44px;
+  z-index: 130;
+  pointer-events: none;
+  opacity: 0;
+  transition: width 0.18s var(--ease), height 0.18s var(--ease), opacity 0.25s ease;
+  will-change: transform;
+}
+[data-theme="dark"] .cv-box.is-visible { opacity: 1; }
+[data-theme="dark"] .cv-box.is-locked { background: rgba(0, 210, 255, 0.05); }
+[data-theme="dark"] .cv-box::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--blue), var(--blue)),
+    linear-gradient(var(--blue), var(--blue)),
+    linear-gradient(var(--blue), var(--blue)),
+    linear-gradient(var(--blue), var(--blue)),
+    linear-gradient(var(--blue), var(--blue)),
+    linear-gradient(var(--blue), var(--blue)),
+    linear-gradient(var(--blue), var(--blue)),
+    linear-gradient(var(--blue), var(--blue));
+  background-position: 0 0, 0 0, 100% 0, 100% 0, 0 100%, 0 100%, 100% 100%, 100% 100%;
+  background-size: 14px 2px, 2px 14px, 14px 2px, 2px 14px, 14px 2px, 2px 14px, 14px 2px, 2px 14px;
+  background-repeat: no-repeat;
+  opacity: 0.85;
+}
+[data-theme="dark"] .cv-box.is-hot::before { background-image:
+  linear-gradient(var(--pink), var(--pink)), linear-gradient(var(--pink), var(--pink)),
+  linear-gradient(var(--pink), var(--pink)), linear-gradient(var(--pink), var(--pink)),
+  linear-gradient(var(--pink), var(--pink)), linear-gradient(var(--pink), var(--pink)),
+  linear-gradient(var(--pink), var(--pink)), linear-gradient(var(--pink), var(--pink));
+}
+[data-theme="dark"] .cv-dot {
+  position: fixed;
+  left: -2px; top: -2px;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  z-index: 132;
+  pointer-events: none;
+  background: var(--blue);
+  box-shadow: 0 0 10px rgba(0, 210, 255, 0.8);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+[data-theme="dark"] .cv-dot.is-visible { opacity: 1; }
+[data-theme="dark"] .cv-tag {
+  position: fixed;
+  left: 0; top: 0;
+  z-index: 131;
+  pointer-events: none;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  color: #030308;
+  background: rgba(0, 210, 255, 0.92);
+  padding: 3px 7px;
+  white-space: nowrap;
+  box-shadow: 0 0 16px rgba(0, 210, 255, 0.4);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+[data-theme="dark"] .cv-tag.is-visible { opacity: 1; }
+[data-theme="dark"] .cv-tag.is-hot {
+  background: rgba(255, 0, 127, 0.92);
+  color: #fff;
+  box-shadow: 0 0 16px rgba(255, 0, 127, 0.45);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-theme="dark"] .cv-box,
+  [data-theme="dark"] .cv-dot,
+  [data-theme="dark"] .cv-tag { display: none; }
+}

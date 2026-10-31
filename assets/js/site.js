@@ -210,3 +210,109 @@
     el.textContent = String(new Date().getFullYear());
   });
 })();
+
+/* ---------------------------------------------------------------------
+   CV-HUD cursor: object-detection framing for the pointer.
+   A bounding box tracks the cursor; hovering project cards / modules
+   locks the box onto the element like a tracked object. Dark theme only,
+   fine pointers only, disabled for prefers-reduced-motion.
+   --------------------------------------------------------------------- */
+(function () {
+  if (!window.matchMedia) return;
+  if (!window.matchMedia("(pointer: fine)").matches) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  var root = document.documentElement;
+  function darkOn() { return root.getAttribute("data-theme") !== "light"; }
+
+  var box = document.createElement("div");
+  var dot = document.createElement("div");
+  var tag = document.createElement("div");
+  box.className = "cv-box";
+  dot.className = "cv-dot";
+  tag.className = "cv-tag";
+  document.body.appendChild(box);
+  document.body.appendChild(dot);
+  document.body.appendChild(tag);
+
+  var els = [box, dot, tag];
+
+  /* [selector, class label, confidence, lock onto element] */
+  var CLASSES = [
+    [".work-card", "project", 0.97, true],
+    [".next-project", "next_case", 0.95, true],
+    [".metric-card, .decision, .flow-node, .mini-card, .contact-card", "module", 0.92, true],
+    [".callout", "note", 0.91, true],
+    [".btn, button, .theme-toggle, .menu-toggle", "control", 0.96, false],
+    ["a", "link", 0.93, false],
+    [".chip", "label", 0.94, false]
+  ];
+
+  function classify(node) {
+    for (var i = 0; i < CLASSES.length; i++) {
+      var el = node && node.closest ? node.closest(CLASSES[i][0]) : null;
+      if (el) return { el: el, cls: CLASSES[i][1], conf: CLASSES[i][2], locked: CLASSES[i][3] };
+    }
+    return { el: null, cls: "visitor", conf: 0.99, locked: false };
+  }
+
+  var cx = 0, cy = 0, raf = 0, everMoved = false;
+
+  function frame() {
+    raf = 0;
+    if (!darkOn()) return;
+    var hit = classify(document.elementFromPoint(cx, cy) || document.body);
+    var bx, by, w, h;
+    if (hit.locked) {
+      var r = hit.el.getBoundingClientRect();
+      bx = r.left - 6; by = r.top - 6; w = r.width + 12; h = r.height + 12;
+      box.classList.add("is-locked");
+    } else {
+      bx = cx - 22; by = cy - 22; w = 44; h = 44;
+      box.classList.remove("is-locked");
+    }
+    var conf = Math.max(0.4, hit.conf - Math.random() * 0.025).toFixed(2);
+    tag.textContent = 'class: "' + hit.cls + '"  conf: ' + conf;
+    var hot = hit.cls === "link" || hit.cls === "control";
+    tag.classList.toggle("is-hot", hot);
+    box.classList.toggle("is-hot", hot);
+    box.style.width = w + "px";
+    box.style.height = h + "px";
+    box.style.transform = "translate(" + bx + "px," + by + "px)";
+    dot.style.transform = "translate(" + cx + "px," + cy + "px)";
+    tag.style.transform = "translate(" + (cx + 26) + "px," + (cy - 28) + "px)";
+  }
+
+  function show() {
+    if (!everMoved) {
+      everMoved = true;
+      if (darkOn()) {
+        document.body.classList.add("cv-hud-on");
+        els.forEach(function (el) { el.classList.add("is-visible"); });
+      }
+    }
+  }
+
+  function sync() {
+    var on = darkOn() && everMoved;
+    document.body.classList.toggle("cv-hud-on", darkOn());
+    els.forEach(function (el) { el.classList.toggle("is-visible", on); });
+    if (on && !raf) raf = requestAnimationFrame(frame);
+  }
+
+  window.addEventListener("pointermove", function (e) {
+    cx = e.clientX; cy = e.clientY;
+    show();
+    if (!raf) raf = requestAnimationFrame(frame);
+  }, { passive: true });
+
+  document.addEventListener("mouseleave", function () {
+    everMoved = false;
+    els.forEach(function (el) { el.classList.remove("is-visible"); });
+    document.body.classList.remove("cv-hud-on");
+  });
+
+  if (window.MutationObserver) {
+    new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+})();
