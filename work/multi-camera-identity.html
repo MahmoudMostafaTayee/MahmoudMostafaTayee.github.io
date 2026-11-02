@@ -4,16 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>One vehicle, thirteen cameras — Mahmoud Mostafa Tayee</title>
-  <meta name="description" content="Case study: cross-camera vehicle identity with per-camera tracking, Re-ID, topology-aware association, and a vision-language arbiter.">
+  <meta name="description" content="Case study: one global ID per vehicle across 13 cameras — gate-then-score-then-judge association, VLM arbitration for the ambiguous band, plate evidence, and benchmarked MTMC results.">
   <link rel="canonical" href="https://mahmoudmostafatayee.github.io/work/multi-camera-identity.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="One vehicle, thirteen cameras — Mahmoud Mostafa Tayee">
-  <meta property="og:description" content="Case study: cross-camera vehicle identity with per-camera tracking, Re-ID, topology-aware association, and a vision-language arbiter.">
+  <meta property="og:description" content="Case study: one global ID per vehicle across 13 cameras — gate-then-score-then-judge association, VLM arbitration for the ambiguous band, plate evidence, and benchmarked MTMC results.">
   <meta property="og:url" content="https://mahmoudmostafatayee.github.io/work/multi-camera-identity.html">
   <meta property="og:image" content="https://mahmoudmostafatayee.github.io/assets/img/og.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="One vehicle, thirteen cameras — Mahmoud Mostafa Tayee">
-  <meta name="twitter:description" content="Case study: cross-camera vehicle identity with per-camera tracking, Re-ID, topology-aware association, and a vision-language arbiter.">
+  <meta name="twitter:description" content="Case study: one global ID per vehicle across 13 cameras — gate-then-score-then-judge association, VLM arbitration for the ambiguous band, plate evidence, and benchmarked MTMC results.">
   <meta name="twitter:image" content="https://mahmoudmostafatayee.github.io/assets/img/og.jpg">
   <meta name="theme-color" content="#030308">
   <meta name="color-scheme" content="dark light">
@@ -228,9 +228,17 @@
               <h3>Track locally, associate globally</h3>
               <p>
                 An IoU tracker per camera turns detections into tracklets. Appearance embeddings from vehicle crops
-                provide the Re-ID signal. Association is gated by the camera topology: only cameras that can
-                plausibly follow one another, within a travel-time window, become candidates. Hierarchical clustering
-                over the candidate tracklets produces the global assignment.
+                provide the Re-ID signal. Association is <strong>gate-then-score-then-judge</strong>. The gates are
+                cheap and physical: only vehicles first seen at designated entrance cameras, confirmed arriving, may
+                open a global track — every other camera may only <em>join</em> an existing one, a single rule that
+                eliminates a whole class of duplicated identities. Site topology declares which camera groups can
+                plausibly follow one another and with what minimum travel time, and a max-absence TTL closes stale
+                tracks so a returning vehicle is a new visit, never a resurrection. The score is two-zone cosine
+                similarity against each candidate's per-camera and combined mean embeddings: below the low gate
+                never merges, above the match threshold merges directly, and the ambiguous zone in between is never
+                auto-merged — that zone exists for the arbiter. Global clusters grow with Union-Find under one
+                invariant: a cluster may never hold two tracklets simultaneously on the same camera, so one vehicle
+                can never carry two simultaneous IDs in a single view.
               </p>
             </div>
           </div>
@@ -240,10 +248,21 @@
               <h3>Ask a VLM only in the ambiguous band</h3>
               <p>
                 If cosine similarity is clearly high or clearly low, the embedding decides. In the narrow band between
-                the gate and the match threshold, a Qwen3-VL 4B model compares the two crops directly and returns
-                <strong>same</strong>, <strong>different</strong>, or <strong>uncertain</strong>, with confidence and
-                the features it used. Calls run on background workers; the tracklet waits across frames for a verdict.
-                If the wait budget expires, it becomes a new ID rather than a bad merge.
+                the gate and the match threshold, a Qwen3-VL 4B model compares two candidates' per-camera,
+                time-spread crops side by side at temperature 0 and returns <strong>same</strong>,
+                <strong>different</strong>, or <strong>uncertain</strong>, with matched and conflicting traits. The
+                prompt encodes multi-camera commonsense: "not visible" is not a contradiction, apparent size is not
+                identity, and <em>uncertain</em> is preferred over forcing a decision. Calls run on background
+                workers; the tracklet waits across frames for a verdict. If the wait budget expires, it becomes a new
+                ID rather than a bad merge — unresolved is preferred over wrong.
+              </p>
+              <p>
+                Latency engineering mattered as much as prompt quality. Greedy decoding occasionally looped until the
+                context cap, and shared-GPU contention could stretch one call by orders of magnitude. Hard token
+                caps, a concise output instruction, image shrink-retries, worker pools, and a per-request wall-clock
+                timeout got arbitration to roughly four seconds per candidate pair in the normal case. Every
+                arbitration is logged — crops, exact prompt, verdict, latency — so "why didn't this merge?" is
+                answerable from records, not re-runs.
               </p>
             </div>
           </div>
@@ -326,6 +345,8 @@
           <div class="metric-card"><div class="metric-value">1</div><span class="metric-label">persistent global ID</span></div>
           <div class="metric-card"><div class="metric-value">4.1<span>s</span></div><span class="metric-label">mean VLM verdict</span></div>
           <div class="metric-card"><div class="metric-value">INT8</div><span class="metric-label">INT8 engine</span></div>
+          <div class="metric-card"><div class="metric-value">0.61 / 0.32</div><span class="metric-label">IDF1 · MTMC benchmark: ground-truth vs real detections</span></div>
+          <div class="metric-card"><div class="metric-value">31% vs 7%</div><span class="metric-label">Rank@1 · shipped Re-ID vs vehicle-trained model</span></div>
         </div>
         <p>
           On the 13-camera recorded testbed, the module produced one persistent global ID per vehicle across
@@ -337,6 +358,21 @@
           The VLM path was bounded: after fixing repetition loops in the model output, the mean verdict dropped to
           about 4.1 seconds over the benchmark pairs. That is still too slow for a frame loop — which is exactly why
           it runs asynchronously, outside the tracker.
+        </p>
+        <p>
+          Benchmark runs on a public academic dataset under the official IDF1 protocol told the honest story:
+          0.61 IDF1 with ground-truth detections, 0.32 through the real detector (baselines ≈ 0.25). The gap is
+          diagnostic, not embarrassing — detection over-production rather than association dominated the loss, which
+          re-aimed the optimization work at detection cleanup.
+        </p>
+        <p>
+          Two measured negative results shaped the association design. A homography spatial model — ground-plane
+          projection as "spatial proof" — was instrumented and found net-negative: 27 of the 28 merges it made on
+          opposite-side camera pairs were wrong vehicles, because bottom-centre projections are orientation-biased
+          (front vs rear of the vehicle); it was demoted to opt-in for verified tight pairs only. And the
+          <em>shipped</em> Re-ID encoder turned out to be an ImageNet-pretrained ResNet50, not a formally
+          vehicle-trained one — the benchmark harness on real site footage showed it beat the domain-trained model
+          handily, so domain training lost to measurement.
         </p>
       </section>
 
@@ -356,7 +392,7 @@
         <div class="case-tags">
           <span class="chip chip--accent">DeepStream</span><span class="chip">TensorRT</span><span class="chip">PyTorch</span>
           <span class="chip">Qwen3-VL</span><span class="chip">Re-ID</span><span class="chip">PP-OCRv5</span>
-          <span class="chip">Redis</span><span class="chip">ONNX Runtime</span>
+          <span class="chip">Union-Find</span><span class="chip">Benchmarked</span><span class="chip">Redis</span><span class="chip">ONNX Runtime</span>
         </div>
       </section>
 

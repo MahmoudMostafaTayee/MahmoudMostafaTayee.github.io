@@ -398,7 +398,7 @@
         <div class="section-kicker"><span>03</span> / Work</div>
         <div>
           <h2 class="section-title">Projects</h2>
-          <p class="section-copy">Sixteen projects: four case studies, twelve use cases — each with the computer-vision problem it solves.</p>
+          <p class="section-copy">Fourteen projects: three case studies, eleven use cases — each with the computer-vision problem it solves.</p>
         </div>
       </div>
 
@@ -573,73 +573,6 @@
           </div>
         </article>
 
-        <!-- 03 Traffic safety -->
-        <article class="work-card work-card--flip reveal">
-          <div class="work-visual">
-            <div class="viz-top"><span><i class="dot"></i> SAFETY SUITE · TEMPORAL EVENTS</span><span>EDGE + CLOUD</span></div>
-            <div class="safety-viz" aria-hidden="true">
-              <svg class="road-svg" viewBox="0 0 520 520" preserveAspectRatio="xMidYMid slice">
-                <rect width="520" height="520" fill="#070b10"/>
-                <path class="road-surface" d="M132 520 388 520 332 40 188 40Z"/>
-                <path class="road-edge" d="M132 520 188 40M388 520 332 40"/>
-                <path class="road-lane" d="M217 520 232 40M303 520 288 40"/>
-                <path class="road-lane" d="M175 520 210 40M345 520 310 40" opacity=".45"/>
-                <path class="zone-poly" d="M210 330 310 330 304 245 216 245Z"/>
-                <g transform="translate(245 400)">
-                  <path class="road-arrow" d="M0 34V0M-7 8 0 0 7 8"/>
-                  <path class="road-arrow" d="M25 18V-16M18-8 25-16 32-8" opacity=".55"/>
-                </g>
-                <g transform="translate(275 215)">
-                  <path class="road-arrow" d="M0 22V0M-6 7 0 0 6 7" opacity=".55"/>
-                </g>
-                <path class="wrong-path" d="M236 54 216 456"/>
-                <path class="wrong-arrow" d="m216 456 4-13 7 9Z"/>
-                <g transform="translate(232 330)">
-                  <rect class="car-box car-box--red" x="-21" y="-28" width="42" height="56" rx="3"/>
-                  <text class="car-label" x="-18" y="-33">TRK 118 · 0.93</text>
-                </g>
-                <g transform="translate(292 250)">
-                  <rect class="car-box" x="-18" y="-24" width="36" height="48" rx="3"/>
-                  <text class="car-label" x="-16" y="-29">TRK 204</text>
-                </g>
-                <g transform="translate(40 58)">
-                  <rect class="alert-chip" x="0" y="0" width="166" height="30" rx="3"/>
-                  <text class="alert-text" x="9" y="13">WRONG-WAY · CAM-03</text>
-                  <text class="alert-text" x="9" y="23" opacity=".65">confirmed across 7 frames</text>
-                </g>
-                <g transform="translate(332 455)">
-                  <rect class="alert-chip" x="0" y="0" width="150" height="30" rx="3" style="fill:rgba(255,180,92,.08);stroke:#ffb45c"/>
-                  <text class="alert-text" x="9" y="13" style="fill:#ffd7a4">UNSAFE LANE CHANGE</text>
-                  <text class="alert-text" x="9" y="23" style="fill:rgba(255,215,164,.6)">lateral velocity 2.4 m/s</text>
-                </g>
-              </svg>
-              <div class="safety-side">
-                <div class="safety-item"><span class="tag">Fall detection</span><span>pose + torso angle + stillness</span></div>
-                <div class="safety-item"><span class="tag">Wrong-way driving</span><span>lane direction + motion vector</span></div>
-                <div class="safety-item"><span class="tag">Unsafe lane change</span><span>lateral velocity + conflict</span></div>
-                <div class="safety-item"><span class="tag">Multi-camera tracking</span><span>Re-ID + camera topology</span></div>
-              </div>
-            </div>
-            <div class="viz-bottom"><span><strong>4</strong> BEHAVIOURS · <strong>1</strong> TRACKING CORE</span><span>ALERT ONCE, WITH EVIDENCE</span></div>
-          </div>
-          <div class="work-body">
-            <div class="work-top"><span class="index">03 / Case study</span><span class="work-client">Ottonomi AI · 2025–26</span></div>
-            <h3 class="work-title"><a href="work/traffic-safety.html">Four safety behaviours, one tracking core.</a></h3>
-            <p class="work-copy">
-              Fall detection, wrong-way driving, unsafe lane changes, and multi-camera tracking. Different questions,
-              same substrate: detections, trajectories, and enough temporal context to tell an event from a false alarm.
-            </p>
-            <div class="work-metrics">
-              <div class="work-metric"><b>4</b><span>safety behaviours</span></div>
-              <div class="work-metric"><b>1</b><span>shared tracking core</span></div>
-              <div class="work-metric"><b>Edge</b><span>and cloud inference</span></div>
-            </div>
-            <div class="work-foot">
-              <div class="chips"><span class="chip">Pose</span><span class="chip">Re-ID</span><span class="chip">Lane geometry</span><span class="chip">Temporal logic</span></div>
-              <a class="text-link" href="work/traffic-safety.html">Read case study <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
-            </div>
-          </div>
-        </article>
         <article class="work-card work-card--case reveal">
           <div class="work-visual">
             <div class="viz-top"><span><i class="dot"></i> FALL DETECTION</span><span>POSE</span></div>
@@ -661,7 +594,7 @@
             </svg>
           </div>
           <div class="work-body">
-            <div class="work-top"><span class="index">04 / Use case</span><span class="work-client">Safety</span></div>
+            <div class="work-top"><span class="index">03 / Use case</span><span class="work-client">Safety</span></div>
             <h3 class="work-title"><a href="work/fall-detection.html">Fall detection</a></h3>
             <div class="uc-line uc-line--problem"><b>Problem</b><p>Sitting, crouching and collapsing all look horizontal in a single frame.</p></div>
             <div class="uc-line uc-line--built"><b>Built</b><p>Pose keypoints, box aspect-ratio change and a stillness state machine — one event per real fall.</p></div>
@@ -694,7 +627,7 @@
             </svg>
           </div>
           <div class="work-body">
-            <div class="work-top"><span class="index">05 / Use case</span><span class="work-client">Traffic</span></div>
+            <div class="work-top"><span class="index">04 / Use case</span><span class="work-client">Traffic</span></div>
             <h3 class="work-title"><a href="work/wrong-way-driving.html">Automatic wrong-way driving</a></h3>
             <div class="uc-line uc-line--problem"><b>Problem</b><p>A car pointing the wrong way is indistinguishable from one completing a turn.</p></div>
             <div class="uc-line uc-line--built"><b>Built</b><p>Lane direction priors checked against the motion vector, confirmed across frames before reporting.</p></div>
@@ -723,47 +656,13 @@
             </svg>
           </div>
           <div class="work-body">
-            <div class="work-top"><span class="index">06 / Use case</span><span class="work-client">Traffic</span></div>
+            <div class="work-top"><span class="index">05 / Use case</span><span class="work-client">Traffic</span></div>
             <h3 class="work-title"><a href="work/unsafe-lane-changes.html">Unsafe lane changes</a></h3>
             <div class="uc-line uc-line--problem"><b>Problem</b><p>Most lane changes are ordinary; only a few are dangerous, and one frame cannot tell them apart.</p></div>
             <div class="uc-line uc-line--built"><b>Built</b><p>Lateral velocity against lane geometry and nearby traffic, with a confirmation window before firing.</p></div>
             <div class="work-foot">
               <div class="chips"><span class="chip">Lane geometry</span><span class="chip">Temporal logic</span></div>
               <a class="text-link" href="work/unsafe-lane-changes.html">Use case <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
-            </div>
-          </div>
-        </article>
-
-        <article class="work-card work-card--case reveal">
-          <div class="work-visual">
-            <div class="viz-top"><span><i class="dot"></i> MULTICAMERA TRACKING</span><span>RE-ID + TOPOLOGY</span></div>
-            <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A tracked object crossing from one camera to another and keeping a single global ID.">
-<rect width="320" height="180" fill="#070b10"/>
-<path d="M0 40H320M0 140H320" stroke="rgba(255,255,255,.05)"/>
-<path class="cam-cone" d="M74 64 52 26 96 26Z"/>
-<circle class="cam-ring" cx="74" cy="64" r="8"/>
-<circle class="cam-node cam-node--active" cx="74" cy="64" r="3.5"/>
-<text class="uc-txt" x="86" y="62">CAM-04</text>
-<path class="cam-cone" d="M246 64 224 26 268 26Z"/>
-<circle class="cam-ring" cx="246" cy="64" r="8"/>
-<circle class="cam-node cam-node--active" cx="246" cy="64" r="3.5"/>
-<text class="uc-txt" x="258" y="62">CAM-11</text>
-<path class="map-route" d="M74 86H246"/>
-<circle class="uc-travel map-pulse" cx="74" cy="126" r="5"/>
-<g class="uc-fade">
-  <rect x="172" y="140" width="136" height="30" rx="4" fill="#0c141e" stroke="rgba(109,155,255,.55)"/>
-  <text class="uc-txt uc-txt--blue" x="181" y="159">GID 0x2F · 3 CAMS</text>
-</g>
-            </svg>
-          </div>
-          <div class="work-body">
-            <div class="work-top"><span class="index">07 / Use case</span><span class="work-client">Identity</span></div>
-            <h3 class="work-title"><a href="work/multicamera-tracking.html">Multicamera tracking</a></h3>
-            <div class="uc-line uc-line--problem"><b>Problem</b><p>IDs reset at occlusion, change at turns, and duplicate when one vehicle enters two views.</p></div>
-            <div class="uc-line uc-line--built"><b>Built</b><p>Tracklets per camera, appearance Re-ID and topology-aware association into one global ID.</p></div>
-            <div class="work-foot">
-              <div class="chips"><span class="chip">Re-ID</span><span class="chip">Topology</span></div>
-              <a class="text-link" href="work/multicamera-tracking.html">Use case <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
             </div>
           </div>
         </article>
@@ -790,7 +689,7 @@
             </svg>
           </div>
           <div class="work-body">
-            <div class="work-top"><span class="index">08 / Use case</span><span class="work-client">Safety</span></div>
+            <div class="work-top"><span class="index">06 / Use case</span><span class="work-client">Safety</span></div>
             <h3 class="work-title"><a href="work/ppe-detection.html">PPE detection</a></h3>
             <div class="uc-line uc-line--problem"><b>Problem</b><p>Compliance has to be checked continuously across a site, not by walking the floor.</p></div>
             <div class="uc-line uc-line--built"><b>Built</b><p>Detector on live feeds, packaged as its own compose stack so a site enables it per camera.</p></div>
@@ -829,7 +728,7 @@
             </svg>
           </div>
           <div class="work-body">
-            <div class="work-top"><span class="index">09 / Use case</span><span class="work-client">VLM</span></div>
+            <div class="work-top"><span class="index">07 / Use case</span><span class="work-client">VLM</span></div>
             <h3 class="work-title"><a href="work/vlm-live-monitoring.html">VLM live monitoring</a></h3>
             <div class="uc-line uc-line--problem"><b>Problem</b><p>Operators ask what happened over time; detectors only answer what is in this frame.</p></div>
             <div class="uc-line uc-line--built"><b>Built</b><p>Overlapping frame batches with detection metadata go to a VLM that writes temporal events.</p></div>
@@ -861,7 +760,7 @@
             </svg>
           </div>
           <div class="work-body">
-            <div class="work-top"><span class="index">10 / Use case</span><span class="work-client">VLM</span></div>
+            <div class="work-top"><span class="index">08 / Use case</span><span class="work-client">VLM</span></div>
             <h3 class="work-title"><a href="work/alert-validation-vlms.html">Alert validation with VLMs</a></h3>
             <div class="uc-line uc-line--problem"><b>Problem</b><p>A noisy detector buries operators in alarms, and a system nobody trusts stops being read.</p></div>
             <div class="uc-line uc-line--built"><b>Built</b><p>Each alarm is re-read by a VLM for a verdict with evidence, benchmarked across model sizes.</p></div>
@@ -890,7 +789,7 @@
             </svg>
           </div>
           <div class="work-body">
-            <div class="work-top"><span class="index">11 / Use case</span><span class="work-client">Analytics</span></div>
+            <div class="work-top"><span class="index">09 / Use case</span><span class="work-client">Analytics</span></div>
             <h3 class="work-title"><a href="work/wait-time-analysis.html">Wait time analysis</a></h3>
             <div class="uc-line uc-line--problem"><b>Problem</b><p>Queue length and wait times were counted by hand at the counter.</p></div>
             <div class="uc-line uc-line--built"><b>Built</b><p>Track-derived queue position and dwell time per person, reported as averages over a shift.</p></div>
@@ -918,7 +817,7 @@
             </svg>
           </div>
           <div class="work-body">
-            <div class="work-top"><span class="index">12 / Use case</span><span class="work-client">Safety</span></div>
+            <div class="work-top"><span class="index">10 / Use case</span><span class="work-client">Safety</span></div>
             <h3 class="work-title"><a href="work/intrusion-detection.html">Intrusion detection</a></h3>
             <div class="uc-line uc-line--problem"><b>Problem</b><p>Static zones trigger on shadows, animals and vehicles that are meant to be there.</p></div>
             <div class="uc-line uc-line--built"><b>Built</b><p>Background subtraction plus YOLO tracking, evaluated against zones and operating hours.</p></div>
@@ -952,7 +851,7 @@
             </svg>
           </div>
           <div class="work-body">
-            <div class="work-top"><span class="index">13 / Use case</span><span class="work-client">Identity</span></div>
+            <div class="work-top"><span class="index">11 / Use case</span><span class="work-client">Identity</span></div>
             <h3 class="work-title"><a href="work/attendance-face-recognition.html">Attendance with face recognition</a></h3>
             <div class="uc-line uc-line--problem"><b>Problem</b><p>Rosters signed by hand are slow to compile and easy to fake.</p></div>
             <div class="uc-line uc-line--built"><b>Built</b><p>Face detection followed by embedding matching against a roster, sharing the recognition pipeline.</p></div>
@@ -986,7 +885,7 @@
             </svg>
           </div>
           <div class="work-body">
-            <div class="work-top"><span class="index">14 / Use case</span><span class="work-client">Parking</span></div>
+            <div class="work-top"><span class="index">12 / Use case</span><span class="work-client">Parking</span></div>
             <h3 class="work-title"><a href="work/plate-ocr.html">Plate detection and OCR</a></h3>
             <div class="uc-line uc-line--problem"><b>Problem</b><p>Finding one vehicle in a parking lot, and how long it has been there, means walking the floor.</p></div>
             <div class="uc-line uc-line--built"><b>Built</b><p>Plate detection and OCR indexed by time, so a plate query returns bay and duration parked.</p></div>
@@ -1018,7 +917,7 @@
             </svg>
           </div>
           <div class="work-body">
-            <div class="work-top"><span class="index">15 / Use case</span><span class="work-client">Reporting</span></div>
+            <div class="work-top"><span class="index">13 / Use case</span><span class="work-client">Reporting</span></div>
             <h3 class="work-title"><a href="work/safety-agent.html">Safety agent</a></h3>
             <div class="uc-line uc-line--problem"><b>Problem</b><p>Unsafe behaviour is usually written up only after someone gets hurt.</p></div>
             <div class="uc-line uc-line--built"><b>Built</b><p>An agent watches the feeds, collects the frames that matter and drafts the report for a supervisor.</p></div>
