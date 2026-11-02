@@ -318,9 +318,9 @@
    Background scene: a neural-network synapse field behind the whole
    site (glowing nodes and links, cursor-reactive, ported from the
    helper portfolio's neural canvas). The kept floating items are drawn
-   over it, still read through the computer-vision overlay: the star
-   with its two planets and moons (dark theme), the kite-duck-bug-
-   saucer-coffee crew, and the astronaut. Both themes share the cast.
+   over it, still read through the computer-vision overlay: the
+   kite/bug/saucer/coffee crew and the astronaut, shared by both
+   themes; the duck floats in light theme only.
    Nothing follows the cursor except the synapse field itself.
    Runs in both themes with a per-theme palette; static single frame
    under reduced motion.
@@ -389,24 +389,12 @@
     }
   }
 
-  /* 3. The star and its planets, pinned to the top-left of the screen.
-     Orbit radii scaled down so the system sits inside the corner. */
-  var planets = [
-    { radius: 60, speed: 0.004,  angle: Math.random() * 10, size: 6, color: "#ff007f",  glow: "rgba(255, 0, 127, 0.4)",   moons: [{ orbitRadius: 10, speed: 0.04, angle: 0, size: 1.4, color: "#ffffff" }] },
-    { radius: 88, speed: 0.0025, angle: Math.random() * 10, size: 7, color: "#7a22ff",  glow: "rgba(122, 34, 255, 0.4)",  moons: [
-      { orbitRadius: 12, speed: 0.03,  angle: 0,        size: 1.8, color: "#a366ff" },
-      { orbitRadius: 18, speed: -0.02, angle: Math.PI,  size: 1.1, color: "#ffffff" }
-    ] }
-  ];
 
   var nebulae = [
     { x: 0.15, y: 0.25, r: 190, color: "rgba(77, 0, 153, 0.05)" },
     { x: 0.85, y: 0.75, r: 230, color: "rgba(0, 210, 255, 0.04)" }
   ];
 
-  var shockRadius = 25, shockAlpha = 0.3;
-  var sunPulse = 25, sunPulseDir = 1;
-  var coronaAngle = 0;
   var t = 0;
 
   /* The pointer only drives the neural field reaction. */
@@ -422,7 +410,6 @@
   /* 6. Detector readouts: confidences re-sampled a few times a second
      so the chips read as live inference instead of a static label. */
   var DET = {
-    star:  { base: 1.0,  val: "1.00" },
     astro: { base: 0.96, val: "0.96" },
     kite:  { base: 0.94, val: "0.94" },
     duck:  { base: 0.99, val: "0.99" },
@@ -431,15 +418,10 @@
     coffee:{ base: 0.98, val: "0.98" }
   };
   var WIND = { base: 3.2, val: "3.2" };
-  var DET_BASE = [0.97, 0.94];                  /* per-planet confidence */
-
   function jitterDets() {
     for (var key in DET) {
       DET[key].val = Math.max(0.4, DET[key].base - Math.random() * 0.045).toFixed(2);
     }
-    planets.forEach(function (p, i) {
-      p.c = Math.max(0.4, DET_BASE[i] - Math.random() * 0.045).toFixed(2);
-    });
     WIND.val = Math.max(1.2, WIND.base + rand(-0.8, 0.8)).toFixed(1);
   }
   jitterDets();
@@ -448,12 +430,6 @@
     t++;
     if (t % 12 === 0) jitterDets();
 
-    shockRadius += 1.2;
-    shockAlpha -= 0.0018;
-    if (shockAlpha <= 0) { shockRadius = 25; shockAlpha = 0.35; }
-    sunPulse += 0.15 * sunPulseDir;
-    if (sunPulse > 50 || sunPulse < 30) sunPulseDir *= -1;
-    coronaAngle += 0.0012;
     /* neural synapse nodes: drift, bounce off the edges, scatter from
        the cursor's 150px influence radius */
     neural.forEach(function (n) {
@@ -469,8 +445,6 @@
         n.y -= (mdy / mdist) * force * 3;
       }
     });
-    planets.forEach(function (p) { p.angle += p.speed; });
-    planets.forEach(function (p) { p.moons.forEach(function (m) { m.angle += m.speed; }); });
     stars.forEach(function (s) {
       s.y += s.speedY / h;
       s.twinklePhase += s.twinkleSpeed;
@@ -875,10 +849,9 @@
   }
 
 
-  /* What the detector sees in the scene: the star system pinned top-left
-     (dark theme), the kite/duck/bug/saucer/coffee crew, and the drifting
-     astronaut. */
-  function drawCvOverlay(cx, cy) {
+  /* What the detector sees in the scene: the kite/bug/saucer/coffee
+     crew, the duck (light theme only), and the drifting astronaut. */
+  function drawCvOverlay() {
     ctx.save();
     ctx.globalAlpha = 0.88;
     ctx.textBaseline = "middle";
@@ -886,28 +859,12 @@
 
     ctx.save();
     drawKite();
-    drawDuck();
+    if (lightOn()) drawDuck();
     drawBug();
     drawUfoAbduction();
     drawCoffee();
     ctx.restore();
 
-    if (!lightOn()) {
-
-    /* planets */
-    planets.forEach(function (p) {
-      var px = cx + Math.cos(p.angle) * p.radius;
-      var py = cy + Math.sin(p.angle) * p.radius;
-      var s = (p.size + 7) * 2;
-      hudBox(px - s / 2, py - s / 2, s, s, "#00d2ff");
-      hudChip(px - s / 2, py - s / 2 - 17, "planet " + p.c, "#00d2ff");
-    });
-
-    /* star core */
-    hudBox(cx - 34, cy - 34, 68, 68, "#ffb45c");
-    hudChip(cx - 34, cy - 51, "star " + DET.star.val, "#ffb45c");
-
-    }
 
     /* astronaut on a slow lissajous drift */
     var ax = w * (0.5 + 0.34 * Math.sin(t * 0.0016));
@@ -922,9 +879,7 @@
   }
 
   function render() {
-    var light = lightOn();   /* palette read per frame so theme toggles repaint */
     ctx.clearRect(0, 0, w, h);
-    var cx = w * 0.09, cy = h * 0.18;   /* star system hugging the top-left */
 
     /* nebula dust */
     nebulae.forEach(function (neb) {
@@ -979,63 +934,7 @@
       ctx.fill();
     });
 
-    /* light mode retires the star system's CV treatment here */
-    if (light) { drawCvOverlay(cx, cy); return; }
-
-    /* supernova shockwave */
-    ctx.beginPath();
-    ctx.arc(cx, cy, shockRadius, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(0, 210, 255, " + shockAlpha + ")";
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-
-    /* solar corona */
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(coronaAngle);
-    for (var k = 0; k < 4; k++) {
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 30 + k * 5, 22 + k * 3, (k * Math.PI) / 4, 0, Math.PI * 2);
-      ctx.strokeStyle = light ? "rgba(255, 0, 127, 0.05)" : "rgba(255, 0, 127, 0.02)";
-      ctx.lineWidth = 4;
-      ctx.stroke();
-    }
-    ctx.restore();
-
-    /* pulsing sun core */
-    ctx.beginPath();
-    ctx.arc(cx, cy, 20, 0, Math.PI * 2);
-    ctx.fillStyle = light ? "#00c0e8" : "#ffffff";
-    ctx.shadowBlur = sunPulse;
-    ctx.shadowColor = "#00d2ff";
-    ctx.fill();
-    ctx.shadowBlur = 0;
-
-    /* planet orbits, bodies and moons */
-    planets.forEach(function (p) {
-      ctx.beginPath();
-      ctx.arc(cx, cy, p.radius, 0, Math.PI * 2);
-      ctx.strokeStyle = light ? "rgba(20, 34, 52, 0.10)" : "rgba(255, 255, 255, 0.02)";
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      var px = cx + Math.cos(p.angle) * p.radius;
-      var py = cy + Math.sin(p.angle) * p.radius;
-      ctx.beginPath();
-      ctx.arc(px, py, p.size, 0, Math.PI * 2);
-      ctx.fillStyle = p.color;
-      ctx.shadowBlur = 18;
-      ctx.shadowColor = p.glow;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-      p.moons.forEach(function (m) {
-        ctx.beginPath();
-        ctx.arc(px + Math.cos(m.angle) * m.orbitRadius, py + Math.sin(m.angle) * m.orbitRadius, m.size, 0, Math.PI * 2);
-        ctx.fillStyle = (light && m.color === "#ffffff") ? "#2a3c52" : m.color;
-        ctx.fill();
-      });
-    });
-
-    drawCvOverlay(cx, cy);
+    drawCvOverlay();
   }
 
   function loop() {
