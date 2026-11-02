@@ -124,8 +124,16 @@
     if (index > 0) el.style.setProperty("--d", String(Math.min(index, 6)));
   });
 
-  /* Theme toggle */
+  /* Theme toggle. The pages hardcode data-theme="light" as the default;
+     a visitor who toggles dark has that choice re-applied before first
+     meaningful paint. */
   var root = doc.documentElement;
+  try {
+    var storedTheme = localStorage.getItem("theme");
+    if (storedTheme === "dark" || storedTheme === "light") {
+      root.setAttribute("data-theme", storedTheme);
+    }
+  } catch (e) {}
   var themeToggle = doc.querySelector(".theme-toggle");
   var themeMeta = doc.querySelector('meta[name="theme-color"]');
 
