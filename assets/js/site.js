@@ -319,8 +319,8 @@
    site (glowing nodes and links, cursor-reactive, ported from the
    helper portfolio's neural canvas). The kept floating items are drawn
    over it, still read through the computer-vision overlay: the star
-   with its two planets and moons pinned to the top-left (dark theme),
-   the floating alien in the bottom-right corner, and the astronaut.
+   with its two planets and moons (dark theme), the kite-duck-bug-
+   saucer-coffee crew, and the astronaut. Both themes share the cast.
    Nothing follows the cursor except the synapse field itself.
    Runs in both themes with a per-theme palette; static single frame
    under reduced motion.
@@ -425,7 +425,6 @@
     star:  { base: 1.0,  val: "1.00" },
     astro: { base: 0.96, val: "0.96" },
     kite:  { base: 0.94, val: "0.94" },
-    alien: { base: 0.93, val: "0.93" },
     duck:  { base: 0.99, val: "0.99" },
     bug:   { base: 0.97, val: "0.97" },
     abduct:{ base: 0.97, val: "0.97" },
@@ -615,12 +614,12 @@
 
   /* ---------------- Cast additions ----------------
      The kite owns the top-left corner in light theme, standing in for
-     the star system; the alien replaced the binary black holes in
-     both themes. The duck, the bug, the abduction and the coffee are
-     light-theme comedians. */
+     the star system; the duck, the bug, the saucer crew and the coffee
+     run in both themes. The alien has moved on to probe elsewhere. */
 
   /* Kite tethered to the true top-left corner of the viewport. */
   function drawKite() {
+    var light = lightOn();
     var kx = w * 0.13 + Math.sin(t * 0.0011) * 16;
     var ky = h * 0.165 + Math.sin(t * 0.0016 + 1.1) * 10;
     var krot = 0.18 + Math.sin(t * 0.0013) * 0.12;
@@ -629,7 +628,7 @@
     ctx.beginPath();
     ctx.moveTo(10, 6);
     ctx.quadraticCurveTo(kx * 0.55, ky + 26 + Math.sin(t * 0.0009) * 8, kx, ky + 16);
-    ctx.strokeStyle = "rgba(20, 34, 52, 0.4)";
+    ctx.strokeStyle = light ? "rgba(20, 34, 52, 0.4)" : "rgba(255, 255, 255, 0.28)";
     ctx.lineWidth = 1;
     ctx.stroke();
 
@@ -641,7 +640,7 @@
     ctx.beginPath();
     ctx.moveTo(0, 22);
     ctx.quadraticCurveTo(4 + Math.sin(t * 0.002) * 3, 38, -2 + Math.sin(t * 0.002 + 1.5) * 4, 56);
-    ctx.strokeStyle = "rgba(20, 34, 52, 0.45)";
+    ctx.strokeStyle = light ? "rgba(20, 34, 52, 0.45)" : "rgba(255, 255, 255, 0.35)";
     ctx.stroke();
     var bows = [3, 36, 1, 46, -2, 55];
     for (var b = 0; b < 6; b += 2) {
@@ -655,9 +654,9 @@
     ctx.beginPath();
     ctx.moveTo(0, -16); ctx.lineTo(11, 0); ctx.lineTo(0, 22); ctx.lineTo(-11, 0);
     ctx.closePath();
-    ctx.fillStyle = "rgba(28, 64, 92, 0.9)";
+    ctx.fillStyle = light ? "rgba(28, 64, 92, 0.9)" : "#dfe9f2";
     ctx.fill();
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.75)";
+    ctx.strokeStyle = light ? "rgba(255, 255, 255, 0.75)" : "rgba(10, 16, 24, 0.8)";
     ctx.lineWidth = 1.2;
     ctx.beginPath();
     ctx.moveTo(0, -16); ctx.lineTo(0, 22);
@@ -673,8 +672,8 @@
   /* Rubber duck: floats on the current, judging your loops until you
      explain them to it. */
   function drawDuck() {
-    var dx = w * 0.40 + Math.sin(t * 0.0012) * 14;
-    var dy = h * 0.30 + Math.sin(t * 0.0021 + 0.4) * 8;
+    var dx = w * 0.10 + Math.sin(t * 0.0012) * 12;
+    var dy = h * 0.80 + Math.sin(t * 0.0021 + 0.4) * 7;
     ctx.save();
     ctx.translate(dx, dy);
     ctx.rotate(Math.sin(t * 0.0016) * 0.07);
@@ -720,6 +719,7 @@
   /* A beetle crawling slowly along the bottom edge: the bug that gets
      detected before it becomes a ticket. */
   function drawBug() {
+    var light = lightOn();
     var bx = (t * 0.9 % (w + 140)) - 70;
     var by = h - 22;
     if (bx < -40 || bx > w + 40) return;
@@ -729,7 +729,7 @@
     ctx.translate(bx, by);
 
     /* six stepping legs */
-    ctx.strokeStyle = "rgba(14, 22, 35, 0.8)";
+    ctx.strokeStyle = light ? "rgba(14, 22, 35, 0.8)" : "rgba(226, 234, 242, 0.7)";
     ctx.lineWidth = 1.2;
     ctx.lineCap = "round";
     for (var l = 0; l < 3; l++) {
@@ -745,14 +745,14 @@
     ctx.stroke();
 
     /* shell with split line, then head */
-    ctx.fillStyle = "#25384e";
+    ctx.fillStyle = light ? "#25384e" : "#4a6580";
     ctx.beginPath();
     ctx.ellipse(0, 0, 10, 6.5, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
     ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(-10, 0); ctx.lineTo(10, 0); ctx.stroke();
-    ctx.fillStyle = "#182636";
+    ctx.fillStyle = light ? "#182636" : "#33495f";
     ctx.beginPath(); ctx.arc(10, 0, 3.5, 0, Math.PI * 2); ctx.fill();
 
     ctx.restore();
@@ -765,7 +765,7 @@
   /* Saucer with a tractor beam; the cow is half-way up and mildly
      upset about it. */
   function drawUfoAbduction() {
-    var ux = w * 0.80 + Math.sin(t * 0.0009) * 18;
+    var ux = w * 0.84 + Math.sin(t * 0.0009) * 18;
     var uy = h * 0.20 + Math.sin(t * 0.0015 + 0.9) * 7;
 
     /* beam */
@@ -826,11 +826,12 @@
 
   /* Paper coffee cup with live steam: segfault fuel. */
   function drawCoffee() {
+    var light = lightOn();
     var cx2 = w * 0.27 + Math.sin(t * 0.001) * 12;
     var cy2 = h * 0.60 + Math.sin(t * 0.0016 + 2) * 9;
 
     /* steam wisps */
-    ctx.strokeStyle = "rgba(88, 105, 122, 0.4)";
+    ctx.strokeStyle = light ? "rgba(88, 105, 122, 0.4)" : "rgba(200, 214, 228, 0.35)";
     ctx.lineWidth = 1.2;
     for (var st = 0; st < 2; st++) {
       var sx2 = cx2 - 4 + st * 8, sway = Math.sin(t * 0.003 + st * 1.7) * 5;
@@ -846,7 +847,7 @@
 
     /* tapered cup */
     ctx.fillStyle = "#f4f1ec";
-    ctx.strokeStyle = "rgba(20, 34, 52, 0.45)";
+    ctx.strokeStyle = light ? "rgba(20, 34, 52, 0.45)" : "rgba(232, 240, 248, 0.55)";
     ctx.lineWidth = 1.2;
     ctx.beginPath();
     ctx.moveTo(-9, -20); ctx.lineTo(9, -20); ctx.lineTo(6, 8); ctx.lineTo(-6, 8);
@@ -863,7 +864,7 @@
     /* lid */
     ctx.fillStyle = "#d8d2c8";
     rr(-10.5, -24, 21, 5, 2); ctx.fill();
-    ctx.strokeStyle = "rgba(20, 34, 52, 0.45)";
+    ctx.strokeStyle = light ? "rgba(20, 34, 52, 0.45)" : "rgba(232, 240, 248, 0.55)";
     ctx.stroke();
 
     ctx.restore();
@@ -873,63 +874,9 @@
     hudChip(cx2 - 13, cy2 - 43, "coffee " + DET.coffee.val + " · segfault fuel", "#8a5a33");
   }
 
-  /* Floating alien head parked where the binary black holes used to
-     hover, in the bottom-right corner — both themes' new occupant. */
-  function drawAlien() {
-    var ax = w - 150, ay = h * 0.76;
-    var fx = ax + Math.sin(t * 0.0013) * 14;
-    var fy = ay + Math.sin(t * 0.0019 + 0.7) * 10;
-    var light = lightOn();
-    ctx.save();
-    ctx.translate(fx, fy);
-    ctx.rotate(Math.sin(t * 0.0011) * 0.16);
-
-    /* antennae with bobbing tips */
-    var tipA = Math.sin(t * 0.0028) * 2, tipB = Math.sin(t * 0.0028 + 1.2) * 2;
-    ctx.strokeStyle = light ? "rgba(20, 44, 28, 0.9)" : "rgba(159, 230, 173, 0.8)";
-    ctx.lineWidth = 1.4;
-    ctx.beginPath();
-    ctx.moveTo(-5, -13); ctx.lineTo(-7, -22 + tipA);
-    ctx.moveTo(5, -13); ctx.lineTo(7, -22 + tipB);
-    ctx.stroke();
-    ctx.fillStyle = "#3c9a6e";
-    ctx.beginPath(); ctx.arc(-7, -23 + tipA, 2, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(7, -23 + tipB, 2, 0, Math.PI * 2); ctx.fill();
-
-    /* head */
-    ctx.fillStyle = "#7fcf8a";
-    ctx.beginPath();
-    ctx.ellipse(0, 0, 13, 15, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    /* big black almond eyes with glints */
-    [-1, 1].forEach(function (sx) {
-      ctx.save();
-      ctx.translate(sx * 5.5, -1);
-      ctx.rotate(sx * 0.55);
-      ctx.fillStyle = "#0b1c12";
-      ctx.beginPath(); ctx.ellipse(0, 0, 4, 2.8, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-      ctx.beginPath(); ctx.arc(sx * 1.2, -0.8, 0.8, 0, Math.PI * 2); ctx.fill();
-      ctx.restore();
-    });
-
-    /* tiny smile */
-    ctx.strokeStyle = "rgba(20, 44, 28, 0.8)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.arc(0, 7, 2.5, 0.15 * Math.PI, 0.85 * Math.PI);
-    ctx.stroke();
-
-    ctx.restore();
-
-    ctx.globalAlpha = 0.8;
-    hudBox(fx - 17, fy - 30, 34, 44, "#3c9a6e");
-    hudChip(fx - 17, fy - 47, "alien " + DET.alien.val, "#3c9a6e");
-  }
 
   /* What the detector sees in the scene: the star system pinned top-left
-     (dark theme), the alien in the bottom-right corner, and the drifting
+     (dark theme), the kite/duck/bug/saucer/coffee crew, and the drifting
      astronaut. */
   function drawCvOverlay(cx, cy) {
     ctx.save();
@@ -937,15 +884,13 @@
     ctx.textBaseline = "middle";
     ctx.textAlign = "left";
 
-    if (lightOn()) {
-      ctx.save();
-      drawKite();
-      drawDuck();
-      drawBug();
-      drawUfoAbduction();
-      drawCoffee();
-      ctx.restore();
-    }
+    ctx.save();
+    drawKite();
+    drawDuck();
+    drawBug();
+    drawUfoAbduction();
+    drawCoffee();
+    ctx.restore();
 
     if (!lightOn()) {
 
@@ -963,10 +908,6 @@
     hudChip(cx - 34, cy - 51, "star " + DET.star.val, "#ffb45c");
 
     }
-
-    /* the alien rides in the corner where the black holes used to be,
-       in both themes */
-    drawAlien();
 
     /* astronaut on a slow lissajous drift */
     var ax = w * (0.5 + 0.34 * Math.sin(t * 0.0016));
@@ -1038,8 +979,7 @@
       ctx.fill();
     });
 
-    /* light mode retires the star system early; the alien replaces the
-       retired black holes in both themes via the CV overlay */
+    /* light mode retires the star system's CV treatment here */
     if (light) { drawCvOverlay(cx, cy); return; }
 
     /* supernova shockwave */
