@@ -617,7 +617,7 @@
   /* Kite tethered to the true top-left corner of the viewport. */
   function drawKite() {
     var kx = w * 0.13 + Math.sin(t * 0.0011) * 16;
-    var ky = h * 0.105 + Math.sin(t * 0.0016 + 1.1) * 10;
+    var ky = h * 0.165 + Math.sin(t * 0.0016 + 1.1) * 10;
     var krot = 0.18 + Math.sin(t * 0.0013) * 0.12;
 
     /* slack tether with wind-dependent sag */
