@@ -214,16 +214,14 @@
 /* ---------------------------------------------------------------------
    CV-HUD cursor: object-detection framing for the pointer.
    A bounding box tracks the cursor; hovering project cards / modules
-   locks the box onto the element like a tracked object. Dark theme only,
-   fine pointers only, disabled for prefers-reduced-motion.
+   locks the box onto the element like a tracked object. Runs in both
+   themes (palette per theme), fine pointers only, disabled under
+   prefers-reduced-motion.
    --------------------------------------------------------------------- */
 (function () {
   if (!window.matchMedia) return;
   if (!window.matchMedia("(pointer: fine)").matches) return;
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-  var root = document.documentElement;
-  function darkOn() { return root.getAttribute("data-theme") !== "light"; }
 
   var box = document.createElement("div");
   var dot = document.createElement("div");
@@ -260,7 +258,6 @@
 
   function frame() {
     raf = 0;
-    if (!darkOn()) return;
     var hit = classify(document.elementFromPoint(cx, cy) || document.body);
     var bx, by, w, h;
     if (hit.locked) {
@@ -286,18 +283,13 @@
   function show() {
     if (!everMoved) {
       everMoved = true;
-      if (darkOn()) {
-        document.body.classList.add("cv-hud-on");
-        els.forEach(function (el) { el.classList.add("is-visible"); });
-      }
+      els.forEach(function (el) { el.classList.add("is-visible"); });
     }
   }
 
   function sync() {
-    var on = darkOn() && everMoved;
-    document.body.classList.toggle("cv-hud-on", darkOn());
-    els.forEach(function (el) { el.classList.toggle("is-visible", on); });
-    if (on && !raf) raf = requestAnimationFrame(frame);
+    els.forEach(function (el) { el.classList.toggle("is-visible", everMoved); });
+    if (everMoved && !raf) raf = requestAnimationFrame(frame);
   }
 
   window.addEventListener("pointermove", function (e) {
@@ -312,9 +304,6 @@
     document.body.classList.remove("cv-hud-on");
   });
 
-  if (window.MutationObserver) {
-    new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
-  }
 })();
 
 /* ---------------------------------------------------------------------
@@ -325,13 +314,14 @@
    with its two planets and moons pinned to the top-left, the binary
    black holes in the bottom-right corner, and the drifting astronaut.
    Nothing follows the cursor except the synapse field itself.
-   Dark theme only; static single frame under reduced motion.
+   Runs in both themes with a per-theme palette; static single frame
+   under reduced motion.
    --------------------------------------------------------------------- */
 (function () {
   if (!window.matchMedia) return;
 
   var root = document.documentElement;
-  function darkOn() { return root.getAttribute("data-theme") !== "light"; }
+  function lightOn() { return root.getAttribute("data-theme") === "light"; }
 
   var canvas = document.createElement("canvas");
   canvas.className = "space-canvas";
@@ -568,12 +558,27 @@
 
   /* Drifting astronaut: suit, backpack, visor and a slack tether. */
   function drawAstronaut(x, y, rot, alpha) {
+    var light = lightOn();
+    var suit = light ? {
+      /* dark-suit variant so the sprite reads on the pale background */
+      tether: "rgba(14, 22, 35, 0.25)",
+      legs: "#405268", boots: "#3d4e62",
+      arms: "#4d5f75", gloves: "#39495d",
+      pack: "#5a6b7d", torso: "#586b81",
+      helmet: "#6b7d91"
+    } : {
+      tether: "rgba(255,255,255,0.16)",
+      legs: "#dde5ef", boots: "#8fa0b4",
+      arms: "#e6ecf5", gloves: "#cbd6e4",
+      pack: "#9fb0c4", torso: "#e9eff7",
+      helmet: "#f2f6fb"
+    };
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(rot);
     ctx.globalAlpha = alpha;
 
-    ctx.strokeStyle = "rgba(255,255,255,0.16)";
+    ctx.strokeStyle = suit.tether;
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(-8, 3);
@@ -582,30 +587,30 @@
 
     /* legs + boots */
     ctx.lineCap = "round";
-    ctx.strokeStyle = "#dde5ef";
+    ctx.strokeStyle = suit.legs;
     ctx.lineWidth = 5;
     ctx.beginPath(); ctx.moveTo(-5, 3); ctx.lineTo(-15, 8); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(-5, -3); ctx.lineTo(-15, -7); ctx.stroke();
-    ctx.fillStyle = "#8fa0b4";
+    ctx.fillStyle = suit.boots;
     ctx.beginPath(); ctx.arc(-16.5, 9, 2.8, 0, Math.PI * 2); ctx.fill();
     ctx.beginPath(); ctx.arc(-16.5, -8, 2.8, 0, Math.PI * 2); ctx.fill();
 
     /* arms + gloves */
-    ctx.strokeStyle = "#e6ecf5";
+    ctx.strokeStyle = suit.arms;
     ctx.lineWidth = 4.4;
     ctx.beginPath(); ctx.moveTo(3, -5); ctx.lineTo(9, -13); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(3, 5); ctx.lineTo(8, 13); ctx.stroke();
-    ctx.fillStyle = "#cbd6e4";
+    ctx.fillStyle = suit.gloves;
     ctx.beginPath(); ctx.arc(10, -14.5, 2.6, 0, Math.PI * 2); ctx.fill();
     ctx.beginPath(); ctx.arc(9, 14.5, 2.6, 0, Math.PI * 2); ctx.fill();
 
     /* life-support backpack */
-    ctx.fillStyle = "#9fb0c4";
+    ctx.fillStyle = suit.pack;
     rr(-7, 6, 15, 5.5, 2.5);
     ctx.fill();
 
     /* torso */
-    ctx.fillStyle = "#e9eff7";
+    ctx.fillStyle = suit.torso;
     rr(-6, -7.5, 16, 15, 6.5);
     ctx.fill();
 
@@ -619,7 +624,7 @@
     ctx.beginPath(); ctx.arc(4.6, 2.2, 1.2, 0, Math.PI * 2); ctx.fill();
 
     /* helmet + visor */
-    ctx.fillStyle = "#f2f6fb";
+    ctx.fillStyle = suit.helmet;
     ctx.beginPath(); ctx.arc(13, 0, 8.2, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#04070e";
     ctx.beginPath(); ctx.arc(14.4, 0, 5.9, 0, Math.PI * 2); ctx.fill();
@@ -670,6 +675,7 @@
   }
 
   function render() {
+    var light = lightOn();   /* palette read per frame so theme toggles repaint */
     ctx.clearRect(0, 0, w, h);
     var cx = w * 0.09, cy = h * 0.18;   /* star system hugging the top-left */
     var b1 = binaryPos(0), b2 = binaryPos(Math.PI);
@@ -691,7 +697,10 @@
         var ndx = neural[a].x - neural[b].x, ndy = neural[a].y - neural[b].y;
         var nl = Math.sqrt(ndx * ndx + ndy * ndy);
         if (nl < 130) {
-          ctx.strokeStyle = "rgba(0, 242, 254, " + ((1 - nl / 130) * 0.22).toFixed(3) + ")";
+          var la = (1 - nl / 130) * 0.22;
+          ctx.strokeStyle = light
+            ? "rgba(20, 110, 170, " + (la * 0.85).toFixed(3) + ")"
+            : "rgba(0, 242, 254, " + la.toFixed(3) + ")";
           ctx.lineWidth = 1;
           ctx.beginPath();
           ctx.moveTo(neural[a].x, neural[a].y);
@@ -705,9 +714,10 @@
     neural.forEach(function (n) {
       ctx.beginPath();
       ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
-      ctx.fillStyle = n.color;
+      var nc = light ? (n.color === "#00f2fe" ? "#0aa2c0" : "#7a22ff") : n.color;
+      ctx.fillStyle = nc;
       ctx.shadowBlur = 8;
-      ctx.shadowColor = n.color;
+      ctx.shadowColor = nc;
       ctx.fill();
       ctx.shadowBlur = 0;
     });
@@ -717,7 +727,9 @@
       var liveOpacity = Math.max(0.05, Math.min(1, s.opacity + Math.sin(s.twinklePhase) * 0.2));
       ctx.beginPath();
       ctx.arc(s.x * w, s.y * h, s.radius, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(255, 255, 255, " + liveOpacity + ")";
+      ctx.fillStyle = light
+        ? "rgba(30, 46, 66, " + (liveOpacity * 0.45).toFixed(3) + ")"
+        : "rgba(255, 255, 255, " + liveOpacity + ")";
       ctx.fill();
     });
 
@@ -739,7 +751,7 @@
     for (var k = 0; k < 4; k++) {
       ctx.beginPath();
       ctx.ellipse(0, 0, 30 + k * 5, 22 + k * 3, (k * Math.PI) / 4, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(255, 0, 127, 0.02)";
+      ctx.strokeStyle = light ? "rgba(255, 0, 127, 0.05)" : "rgba(255, 0, 127, 0.02)";
       ctx.lineWidth = 4;
       ctx.stroke();
     }
@@ -748,7 +760,7 @@
     /* pulsing sun core */
     ctx.beginPath();
     ctx.arc(cx, cy, 20, 0, Math.PI * 2);
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = light ? "#00c0e8" : "#ffffff";
     ctx.shadowBlur = sunPulse;
     ctx.shadowColor = "#00d2ff";
     ctx.fill();
@@ -758,7 +770,7 @@
     planets.forEach(function (p) {
       ctx.beginPath();
       ctx.arc(cx, cy, p.radius, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.02)";
+      ctx.strokeStyle = light ? "rgba(20, 34, 52, 0.10)" : "rgba(255, 255, 255, 0.02)";
       ctx.lineWidth = 1;
       ctx.stroke();
       var px = cx + Math.cos(p.angle) * p.radius;
@@ -773,7 +785,7 @@
       p.moons.forEach(function (m) {
         ctx.beginPath();
         ctx.arc(px + Math.cos(m.angle) * m.orbitRadius, py + Math.sin(m.angle) * m.orbitRadius, m.size, 0, Math.PI * 2);
-        ctx.fillStyle = m.color;
+        ctx.fillStyle = (light && m.color === "#ffffff") ? "#2a3c52" : m.color;
         ctx.fill();
       });
     });
@@ -791,12 +803,7 @@
   window.addEventListener("resize", resize);
 
   function sync() {
-    var on = darkOn();
-    canvas.style.display = on ? "" : "none";
-    if (!on) {
-      if (raf) { cancelAnimationFrame(raf); raf = 0; }
-      return;
-    }
+    canvas.style.display = "";
     if (reduced) { if (raf) { cancelAnimationFrame(raf); raf = 0; } render(); return; }
     if (!raf) raf = requestAnimationFrame(loop);
   }
