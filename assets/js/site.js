@@ -879,6 +879,7 @@
   }
 
   function render() {
+    var light = lightOn();   /* palette read per frame so theme toggles repaint */
     ctx.clearRect(0, 0, w, h);
 
     /* nebula dust */
