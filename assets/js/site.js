@@ -425,7 +425,11 @@
     star:  { base: 1.0,  val: "1.00" },
     astro: { base: 0.96, val: "0.96" },
     kite:  { base: 0.94, val: "0.94" },
-    alien: { base: 0.93, val: "0.93" }
+    alien: { base: 0.93, val: "0.93" },
+    duck:  { base: 0.99, val: "0.99" },
+    bug:   { base: 0.97, val: "0.97" },
+    abduct:{ base: 0.97, val: "0.97" },
+    coffee:{ base: 0.98, val: "0.98" }
   };
   var WIND = { base: 3.2, val: "3.2" };
   var DET_BASE = [0.97, 0.94];                  /* per-planet confidence */
@@ -612,7 +616,8 @@
   /* ---------------- Cast additions ----------------
      The kite owns the top-left corner in light theme, standing in for
      the star system; the alien replaced the binary black holes in
-     both themes. */
+     both themes. The duck, the bug, the abduction and the coffee are
+     light-theme comedians. */
 
   /* Kite tethered to the true top-left corner of the viewport. */
   function drawKite() {
@@ -663,6 +668,209 @@
     ctx.globalAlpha = 0.8;
     hudBox(kx - 18, ky - 24, 36, 52, "#7a22ff");
     hudChip(kx - 18, ky - 41, "kite " + DET.kite.val + " · wind " + WIND.val + " m/s", "#7a22ff");
+  }
+
+  /* Rubber duck: floats on the current, judging your loops until you
+     explain them to it. */
+  function drawDuck() {
+    var dx = w * 0.40 + Math.sin(t * 0.0012) * 14;
+    var dy = h * 0.30 + Math.sin(t * 0.0021 + 0.4) * 8;
+    ctx.save();
+    ctx.translate(dx, dy);
+    ctx.rotate(Math.sin(t * 0.0016) * 0.07);
+
+    /* body */
+    ctx.fillStyle = "#f6c94a";
+    ctx.beginPath();
+    ctx.ellipse(0, 2, 14, 9, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    /* tail flick */
+    ctx.beginPath();
+    ctx.moveTo(-12, -1);
+    ctx.quadraticCurveTo(-18, -3, -15, -7);
+    ctx.quadraticCurveTo(-11, -5, -9, -2);
+    ctx.closePath();
+    ctx.fill();
+
+    /* head, beak, eye */
+    ctx.beginPath(); ctx.arc(7, -8, 6.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#e8842c";
+    ctx.beginPath();
+    ctx.moveTo(12, -8); ctx.lineTo(17.5, -7); ctx.lineTo(12, -5.6);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#20242b";
+    ctx.beginPath(); ctx.arc(8.5, -9.5, 1.1, 0, Math.PI * 2); ctx.fill();
+
+    /* wing line */
+    ctx.strokeStyle = "rgba(140, 100, 20, 0.55)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.arc(-3, 2, 6, 0.3, 1.9);
+    ctx.stroke();
+
+    ctx.restore();
+
+    ctx.globalAlpha = 0.8;
+    hudBox(dx - 18, dy - 16, 39, 27, "#d19b26");
+    hudChip(dx - 18, dy - 33, "duck " + DET.duck.val + " · explain your code", "#d19b26");
+  }
+
+  /* A beetle crawling slowly along the bottom edge: the bug that gets
+     detected before it becomes a ticket. */
+  function drawBug() {
+    var bx = (t * 0.9 % (w + 140)) - 70;
+    var by = h - 22;
+    if (bx < -40 || bx > w + 40) return;
+    var walk = Math.sin(t * 0.18) * 2;
+
+    ctx.save();
+    ctx.translate(bx, by);
+
+    /* six stepping legs */
+    ctx.strokeStyle = "rgba(14, 22, 35, 0.8)";
+    ctx.lineWidth = 1.2;
+    ctx.lineCap = "round";
+    for (var l = 0; l < 3; l++) {
+      var lx = -6 + l * 6;
+      ctx.beginPath(); ctx.moveTo(lx, 3);  ctx.lineTo(lx - 4,  9 + ((l % 2) ?  walk : -walk) * 0.4); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(lx, -3); ctx.lineTo(lx - 4, -9 - ((l % 2) ? -walk :  walk) * 0.4); ctx.stroke();
+    }
+
+    /* antennae */
+    ctx.beginPath();
+    ctx.moveTo(9, -2); ctx.lineTo(15, -6 + walk);
+    ctx.moveTo(9, 2);  ctx.lineTo(15,  6 - walk);
+    ctx.stroke();
+
+    /* shell with split line, then head */
+    ctx.fillStyle = "#25384e";
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 10, 6.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(-10, 0); ctx.lineTo(10, 0); ctx.stroke();
+    ctx.fillStyle = "#182636";
+    ctx.beginPath(); ctx.arc(10, 0, 3.5, 0, Math.PI * 2); ctx.fill();
+
+    ctx.restore();
+
+    ctx.globalAlpha = 0.8;
+    hudBox(bx - 14, by - 13, 38, 26, "#ff007f");
+    hudChip(bx - 14, by - 30, "bug " + DET.bug.val + " · not a feature", "#ff007f");
+  }
+
+  /* Saucer with a tractor beam; the cow is half-way up and mildly
+     upset about it. */
+  function drawUfoAbduction() {
+    var ux = w * 0.80 + Math.sin(t * 0.0009) * 18;
+    var uy = h * 0.20 + Math.sin(t * 0.0015 + 0.9) * 7;
+
+    /* beam */
+    var bTop = uy + 10, bBot = uy + h * 0.34, spread = 46;
+    var g = ctx.createLinearGradient(0, bTop, 0, bBot);
+    g.addColorStop(0, "rgba(94, 214, 162, 0.35)");
+    g.addColorStop(1, "rgba(94, 214, 162, 0.02)");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(ux - 10, bTop); ctx.lineTo(ux - spread, bBot);
+    ctx.lineTo(ux + spread, bBot); ctx.lineTo(ux + 10, bTop);
+    ctx.closePath();
+    ctx.fill();
+
+    /* the cow */
+    var cwob = Math.sin(t * 0.0035) * 4;
+    ctx.save();
+    ctx.translate(ux + cwob * 0.4, bBot - (bBot - bTop) * 0.55 + cwob);
+    ctx.rotate(0.18 + Math.sin(t * 0.0022) * 0.12);
+    ctx.strokeStyle = "#e8e3da";
+    ctx.lineWidth = 3;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(-6, 5); ctx.lineTo(-10, 12); ctx.moveTo(-2, 6); ctx.lineTo(-3, 14);
+    ctx.moveTo(3, 6);  ctx.lineTo(8, 13);   ctx.moveTo(6, 5);  ctx.lineTo(13, 9);
+    ctx.stroke();
+    ctx.fillStyle = "#f2efe8";
+    rr(-10, -6, 20, 12, 5); ctx.fill();
+    ctx.fillStyle = "#2b2f36";
+    ctx.beginPath(); ctx.ellipse(3, -2, 5, 3.4, 0.4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(-6, 2, 3.6, 2.6, -0.3, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#f2efe8";
+    ctx.beginPath(); ctx.ellipse(-12, -7, 5, 4, 0.6, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#2b2f36";
+    ctx.beginPath(); ctx.arc(-9.5, -8.5, 1, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "#e8e3da"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(10, -4); ctx.quadraticCurveTo(15, -8 + cwob, 13, -13); ctx.stroke();
+    ctx.restore();
+
+    /* saucer: dome, hull, chasing rim lights */
+    ctx.fillStyle = "rgba(0, 210, 255, 0.55)";
+    ctx.beginPath();
+    ctx.ellipse(ux, uy, 12, 9, 0, Math.PI, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#7f8ea0";
+    ctx.beginPath();
+    ctx.ellipse(ux, uy + 6, 32, 8, 0, 0, Math.PI * 2);
+    ctx.fill();
+    for (var li = -3; li <= 3; li++) {
+      ctx.fillStyle = "rgba(255, 214, 92, " + (0.4 + 0.5 * Math.abs(Math.sin(t * 0.006 + li))).toFixed(2) + ")";
+      ctx.beginPath(); ctx.arc(ux + li * 8, uy + 8, 1.4, 0, Math.PI * 2); ctx.fill();
+    }
+
+    ctx.globalAlpha = 0.8;
+    hudBox(ux - 34, uy - 14, 68, 22, "#2f9e8f");
+    hudChip(ux - 34, uy - 31, "abduct " + DET.abduct.val, "#2f9e8f");
+  }
+
+  /* Paper coffee cup with live steam: segfault fuel. */
+  function drawCoffee() {
+    var cx2 = w * 0.27 + Math.sin(t * 0.001) * 12;
+    var cy2 = h * 0.60 + Math.sin(t * 0.0016 + 2) * 9;
+
+    /* steam wisps */
+    ctx.strokeStyle = "rgba(88, 105, 122, 0.4)";
+    ctx.lineWidth = 1.2;
+    for (var st = 0; st < 2; st++) {
+      var sx2 = cx2 - 4 + st * 8, sway = Math.sin(t * 0.003 + st * 1.7) * 5;
+      ctx.beginPath();
+      ctx.moveTo(sx2, cy2 - 22);
+      ctx.bezierCurveTo(sx2 + sway, cy2 - 32, sx2 - sway, cy2 - 42, sx2 + sway, cy2 - 54);
+      ctx.stroke();
+    }
+
+    ctx.save();
+    ctx.translate(cx2, cy2);
+    ctx.rotate(Math.sin(t * 0.0014) * 0.04);
+
+    /* tapered cup */
+    ctx.fillStyle = "#f4f1ec";
+    ctx.strokeStyle = "rgba(20, 34, 52, 0.45)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(-9, -20); ctx.lineTo(9, -20); ctx.lineTo(6, 8); ctx.lineTo(-6, 8);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+
+    /* sleeve */
+    ctx.fillStyle = "#a2603a";
+    ctx.beginPath();
+    ctx.moveTo(-7.6, -10); ctx.lineTo(7.6, -10); ctx.lineTo(6.4, 2); ctx.lineTo(-6.4, 2);
+    ctx.closePath();
+    ctx.fill();
+
+    /* lid */
+    ctx.fillStyle = "#d8d2c8";
+    rr(-10.5, -24, 21, 5, 2); ctx.fill();
+    ctx.strokeStyle = "rgba(20, 34, 52, 0.45)";
+    ctx.stroke();
+
+    ctx.restore();
+
+    ctx.globalAlpha = 0.8;
+    hudBox(cx2 - 13, cy2 - 26, 26, 36, "#8a5a33");
+    hudChip(cx2 - 13, cy2 - 43, "coffee " + DET.coffee.val + " · segfault fuel", "#8a5a33");
   }
 
   /* Floating alien head parked where the binary black holes used to
@@ -732,6 +940,10 @@
     if (lightOn()) {
       ctx.save();
       drawKite();
+      drawDuck();
+      drawBug();
+      drawUfoAbduction();
+      drawCoffee();
       ctx.restore();
     }
 
