@@ -425,8 +425,12 @@
   var DET = {
     star:  { base: 1.0,  val: "1.00" },
     bh:    { base: 0.99, val: "0.99" },
-    astro: { base: 0.96, val: "0.96" }
+    astro: { base: 0.96, val: "0.96" },
+    kite:  { base: 0.94, val: "0.94" },
+    drone: { base: 0.92, val: "0.92" },
+    radar: { base: 0.90, val: "0.90" }
   };
+  var WIND = { base: 3.2, val: "3.2" };
   var DET_BASE = [0.97, 0.94];                  /* per-planet confidence */
 
   function jitterDets() {
@@ -436,6 +440,7 @@
     planets.forEach(function (p, i) {
       p.c = Math.max(0.4, DET_BASE[i] - Math.random() * 0.045).toFixed(2);
     });
+    WIND.val = Math.max(1.2, WIND.base + rand(-0.8, 0.8)).toFixed(1);
   }
   jitterDets();
 
@@ -644,6 +649,159 @@
     ctx.restore();
   }
 
+  /* ---------------- Light-theme-only extras ----------------
+     The kite, drone and radar belong to the pale day sky; they gate on
+     the light theme, everything else is the curated dark-mode cast. */
+
+  /* Kite tethered to the true top-left corner of the viewport. */
+  function drawKite() {
+    var kx = w * 0.20 + Math.sin(t * 0.0011) * 16;
+    var ky = h * 0.075 + Math.sin(t * 0.0016 + 1.1) * 10;
+    var krot = 0.18 + Math.sin(t * 0.0013) * 0.12;
+
+    /* slack tether with wind-dependent sag */
+    ctx.beginPath();
+    ctx.moveTo(10, 6);
+    ctx.quadraticCurveTo(kx * 0.55, ky + 26 + Math.sin(t * 0.0009) * 8, kx, ky + 16);
+    ctx.strokeStyle = "rgba(20, 34, 52, 0.4)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.save();
+    ctx.translate(kx, ky);
+    ctx.rotate(krot);
+
+    /* tail first, under the body */
+    ctx.beginPath();
+    ctx.moveTo(0, 22);
+    ctx.quadraticCurveTo(4 + Math.sin(t * 0.002) * 3, 38, -2 + Math.sin(t * 0.002 + 1.5) * 4, 56);
+    ctx.strokeStyle = "rgba(20, 34, 52, 0.45)";
+    ctx.stroke();
+    var bows = [3, 36, 1, 46, -2, 55];
+    for (var b = 0; b < 6; b += 2) {
+      ctx.beginPath();
+      ctx.arc(bows[b], bows[b + 1], 2.2, 0, Math.PI * 2);
+      ctx.fillStyle = (b % 4 === 0) ? "rgba(255, 0, 127, 0.75)" : "rgba(0, 210, 255, 0.75)";
+      ctx.fill();
+    }
+
+    /* diamond kite: dark sail over white spars */
+    ctx.beginPath();
+    ctx.moveTo(0, -16); ctx.lineTo(11, 0); ctx.lineTo(0, 22); ctx.lineTo(-11, 0);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(28, 64, 92, 0.9)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.75)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(0, -16); ctx.lineTo(0, 22);
+    ctx.moveTo(-11, 0); ctx.lineTo(11, 0);
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.globalAlpha = 0.8;
+    hudBox(kx - 18, ky - 24, 36, 52, "#7a22ff");
+    hudChip(kx - 18, ky - 41, "kite " + DET.kite.val + " · wind " + WIND.val + " m/s", "#7a22ff");
+  }
+
+  /* Quad-rotor drone loitering above the binary black holes. */
+  function drawDrone() {
+    var ox = w - 195, oy = h * 0.62;
+    var dx = ox + Math.cos(t * 0.0014) * 26;
+    var dy = oy + Math.sin(t * 0.0019) * 16 + Math.sin(t * 0.0031) * 3;
+    ctx.save();
+    ctx.translate(dx, dy);
+    ctx.rotate(Math.cos(t * 0.0014) * 0.12);
+
+    /* rotor blur arcs at the four ends of the X frame */
+    var ends = [-10, -8.5, 10, -8.5, -10, 8.5, 10, 8.5];
+    for (var e = 0; e < 8; e += 2) {
+      var phase = t * 0.35 + e;
+      ctx.beginPath();
+      ctx.ellipse(ends[e], ends[e + 1], 8, 1.5, 0, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(14, 22, 35, " + (0.15 + 0.1 * Math.abs(Math.sin(phase))).toFixed(3) + ")";
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+    }
+
+    /* X arms */
+    ctx.strokeStyle = "#33455c";
+    ctx.lineWidth = 3;
+    ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(-9, -7); ctx.lineTo(9, 7); ctx.moveTo(-9, 7); ctx.lineTo(9, -7); ctx.stroke();
+
+    /* hull, camera dome, blinking nav light */
+    ctx.fillStyle = "#22344a";
+    rr(-4, -4, 8, 8, 3); ctx.fill();
+    ctx.fillStyle = "rgba(0, 210, 255, 0.85)";
+    ctx.beginPath(); ctx.arc(0, 0.5, 2.2, 0, Math.PI * 2); ctx.fill();
+    if (t % 42 < 5) {
+      ctx.fillStyle = "#ff007f";
+      ctx.beginPath(); ctx.arc(0, -7, 1.5, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+
+    ctx.globalAlpha = 0.8;
+    hudBox(dx - 26, dy - 22, 52, 44, "#0098a8");
+    hudChip(dx - 26, dy - 39, "drone " + DET.drone.val, "#0098a8");
+  }
+
+  /* Radar scope anchored to the bottom-left corner; two persistent
+     contacts afterglow behind the sweep, and the cursor reads as a
+     live contact while it stays inside the radius. */
+  var radarBlips = [ { ang: 2.5, dist: 0.62 }, { ang: 1.4, dist: 0.85 } ];
+
+  function drawRadar() {
+    var ox = 26, oy = h - 30, R = 150;
+    var a = t * 0.009;
+
+    /* range rings */
+    ctx.strokeStyle = "rgba(20, 110, 170, 0.3)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.arc(ox, oy, R * 0.45, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(ox, oy, R, 0, Math.PI * 2); ctx.stroke();
+
+    /* sweep wedge + leading edge */
+    ctx.beginPath();
+    ctx.moveTo(ox, oy);
+    ctx.arc(ox, oy, R, a - 0.8, a);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(0, 180, 220, 0.06)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(0, 180, 220, 0.5)";
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(ox, oy);
+    ctx.lineTo(ox + Math.cos(a) * R, oy + Math.sin(a) * R);
+    ctx.stroke();
+
+    /* contacts: afterglow decays as the sweep passes their angle */
+    function pingAt(x, y, hot) {
+      var ang = Math.atan2(y - oy, x - ox);
+      var dA = (a - ang + Math.PI * 2) % (Math.PI * 2);
+      var glow = Math.max(0, 1 - dA / 2.6);
+      var strong = hot ? Math.max(glow, 0.30) : glow;
+      if (strong <= 0.02) return;
+      ctx.beginPath();
+      ctx.arc(x, y, hot ? 4 : 3, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(214, 0, 110, " + (strong * (hot ? 0.35 : 0.25)).toFixed(3) + ")";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(214, 0, 110, " + strong.toFixed(3) + ")";
+      ctx.lineWidth = 1.3;
+      ctx.stroke();
+    }
+    radarBlips.forEach(function (bp) {
+      pingAt(ox + Math.cos(bp.ang) * R * bp.dist, oy + Math.sin(bp.ang) * R * bp.dist, false);
+    });
+    var mdx = mouse.x - ox, mdy = mouse.y - oy;
+    var mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+    if (mdist < R && mouse.x > -100) pingAt(mouse.x, mouse.y, true);
+
+    ctx.globalAlpha = 0.8;
+    hudBox(ox - 6, oy - R - 6, R + 12, R + 12, "#b46a1f");
+    hudChip(ox - 6, oy - R - 23, "radar " + DET.radar.val + " · 2 ctc", "#b46a1f");
+  }
+
   /* What the detector sees in the scene: the star system pinned top-left,
      the binary black holes bottom-right, and the drifting astronaut. */
   function drawCvOverlay(cx, cy) {
@@ -651,6 +809,12 @@
     ctx.globalAlpha = 0.88;
     ctx.textBaseline = "middle";
     ctx.textAlign = "left";
+
+    if (lightOn()) {
+      ctx.save();
+      drawKite(); drawDrone(); drawRadar();
+      ctx.restore();
+    }
 
     /* planets */
     planets.forEach(function (p) {
