@@ -3345,68 +3345,12 @@ html { color-scheme: light; }
   box-shadow: 0 0 8px rgba(0, 210, 255, 0.5);
 }
 
-/* Starfield: two parallax layers of drifting, twinkling stars. */
-html[data-theme="dark"]::before {
-  content: "";
-  position: fixed;
-  inset: -60%;
-  z-index: -4;
-  pointer-events: none;
-  background-image:
-    radial-gradient(1.4px 1.4px at 62px 90px, rgba(255, 255, 255, 0.55), transparent 2px),
-    radial-gradient(1px 1px at 190px 40px, rgba(255, 255, 255, 0.4), transparent 2px),
-    radial-gradient(1.8px 1.8px at 276px 150px, rgba(125, 232, 255, 0.5), transparent 2.5px),
-    radial-gradient(1.2px 1.2px at 120px 250px, rgba(255, 255, 255, 0.35), transparent 2px),
-    radial-gradient(1px 1px at 330px 200px, rgba(255, 255, 255, 0.45), transparent 2px),
-    radial-gradient(1.6px 1.6px at 40px 330px, rgba(255, 255, 255, 0.5), transparent 2px),
-    radial-gradient(1px 1px at 250px 320px, rgba(125, 232, 255, 0.4), transparent 2px),
-    radial-gradient(1.2px 1.2px at 360px 90px, rgba(255, 255, 255, 0.3), transparent 2px),
-    radial-gradient(1px 1px at 170px 170px, rgba(255, 255, 255, 0.35), transparent 2px),
-    radial-gradient(1.4px 1.4px at 320px 390px, rgba(255, 255, 255, 0.42), transparent 2px);
-  background-size: 420px 420px;
-  background-repeat: repeat;
-  opacity: 0.95;
-  animation: star-drift-far 300s linear infinite, star-twinkle 9s ease-in-out infinite alternate;
-}
-
-html[data-theme="dark"]::after {
-  content: "";
-  position: fixed;
-  inset: -60%;
-  z-index: -3;
-  pointer-events: none;
-  background-image:
-    radial-gradient(1px 1px at 22px 34px, rgba(255, 255, 255, 0.85), transparent 2px),
-    radial-gradient(1.3px 1.3px at 148px 88px, rgba(255, 255, 255, 0.7), transparent 2px),
-    radial-gradient(1.6px 1.6px at 84px 176px, rgba(125, 232, 255, 0.75), transparent 2.2px),
-    radial-gradient(1px 1px at 196px 140px, rgba(255, 255, 255, 0.8), transparent 2px),
-    radial-gradient(1.2px 1.2px at 58px 110px, rgba(255, 255, 255, 0.6), transparent 2px),
-    radial-gradient(1.4px 1.4px at 232px 52px, rgba(255, 255, 255, 0.72), transparent 2px),
-    radial-gradient(1px 1px at 112px 224px, rgba(255, 255, 255, 0.78), transparent 2px),
-    radial-gradient(1.7px 1.7px at 250px 190px, rgba(255, 255, 255, 0.6), transparent 2.4px),
-    radial-gradient(1.1px 1.1px at 40px 250px, rgba(125, 232, 255, 0.55), transparent 2px),
-    radial-gradient(1px 1px at 180px 40px, rgba(255, 255, 255, 0.65), transparent 2px),
-    radial-gradient(1.3px 1.3px at 260px 260px, rgba(255, 255, 255, 0.55), transparent 2px),
-    radial-gradient(1px 1px at 130px 140px, rgba(255, 255, 255, 0.7), transparent 2px);
-  background-size: 280px 280px;
-  background-repeat: repeat;
-  opacity: 0.95;
-  animation: star-drift 110s linear infinite, star-twinkle 6s ease-in-out infinite alternate;
-}
-@keyframes star-drift {
-  from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(-140px, -140px, 0); }
-}
-@keyframes star-drift-far {
-  from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(-210px, 210px, 0); }
-}
-@keyframes star-twinkle {
-  from { opacity: 0.75; }
-  to   { opacity: 1; }
-}
+/* Background: the canvas scene in site.js paints the whole backdrop —
+   the neural synapse field plus the kept floating items (star system
+   top-left, binary black holes, astronaut, scout ship). The old CSS
+   starfield layers were retired when the neural background moved in.
+   Dark theme only. */
 @media (prefers-reduced-motion: reduce) {
-  html[data-theme="dark"]::after,
   [data-theme="dark"] .type-target { animation: none; }
 }
 
@@ -3422,7 +3366,9 @@ html[data-theme="dark"]::after {
   will-change: transform;
 }
 [data-theme="dark"] .cv-box.is-visible { opacity: 1; }
+[data-theme="dark"] .cv-box { background: rgba(0, 210, 255, 0.1); }
 [data-theme="dark"] .cv-box.is-locked { background: rgba(0, 210, 255, 0.05); }
+[data-theme="dark"] .cv-box.is-hot { background: rgba(255, 0, 127, 0.12); }
 [data-theme="dark"] .cv-box::before {
   content: "";
   position: absolute;

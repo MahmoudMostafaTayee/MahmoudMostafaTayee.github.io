@@ -318,14 +318,13 @@
 })();
 
 /* ---------------------------------------------------------------------
-   Space scene: canvas-based cosmos behind the whole site (port of the
-   interstellar background — twinkling drifting stars, gravity comets,
-   pulsing sun, orbiting planets with moons, asteroid belt, binary
-   black holes, supernova shockwave, corona) read through a
-   computer-vision overlay: detector brackets and confidence chips on
-   every celestial object, speed readouts on the comets and on the
-   scout ship, a drifting astronaut, and the mouse spaceship from the
-   helper portfolio trailing the cursor while the DOM CV box frames it.
+   Background scene: a neural-network synapse field behind the whole
+   site (glowing nodes and links, cursor-reactive, ported from the
+   helper portfolio's neural canvas). The kept floating items are drawn
+   over it, still read through the computer-vision overlay: the star
+   with its two planets and moons pinned to the top-left, the binary
+   black holes in the bottom-right corner, and the drifting astronaut.
+   Nothing follows the cursor except the synapse field itself.
    Dark theme only; static single frame under reduced motion.
    --------------------------------------------------------------------- */
 (function () {
@@ -352,11 +351,7 @@
     canvas.style.width = w + "px";
     canvas.style.height = h + "px";
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    if (!ship.seeded) {
-      ship.seeded = true;
-      ship.x = ship.tx = w * 0.2;
-      ship.y = ship.ty = h * 0.5;
-    }
+    initNeural();
     if (!raf) { render(false); }
   }
 
@@ -375,34 +370,36 @@
     });
   }
 
-  /* 2. Gravity-slingshot comets */
-  var comets = [
-    { x: rand(0, 0.3), y: -0.05, vx: rand(3, 5), vy: rand(2, 4) },
-    { x: rand(0, 0.3), y: -0.05, vx: rand(3, 5), vy: rand(1.5, 3.5) }
-  ];
+  /* 2. Neural synapse field (port of the helper portfolio's neural
+     canvas): drifting glowing nodes that link up when close and
+     scatter from the cursor. */
+  var neural = [];
+  var mouse = { x: -9999, y: -9999, radius: 150 };
 
-  /* 3. Planets with sub-moons */
-  var planets = [
-    { radius: 95,  speed: 0.007,  angle: Math.random() * 10, size: 4, color: "#00d2ff",  glow: "rgba(0, 210, 255, 0.4)",   moons: [] },
-    { radius: 145, speed: 0.004,  angle: Math.random() * 10, size: 6, color: "#ff007f",  glow: "rgba(255, 0, 127, 0.4)",   moons: [{ orbitRadius: 12, speed: 0.04, angle: 0, size: 1.5, color: "#ffffff" }] },
-    { radius: 215, speed: 0.0025, angle: Math.random() * 10, size: 8, color: "#7a22ff",  glow: "rgba(122, 34, 255, 0.4)",  moons: [
-      { orbitRadius: 15, speed: 0.03,  angle: 0,        size: 2,   color: "#a366ff" },
-      { orbitRadius: 22, speed: -0.02, angle: Math.PI,  size: 1.2, color: "#ffffff" }
-    ] },
-    { radius: 280, speed: 0.0018, angle: Math.random() * 10, size: 5, color: "#00ff41",  glow: "rgba(0, 255, 65, 0.4)",    moons: [] }
-  ];
-
-  /* 4. Asteroid belt */
-  var asteroids = [];
-  for (var a = 0; a < 80; a++) {
-    asteroids.push({
-      radius: Math.random() * 40 + 172,
-      speed: Math.random() * 0.001 + 0.0006,
-      angle: Math.random() * Math.PI * 2,
-      size: Math.random() * 0.9 + 0.3,
-      opacity: Math.random() * 0.4 + 0.1
-    });
+  function initNeural() {
+    neural = [];
+    var count = Math.min(80, Math.max(35, Math.floor((w * h) / 18000)));
+    for (var n = 0; n < count; n++) {
+      neural.push({
+        x: rand(0, w),
+        y: rand(0, h),
+        vx: rand(-0.4, 0.4),
+        vy: rand(-0.4, 0.4),
+        radius: rand(1, 3),
+        color: Math.random() > 0.3 ? "#00f2fe" : "#9d4edd"
+      });
+    }
   }
+
+  /* 3. The star and its planets, pinned to the top-left of the screen.
+     Orbit radii scaled down so the system sits inside the corner. */
+  var planets = [
+    { radius: 60, speed: 0.004,  angle: Math.random() * 10, size: 6, color: "#ff007f",  glow: "rgba(255, 0, 127, 0.4)",   moons: [{ orbitRadius: 10, speed: 0.04, angle: 0, size: 1.4, color: "#ffffff" }] },
+    { radius: 88, speed: 0.0025, angle: Math.random() * 10, size: 7, color: "#7a22ff",  glow: "rgba(122, 34, 255, 0.4)",  moons: [
+      { orbitRadius: 12, speed: 0.03,  angle: 0,        size: 1.8, color: "#a366ff" },
+      { orbitRadius: 18, speed: -0.02, angle: Math.PI,  size: 1.1, color: "#ffffff" }
+    ] }
+  ];
 
   var nebulae = [
     { x: 0.15, y: 0.25, r: 190, color: "rgba(77, 0, 153, 0.05)" },
@@ -415,13 +412,14 @@
   var coronaAngle = 0;
   var t = 0;
 
-  /* 5. Mouse scout ship (ported from the helper portfolio's mouseShip):
-     inertia-follows the pointer, then swings out to a core orbit. */
-  var ship = { x: 0, y: 0, tx: 0, ty: 0, angle: 0, speed: 0.05, seeded: false, kmh: 0 };
-
+  /* The pointer only drives the neural field reaction. */
   window.addEventListener("pointermove", function (e) {
-    ship.tx = e.clientX;
-    ship.ty = e.clientY;
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  }, { passive: true });
+  window.addEventListener("mouseleave", function () {
+    mouse.x = -9999;
+    mouse.y = -9999;
   }, { passive: true });
 
   /* 6. Detector readouts: confidences re-sampled a few times a second
@@ -429,11 +427,9 @@
   var DET = {
     star:  { base: 1.0,  val: "1.00" },
     bh:    { base: 0.99, val: "0.99" },
-    belt:  { base: 0.87, val: "0.87" },
     astro: { base: 0.96, val: "0.96" }
   };
-  var DET_BASE = [0.97, 0.94, 0.96, 0.93];      /* per-planet confidence */
-  var COMET_BASE = [0.92, 0.88];                /* per-comet confidence */
+  var DET_BASE = [0.97, 0.94];                  /* per-planet confidence */
 
   function jitterDets() {
     for (var key in DET) {
@@ -442,27 +438,12 @@
     planets.forEach(function (p, i) {
       p.c = Math.max(0.4, DET_BASE[i] - Math.random() * 0.045).toFixed(2);
     });
-    comets.forEach(function (c, i) {
-      c.c = Math.max(0.4, COMET_BASE[i] - Math.random() * 0.045).toFixed(2);
-    });
   }
   jitterDets();
 
   function step() {
     t++;
     if (t % 12 === 0) jitterDets();
-
-    /* scout ship: chase the pointer, orbit the core when it has arrived */
-    var sdx = ship.tx - ship.x, sdy = ship.ty - ship.y;
-    var sdist = Math.sqrt(sdx * sdx + sdy * sdy) || 1;
-    if (sdist < 40) {
-      ship.tx = w / 2 + Math.cos(binaryAngle * 0.4) * 340;
-      ship.ty = h / 2 + Math.sin(binaryAngle * 0.4) * 340;
-    }
-    ship.x += sdx * ship.speed;
-    ship.y += sdy * ship.speed;
-    if (sdist > 2) ship.angle = Math.atan2(sdy, sdx);
-    ship.kmh = sdist * ship.speed * 9.4;
 
     binaryAngle += BINARY_SPEED;
     shockRadius += 1.2;
@@ -471,7 +452,21 @@
     sunPulse += 0.15 * sunPulseDir;
     if (sunPulse > 50 || sunPulse < 30) sunPulseDir *= -1;
     coronaAngle += 0.0012;
-    asteroids.forEach(function (ast) { ast.angle += ast.speed; });
+    /* neural synapse nodes: drift, bounce off the edges, scatter from
+       the cursor's 150px influence radius */
+    neural.forEach(function (n) {
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < 0 || n.x > w) n.vx *= -1;
+      if (n.y < 0 || n.y > h) n.vy *= -1;
+      var mdx = mouse.x - n.x, mdy = mouse.y - n.y;
+      var mdist = Math.sqrt(mdx * mdx + mdy * mdy) || 1;
+      if (mdist < mouse.radius) {
+        var force = (mouse.radius - mdist) / mouse.radius;
+        n.x -= (mdx / mdist) * force * 3;
+        n.y -= (mdy / mdist) * force * 3;
+      }
+    });
     planets.forEach(function (p) { p.angle += p.speed; });
     planets.forEach(function (p) { p.moons.forEach(function (m) { m.angle += m.speed; }); });
     stars.forEach(function (s) {
@@ -490,24 +485,11 @@
         }
       });
     });
-    comets.forEach(function (c) {
-      var dx = w / 2 - c.x, dy = h / 2 - c.y;
-      var distance = Math.sqrt(dx * dx + dy * dy) || 1;
-      if (distance < 380) {
-        var force = (380 - distance) * 0.00018;
-        c.vx += (dx / distance) * force;
-        c.vy += (dy / distance) * force;
-      }
-      c.x += c.vx; c.y += c.vy;
-      if (c.x > w + 60 || c.y > h + 60 || c.x < -60 || c.y < -60) {
-        c.x = rand(0, w * 0.3); c.y = -40;
-        c.vx = rand(3, 5); c.vy = rand(1.5, 4);
-      }
-    });
   }
 
+  /* Binary black holes: hugging the bottom-right corner. */
   function binaryPos(offset) {
-    var cx = w * 0.82, cy = h * 0.25;
+    var cx = w - 120, cy = h * 0.82;
     return [cx + Math.cos(binaryAngle + offset) * SEPARATION, cy + Math.sin(binaryAngle + offset) * SEPARATION];
   }
 
@@ -545,9 +527,19 @@
     ctx.closePath();
   }
 
-  /* corner-bracket detection box, top-left origin */
+  /* corner-bracket detection box, top-left origin, washed with a light
+     tint of the detection colour — same treatment as the .alert-chip
+     fill (rgba(colour, ~0.1)) in the case-study visuals */
   function hudBox(bx, by, bw, bh, color) {
     var arm = Math.max(6, Math.min(14, bw * 0.3, bh * 0.3));
+
+    /* light fill of the box's own colour, under the brackets */
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.globalAlpha *= 0.12;
+    ctx.fillRect(bx, by, bw, bh);
+    ctx.restore();
+
     ctx.strokeStyle = color;
     ctx.lineWidth = 1.4;
     ctx.beginPath();
@@ -639,47 +631,8 @@
     ctx.restore();
   }
 
-  /* Mouse scout ship: arrow hull, cockpit glint, plasma trail. */
-  function drawShip() {
-    ctx.save();
-    ctx.translate(ship.x, ship.y);
-    ctx.rotate(ship.angle);
-
-    var jet = ctx.createLinearGradient(-12, 0, -32, 0);
-    jet.addColorStop(0, "rgba(255, 0, 127, 0.95)");
-    jet.addColorStop(1, "rgba(77, 0, 153, 0)");
-    ctx.fillStyle = jet;
-    ctx.beginPath();
-    ctx.moveTo(-8, -2.5);
-    ctx.lineTo(-24 - Math.random() * 10, 0);
-    ctx.lineTo(-8, 2.5);
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.moveTo(14, 0);
-    ctx.lineTo(-9, -7);
-    ctx.lineTo(-5, 0);
-    ctx.lineTo(-9, 7);
-    ctx.closePath();
-    ctx.fillStyle = "#ffffff";
-    ctx.shadowBlur = 12;
-    ctx.shadowColor = "#00d2ff";
-    ctx.fill();
-    ctx.shadowBlur = 0;
-
-    ctx.beginPath();
-    ctx.moveTo(3, -1.5);
-    ctx.lineTo(7, 0);
-    ctx.lineTo(3, 1.5);
-    ctx.closePath();
-    ctx.fillStyle = "#00d2ff";
-    ctx.fill();
-
-    ctx.restore();
-  }
-
-  /* What the detector sees in the cosmos. The ship gets a velocity chip
-     only — the DOM CV box already frames the cursor it flies to. */
+  /* What the detector sees in the scene: the star system pinned top-left,
+     the binary black holes bottom-right, and the drifting astronaut. */
   function drawCvOverlay(cx, cy) {
     ctx.save();
     ctx.globalAlpha = 0.88;
@@ -695,32 +648,14 @@
       hudChip(px - s / 2, py - s / 2 - 17, "planet " + p.c, "#00d2ff");
     });
 
-    /* comets — speed detection */
-    comets.forEach(function (c) {
-      var kmh = Math.sqrt(c.vx * c.vx + c.vy * c.vy) * 9.4;
-      hudBox(c.x - 15, c.y - 15, 30, 30, "#ffb45c");
-      hudChip(c.x - 15, c.y + 17, "comet " + c.c + " · " + kmh.toFixed(1) + " km/s", "#ffb45c");
-    });
-
     /* star core */
     hudBox(cx - 34, cy - 34, 68, 68, "#ffb45c");
     hudChip(cx - 34, cy - 51, "star " + DET.star.val, "#ffb45c");
 
     /* binary black holes */
-    var bsx = w * 0.82, bsy = h * 0.25, bs = SEPARATION * 2 + 46;
+    var bsx = w - 120, bsy = h * 0.82, bs = SEPARATION * 2 + 46;
     hudBox(bsx - bs / 2, bsy - bs / 2, bs, bs, "#ff007f");
     hudChip(bsx - bs / 2, bsy - bs / 2 - 17, "binary_bh " + DET.bh.val, "#ff007f");
-
-    /* asteroid belt as one cluster detection */
-    ctx.save();
-    ctx.globalAlpha = 0.5;
-    ctx.strokeStyle = "rgba(0,210,255,0.7)";
-    ctx.lineWidth = 1;
-    ctx.setLineDash([5, 7]);
-    ctx.strokeRect(cx - 224, cy - 224, 448, 448);
-    ctx.setLineDash([]);
-    hudChip(cx - 224, cy - 241, "cluster \"belt\" · " + asteroids.length + " obj " + DET.belt.val, "#00d2ff");
-    ctx.restore();
 
     /* astronaut on a slow lissajous drift */
     var ax = w * (0.5 + 0.34 * Math.sin(t * 0.0016));
@@ -731,19 +666,12 @@
     hudBox(ax - 30, ay - 24, 62, 48, "#5ad9a6");
     hudChip(ax - 30, ay - 41, "astronaut " + DET.astro.val, "#5ad9a6");
 
-    /* scout ship speed readout */
-    drawShip();
-    if (ship.kmh > 0.5) {
-      ctx.globalAlpha = 0.9;
-      hudChip(ship.x - 18, ship.y + 20, "scout_ship " + ship.kmh.toFixed(1) + " km/s", "#ffb45c");
-    }
-
     ctx.restore();
   }
 
   function render() {
     ctx.clearRect(0, 0, w, h);
-    var cx = w / 2, cy = h / 2;
+    var cx = w * 0.09, cy = h * 0.18;   /* star system hugging the top-left */
     var b1 = binaryPos(0), b2 = binaryPos(Math.PI);
 
     /* nebula dust */
@@ -757,6 +685,33 @@
       ctx.fill();
     });
 
+    /* neural synapse links */
+    for (var a = 0; a < neural.length; a++) {
+      for (var b = a + 1; b < neural.length; b++) {
+        var ndx = neural[a].x - neural[b].x, ndy = neural[a].y - neural[b].y;
+        var nl = Math.sqrt(ndx * ndx + ndy * ndy);
+        if (nl < 130) {
+          ctx.strokeStyle = "rgba(0, 242, 254, " + ((1 - nl / 130) * 0.22).toFixed(3) + ")";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(neural[a].x, neural[a].y);
+          ctx.lineTo(neural[b].x, neural[b].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    /* neural synapse nodes, glowing like the helper portfolio's */
+    neural.forEach(function (n) {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+      ctx.fillStyle = n.color;
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = n.color;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+
     /* stars */
     stars.forEach(function (s) {
       var liveOpacity = Math.max(0.05, Math.min(1, s.opacity + Math.sin(s.twinklePhase) * 0.2));
@@ -764,19 +719,6 @@
       ctx.arc(s.x * w, s.y * h, s.radius, 0, Math.PI * 2);
       ctx.fillStyle = "rgba(255, 255, 255, " + liveOpacity + ")";
       ctx.fill();
-    });
-
-    /* comets with cyan→pink tails */
-    comets.forEach(function (c) {
-      var tail = ctx.createLinearGradient(c.x, c.y, c.x - c.vx * 15, c.y - c.vy * 15);
-      tail.addColorStop(0, "rgba(0, 210, 255, 0.45)");
-      tail.addColorStop(1, "rgba(255, 0, 127, 0)");
-      ctx.beginPath();
-      ctx.moveTo(c.x, c.y);
-      ctx.lineTo(c.x - c.vx * 15, c.y - c.vy * 15);
-      ctx.strokeStyle = tail;
-      ctx.lineWidth = 2;
-      ctx.stroke();
     });
 
     /* binary black holes */
@@ -811,14 +753,6 @@
     ctx.shadowColor = "#00d2ff";
     ctx.fill();
     ctx.shadowBlur = 0;
-
-    /* asteroid belt */
-    asteroids.forEach(function (ast) {
-      ctx.beginPath();
-      ctx.arc(cx + Math.cos(ast.angle) * ast.radius, cy + Math.sin(ast.angle) * ast.radius, ast.size, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(175, 200, 255, " + ast.opacity + ")";
-      ctx.fill();
-    });
 
     /* planet orbits, bodies and moons */
     planets.forEach(function (p) {
