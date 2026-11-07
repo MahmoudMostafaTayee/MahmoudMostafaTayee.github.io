@@ -300,10 +300,10 @@
 
 /* ---------------------------------------------------------------------
    Background scene: nebula dust and floating cast drawn through the
-   computer-vision overlay (the kite/bug/saucer/coffee crew and the
-   astronaut, shared by both themes; the duck floats in light theme only).
-   Starfield and neural particles retired. Runs in both themes; static
-   single frame under reduced motion.
+   computer-vision overlay:
+   - Light theme: rubber duck (top-left), floating kite (central drift), crawling bug.
+   - Dark theme: astronaut (central drift), saucer cow abduction, crawling bug.
+   Runs in both themes; static single frame under reduced motion.
    --------------------------------------------------------------------- */
 (function () {
   if (!window.matchMedia) return;
@@ -348,8 +348,7 @@
     kite:  { base: 0.94, val: "0.94" },
     duck:  { base: 0.99, val: "0.99" },
     bug:   { base: 0.97, val: "0.97" },
-    abduct:{ base: 0.97, val: "0.97" },
-    coffee:{ base: 0.98, val: "0.98" }
+    abduct:{ base: 0.97, val: "0.97" }
   };
   var WIND = { base: 3.2, val: "3.2" };
   function jitterDets() {
@@ -500,67 +499,14 @@
   }
 
   /* ---------------- Cast additions ----------------
-     The kite owns the top-left corner in light theme; the duck, the
-     bug, the saucer crew and the coffee run in both themes. The alien
-     has moved on to probe elsewhere. */
+     Light theme: rubber duck (top-left) and floating kite (central drift).
+     Dark theme: astronaut (central drift) and saucer cow abduction.
+     The crawling bug runs along the bottom edge in both themes. */
 
-  /* Kite tethered to the true top-left corner of the viewport. */
-  function drawKite() {
-    var light = lightOn();
-    var kx = Math.max(70, w * 0.085) + Math.sin(t * 0.0011) * 14;
-    var ky = h * 0.165 + Math.sin(t * 0.0016 + 1.1) * 10;
-    var krot = 0.18 + Math.sin(t * 0.0013) * 0.12;
-
-    /* slack tether with wind-dependent sag */
-    ctx.beginPath();
-    ctx.moveTo(10, 6);
-    ctx.quadraticCurveTo(kx * 0.55, ky + 26 + Math.sin(t * 0.0009) * 8, kx, ky + 16);
-    ctx.strokeStyle = light ? "rgba(20, 34, 52, 0.4)" : "rgba(255, 255, 255, 0.28)";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    ctx.save();
-    ctx.translate(kx, ky);
-    ctx.rotate(krot);
-
-    /* tail first, under the body */
-    ctx.beginPath();
-    ctx.moveTo(0, 22);
-    ctx.quadraticCurveTo(4 + Math.sin(t * 0.002) * 3, 38, -2 + Math.sin(t * 0.002 + 1.5) * 4, 56);
-    ctx.strokeStyle = light ? "rgba(20, 34, 52, 0.45)" : "rgba(255, 255, 255, 0.35)";
-    ctx.stroke();
-    var bows = [3, 36, 1, 46, -2, 55];
-    for (var b = 0; b < 6; b += 2) {
-      ctx.beginPath();
-      ctx.arc(bows[b], bows[b + 1], 2.2, 0, Math.PI * 2);
-      ctx.fillStyle = (b % 4 === 0) ? "rgba(255, 0, 127, 0.75)" : "rgba(0, 210, 255, 0.75)";
-      ctx.fill();
-    }
-
-    /* diamond kite: dark sail over white spars */
-    ctx.beginPath();
-    ctx.moveTo(0, -16); ctx.lineTo(11, 0); ctx.lineTo(0, 22); ctx.lineTo(-11, 0);
-    ctx.closePath();
-    ctx.fillStyle = light ? "rgba(28, 64, 92, 0.9)" : "#dfe9f2";
-    ctx.fill();
-    ctx.strokeStyle = light ? "rgba(255, 255, 255, 0.75)" : "rgba(10, 16, 24, 0.8)";
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.moveTo(0, -16); ctx.lineTo(0, 22);
-    ctx.moveTo(-11, 0); ctx.lineTo(11, 0);
-    ctx.stroke();
-    ctx.restore();
-
-    ctx.globalAlpha = 0.8;
-    hudBox(kx - 18, ky - 24, 36, 52, "#7a22ff");
-    hudChip(kx - 18, ky - 41, "kite " + DET.kite.val + " · wind " + WIND.val + " m/s", "#7a22ff");
-  }
-
-  /* Rubber duck: floats on the current, judging your loops until you
-     explain them to it. */
+  /* Rubber duck: bobbing in the top-left corner, judging your code. */
   function drawDuck() {
-    var dx = w * 0.10 + Math.sin(t * 0.0012) * 12;
-    var dy = h * 0.80 + Math.sin(t * 0.0021 + 0.4) * 7;
+    var dx = Math.max(70, w * 0.085) + Math.sin(t * 0.0012) * 12;
+    var dy = h * 0.165 + Math.sin(t * 0.0021 + 0.4) * 8;
     ctx.save();
     ctx.translate(dx, dy);
     ctx.rotate(Math.sin(t * 0.0016) * 0.07);
@@ -601,6 +547,55 @@
     ctx.globalAlpha = 0.8;
     hudBox(dx - 18, dy - 16, 39, 27, "#d19b26");
     hudChip(dx - 18, dy - 33, "duck " + DET.duck.val + " · explain your code", "#d19b26");
+  }
+
+  /* Kite floating freely in the sky (light mode replacement for the astronaut). */
+  function drawKite(kx, ky, krot) {
+    if (krot === undefined) krot = 0.18 + Math.sin(t * 0.0013) * 0.12;
+
+    /* trailing string fluttering in the wind */
+    ctx.beginPath();
+    ctx.moveTo(kx, ky);
+    ctx.quadraticCurveTo(kx - 14 + Math.sin(t * 0.0025) * 6, ky + 24, kx - 26 + Math.sin(t * 0.002) * 8, ky + 44);
+    ctx.strokeStyle = "rgba(20, 34, 52, 0.35)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.save();
+    ctx.translate(kx, ky);
+    ctx.rotate(krot);
+
+    /* tail first, under the body */
+    ctx.beginPath();
+    ctx.moveTo(0, 22);
+    ctx.quadraticCurveTo(4 + Math.sin(t * 0.002) * 3, 38, -2 + Math.sin(t * 0.002 + 1.5) * 4, 56);
+    ctx.strokeStyle = "rgba(20, 34, 52, 0.45)";
+    ctx.stroke();
+    var bows = [3, 36, 1, 46, -2, 55];
+    for (var b = 0; b < 6; b += 2) {
+      ctx.beginPath();
+      ctx.arc(bows[b], bows[b + 1], 2.2, 0, Math.PI * 2);
+      ctx.fillStyle = (b % 4 === 0) ? "rgba(255, 0, 127, 0.75)" : "rgba(0, 210, 255, 0.75)";
+      ctx.fill();
+    }
+
+    /* diamond kite: dark sail over white spars */
+    ctx.beginPath();
+    ctx.moveTo(0, -16); ctx.lineTo(11, 0); ctx.lineTo(0, 22); ctx.lineTo(-11, 0);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(28, 64, 92, 0.9)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.75)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(0, -16); ctx.lineTo(0, 22);
+    ctx.moveTo(-11, 0); ctx.lineTo(11, 0);
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.globalAlpha = 0.8;
+    hudBox(kx - 18, ky - 24, 36, 52, "#7a22ff");
+    hudChip(kx - 18, ky - 41, "kite " + DET.kite.val + " · wind " + WIND.val + " m/s", "#7a22ff");
   }
 
   /* A beetle crawling slowly along the bottom edge: the bug that gets
@@ -711,82 +706,39 @@
     hudChip(ux - 34, uy - 31, "abduct " + DET.abduct.val, "#2f9e8f");
   }
 
-  /* Paper coffee cup with live steam: segfault fuel. */
-  function drawCoffee() {
-    var light = lightOn();
-    var cx2 = w * 0.27 + Math.sin(t * 0.001) * 12;
-    var cy2 = h * 0.60 + Math.sin(t * 0.0016 + 2) * 9;
-
-    /* steam wisps */
-    ctx.strokeStyle = light ? "rgba(88, 105, 122, 0.4)" : "rgba(200, 214, 228, 0.35)";
-    ctx.lineWidth = 1.2;
-    for (var st = 0; st < 2; st++) {
-      var sx2 = cx2 - 4 + st * 8, sway = Math.sin(t * 0.003 + st * 1.7) * 5;
-      ctx.beginPath();
-      ctx.moveTo(sx2, cy2 - 22);
-      ctx.bezierCurveTo(sx2 + sway, cy2 - 32, sx2 - sway, cy2 - 42, sx2 + sway, cy2 - 54);
-      ctx.stroke();
-    }
-
-    ctx.save();
-    ctx.translate(cx2, cy2);
-    ctx.rotate(Math.sin(t * 0.0014) * 0.04);
-
-    /* tapered cup */
-    ctx.fillStyle = "#f4f1ec";
-    ctx.strokeStyle = light ? "rgba(20, 34, 52, 0.45)" : "rgba(232, 240, 248, 0.55)";
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.moveTo(-9, -20); ctx.lineTo(9, -20); ctx.lineTo(6, 8); ctx.lineTo(-6, 8);
-    ctx.closePath();
-    ctx.fill(); ctx.stroke();
-
-    /* sleeve */
-    ctx.fillStyle = "#a2603a";
-    ctx.beginPath();
-    ctx.moveTo(-7.6, -10); ctx.lineTo(7.6, -10); ctx.lineTo(6.4, 2); ctx.lineTo(-6.4, 2);
-    ctx.closePath();
-    ctx.fill();
-
-    /* lid */
-    ctx.fillStyle = "#d8d2c8";
-    rr(-10.5, -24, 21, 5, 2); ctx.fill();
-    ctx.strokeStyle = light ? "rgba(20, 34, 52, 0.45)" : "rgba(232, 240, 248, 0.55)";
-    ctx.stroke();
-
-    ctx.restore();
-
-    ctx.globalAlpha = 0.8;
-    hudBox(cx2 - 13, cy2 - 26, 26, 36, "#8a5a33");
-    hudChip(cx2 - 13, cy2 - 43, "coffee " + DET.coffee.val + " · segfault fuel", "#8a5a33");
-  }
-
-
-  /* What the detector sees in the scene: the kite/bug/saucer/coffee
-     crew, the duck (light theme only), and the drifting astronaut. */
+  /* What the detector sees in the scene:
+     - Light theme: rubber duck (top-left), floating kite (central drift), crawling bug.
+     - Dark theme: astronaut (central drift), saucer cow abduction, crawling bug. */
   function drawCvOverlay() {
+    var light = lightOn();
+
     ctx.save();
     ctx.globalAlpha = 0.88;
     ctx.textBaseline = "middle";
     ctx.textAlign = "left";
 
     ctx.save();
-    drawKite();
-    if (lightOn()) drawDuck();
+    if (light) {
+      drawDuck();
+    } else {
+      drawUfoAbduction();
+    }
     drawBug();
-    drawUfoAbduction();
-    drawCoffee();
     ctx.restore();
 
-
-    /* astronaut on a slow lissajous drift */
+    /* central drift: floating kite in light mode, astronaut in dark mode */
     var ax = w * (0.5 + 0.34 * Math.sin(t * 0.0016));
     var ay = h * (0.52 + 0.28 * Math.sin(t * 0.0023 + 1.2));
     var arot = Math.sin(t * 0.0011) * 0.35 + 0.2;
-    drawAstronaut(ax, ay, arot, 0.75);
-    ctx.globalAlpha = 0.8;
-    hudBox(ax - 30, ay - 24, 62, 48, "#5ad9a6");
-    hudChip(ax - 30, ay - 41, "astronaut " + DET.astro.val, "#5ad9a6");
+
+    if (light) {
+      drawKite(ax, ay, arot);
+    } else {
+      drawAstronaut(ax, ay, arot, 0.75);
+      ctx.globalAlpha = 0.8;
+      hudBox(ax - 30, ay - 24, 62, 48, "#5ad9a6");
+      hudChip(ax - 30, ay - 41, "astronaut " + DET.astro.val, "#5ad9a6");
+    }
 
     ctx.restore();
   }
