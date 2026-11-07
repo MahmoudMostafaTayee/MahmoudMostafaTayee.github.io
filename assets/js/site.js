@@ -157,22 +157,6 @@
     });
   }
 
-  /* The path: draw the rail as far as the reader has scrolled */
-  var path = doc.querySelector(".path");
-  var pathLine = path ? path.querySelector(".path-line") : null;
-  if (path && pathLine) {
-    var updatePath = function () {
-      var rect = path.getBoundingClientRect();
-      var trigger = window.innerHeight * 0.62;
-      var progress = (trigger - rect.top) / rect.height;
-      progress = Math.max(0, Math.min(1, progress));
-      pathLine.style.setProperty("--path-progress", progress.toFixed(3));
-    };
-    window.addEventListener("scroll", updatePath, { passive: true });
-    window.addEventListener("resize", updatePath);
-    updatePath();
-  }
-
   /* Hero typewriter */
   var typeTarget = doc.querySelector(".type-target");
   if (typeTarget) {
