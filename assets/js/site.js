@@ -301,8 +301,8 @@
 /* ---------------------------------------------------------------------
    Background scene: nebula dust and floating cast drawn through the
    computer-vision overlay:
-   - Light theme: tethered kite (top-left), floating robot (central drift), crawling bug.
-   - Dark theme: astronaut (central drift), saucer cow abduction, crawling bug.
+   - Light theme: tethered kite (top-left) and floating robot (central drift).
+   - Dark theme: astronaut (central drift) and saucer cow abduction.
    Runs in both themes; static single frame under reduced motion.
    --------------------------------------------------------------------- */
 (function () {
@@ -347,7 +347,6 @@
     astro: { base: 0.96, val: "0.96" },
     kite:  { base: 0.94, val: "0.94" },
     robot: { base: 0.98, val: "0.98" },
-    bug:   { base: 0.97, val: "0.97" },
     abduct:{ base: 0.97, val: "0.97" }
   };
   var WIND = { base: 3.2, val: "3.2" };
@@ -500,8 +499,7 @@
 
   /* ---------------- Cast additions ----------------
      Light theme: tethered kite (top-left) and floating robot (central drift).
-     Dark theme: astronaut (central drift) and saucer cow abduction.
-     The crawling bug runs along the bottom edge in both themes. */
+     Dark theme: astronaut (central drift) and saucer cow abduction. */
 
   /* Kite tethered to the top-left corner of the viewport (light mode). */
   function drawKite() {
@@ -649,52 +647,6 @@
     hudChip(rx - 25, ry - 47, "robot " + DET.robot.val + " · edge_ai", "#00a3c4");
   }
 
-  /* A beetle crawling slowly along the bottom edge: the bug that gets
-     detected before it becomes a ticket. */
-  function drawBug() {
-    var light = lightOn();
-    var bx = (t * 0.9 % (w + 140)) - 70;
-    var by = h - 22;
-    if (bx < -40 || bx > w + 40) return;
-    var walk = Math.sin(t * 0.18) * 2;
-
-    ctx.save();
-    ctx.translate(bx, by);
-
-    /* six stepping legs */
-    ctx.strokeStyle = light ? "rgba(14, 22, 35, 0.8)" : "rgba(226, 234, 242, 0.7)";
-    ctx.lineWidth = 1.2;
-    ctx.lineCap = "round";
-    for (var l = 0; l < 3; l++) {
-      var lx = -6 + l * 6;
-      ctx.beginPath(); ctx.moveTo(lx, 3);  ctx.lineTo(lx - 4,  9 + ((l % 2) ?  walk : -walk) * 0.4); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(lx, -3); ctx.lineTo(lx - 4, -9 - ((l % 2) ? -walk :  walk) * 0.4); ctx.stroke();
-    }
-
-    /* antennae */
-    ctx.beginPath();
-    ctx.moveTo(9, -2); ctx.lineTo(15, -6 + walk);
-    ctx.moveTo(9, 2);  ctx.lineTo(15,  6 - walk);
-    ctx.stroke();
-
-    /* shell with split line, then head */
-    ctx.fillStyle = light ? "#25384e" : "#4a6580";
-    ctx.beginPath();
-    ctx.ellipse(0, 0, 10, 6.5, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(-10, 0); ctx.lineTo(10, 0); ctx.stroke();
-    ctx.fillStyle = light ? "#182636" : "#33495f";
-    ctx.beginPath(); ctx.arc(10, 0, 3.5, 0, Math.PI * 2); ctx.fill();
-
-    ctx.restore();
-
-    ctx.globalAlpha = 0.8;
-    hudBox(bx - 14, by - 13, 38, 26, "#ff007f");
-    hudChip(bx - 14, by - 30, "bug " + DET.bug.val + " · not a feature", "#ff007f");
-  }
-
   /* Saucer with a tractor beam; the cow is half-way up and mildly
      upset about it. */
   function drawUfoAbduction() {
@@ -758,8 +710,8 @@
   }
 
   /* What the detector sees in the scene:
-     - Light theme: tethered kite (top-left), floating robot (central drift), crawling bug.
-     - Dark theme: astronaut (central drift), saucer cow abduction, crawling bug. */
+     - Light theme: tethered kite (top-left) and floating robot (central drift).
+     - Dark theme: astronaut (central drift) and saucer cow abduction. */
   function drawCvOverlay() {
     var light = lightOn();
 
@@ -774,7 +726,6 @@
     } else {
       drawUfoAbduction();
     }
-    drawBug();
     ctx.restore();
 
     /* central drift: floating robot in light mode, astronaut in dark mode */
