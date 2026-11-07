@@ -301,7 +301,7 @@
 /* ---------------------------------------------------------------------
    Background scene: nebula dust and floating cast drawn through the
    computer-vision overlay:
-   - Light theme: rubber duck (top-left), floating kite (central drift), crawling bug.
+   - Light theme: tethered kite (top-left), floating robot (central drift), crawling bug.
    - Dark theme: astronaut (central drift), saucer cow abduction, crawling bug.
    Runs in both themes; static single frame under reduced motion.
    --------------------------------------------------------------------- */
@@ -346,7 +346,7 @@
   var DET = {
     astro: { base: 0.96, val: "0.96" },
     kite:  { base: 0.94, val: "0.94" },
-    duck:  { base: 0.99, val: "0.99" },
+    robot: { base: 0.98, val: "0.98" },
     bug:   { base: 0.97, val: "0.97" },
     abduct:{ base: 0.97, val: "0.97" }
   };
@@ -499,65 +499,21 @@
   }
 
   /* ---------------- Cast additions ----------------
-     Light theme: rubber duck (top-left) and floating kite (central drift).
+     Light theme: tethered kite (top-left) and floating robot (central drift).
      Dark theme: astronaut (central drift) and saucer cow abduction.
      The crawling bug runs along the bottom edge in both themes. */
 
-  /* Rubber duck: bobbing in the top-left corner, judging your code. */
-  function drawDuck() {
-    var dx = Math.max(70, w * 0.085) + Math.sin(t * 0.0012) * 12;
-    var dy = h * 0.165 + Math.sin(t * 0.0021 + 0.4) * 8;
-    ctx.save();
-    ctx.translate(dx, dy);
-    ctx.rotate(Math.sin(t * 0.0016) * 0.07);
+  /* Kite tethered to the top-left corner of the viewport (light mode). */
+  function drawKite() {
+    var kx = Math.max(70, w * 0.085) + Math.sin(t * 0.0011) * 14;
+    var ky = h * 0.165 + Math.sin(t * 0.0016 + 1.1) * 10;
+    var krot = 0.18 + Math.sin(t * 0.0013) * 0.12;
 
-    /* body */
-    ctx.fillStyle = "#f6c94a";
+    /* slack tether with wind-dependent sag */
     ctx.beginPath();
-    ctx.ellipse(0, 2, 14, 9, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    /* tail flick */
-    ctx.beginPath();
-    ctx.moveTo(-12, -1);
-    ctx.quadraticCurveTo(-18, -3, -15, -7);
-    ctx.quadraticCurveTo(-11, -5, -9, -2);
-    ctx.closePath();
-    ctx.fill();
-
-    /* head, beak, eye */
-    ctx.beginPath(); ctx.arc(7, -8, 6.5, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#e8842c";
-    ctx.beginPath();
-    ctx.moveTo(12, -8); ctx.lineTo(17.5, -7); ctx.lineTo(12, -5.6);
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle = "#20242b";
-    ctx.beginPath(); ctx.arc(8.5, -9.5, 1.1, 0, Math.PI * 2); ctx.fill();
-
-    /* wing line */
-    ctx.strokeStyle = "rgba(140, 100, 20, 0.55)";
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.arc(-3, 2, 6, 0.3, 1.9);
-    ctx.stroke();
-
-    ctx.restore();
-
-    ctx.globalAlpha = 0.8;
-    hudBox(dx - 18, dy - 16, 39, 27, "#d19b26");
-    hudChip(dx - 18, dy - 33, "duck " + DET.duck.val + " · explain your code", "#d19b26");
-  }
-
-  /* Kite floating freely in the sky (light mode replacement for the astronaut). */
-  function drawKite(kx, ky, krot) {
-    if (krot === undefined) krot = 0.18 + Math.sin(t * 0.0013) * 0.12;
-
-    /* trailing string fluttering in the wind */
-    ctx.beginPath();
-    ctx.moveTo(kx, ky);
-    ctx.quadraticCurveTo(kx - 14 + Math.sin(t * 0.0025) * 6, ky + 24, kx - 26 + Math.sin(t * 0.002) * 8, ky + 44);
-    ctx.strokeStyle = "rgba(20, 34, 52, 0.35)";
+    ctx.moveTo(10, 6);
+    ctx.quadraticCurveTo(kx * 0.55, ky + 26 + Math.sin(t * 0.0009) * 8, kx, ky + 16);
+    ctx.strokeStyle = "rgba(20, 34, 52, 0.4)";
     ctx.lineWidth = 1;
     ctx.stroke();
 
@@ -596,6 +552,101 @@
     ctx.globalAlpha = 0.8;
     hudBox(kx - 18, ky - 24, 36, 52, "#7a22ff");
     hudChip(kx - 18, ky - 41, "kite " + DET.kite.val + " · wind " + WIND.val + " m/s", "#7a22ff");
+  }
+
+  /* Floating AI inspection robot (light theme central drift) */
+  function drawFloatingRobot(rx, ry, rot) {
+    ctx.save();
+    ctx.translate(rx, ry);
+    ctx.rotate(rot * 0.35);
+
+    /* hover thruster pulse underneath */
+    var flame = 6 + Math.abs(Math.sin(t * 0.08)) * 5;
+    ctx.beginPath();
+    ctx.moveTo(-5, 17);
+    ctx.lineTo(0, 17 + flame);
+    ctx.lineTo(5, 17);
+    ctx.fillStyle = "rgba(0, 195, 255, 0.75)";
+    ctx.fill();
+
+    /* inner thruster flame */
+    ctx.beginPath();
+    ctx.moveTo(-2.5, 17);
+    ctx.lineTo(0, 17 + flame * 0.6);
+    ctx.lineTo(2.5, 17);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+
+    /* antenna with pulsing beacon */
+    ctx.strokeStyle = "#47617a";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, -14);
+    ctx.lineTo(0, -23);
+    ctx.stroke();
+    var beaconAlpha = 0.5 + 0.5 * Math.sin(t * 0.06);
+    ctx.fillStyle = "rgba(255, 0, 127, " + beaconAlpha.toFixed(2) + ")";
+    ctx.beginPath();
+    ctx.arc(0, -24, 2.8, 0, Math.PI * 2);
+    ctx.fill();
+
+    /* floating mechanical arms */
+    var armSway = Math.sin(t * 0.03) * 2;
+    ctx.strokeStyle = "#33495f";
+    ctx.lineWidth = 2.4;
+    ctx.lineCap = "round";
+    /* left arm */
+    ctx.beginPath();
+    ctx.moveTo(-12, 1);
+    ctx.lineTo(-18, 5 + armSway);
+    ctx.lineTo(-14, 11 + armSway);
+    ctx.stroke();
+    /* right arm (waving slightly) */
+    ctx.beginPath();
+    ctx.moveTo(12, 1);
+    ctx.lineTo(19, -2 - armSway);
+    ctx.lineTo(16, -8 - armSway);
+    ctx.stroke();
+
+    /* robot chassis */
+    ctx.fillStyle = "#1e3347";
+    rr(-13, -14, 26, 31, 7);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    /* visor screen */
+    ctx.fillStyle = "#0a131c";
+    rr(-9.5, -9.5, 19, 13, 3.5);
+    ctx.fill();
+
+    /* glowing digital eyes: friendly curved slits or twin cyan dots */
+    var blink = (t % 160 > 154);
+    ctx.fillStyle = blink ? "#006680" : "#00f2fe";
+    if (blink) {
+      ctx.fillRect(-6.5, -3.5, 4, 1);
+      ctx.fillRect(2.5, -3.5, 4, 1);
+    } else {
+      ctx.beginPath();
+      ctx.arc(-4.5, -3.5, 2.2, 0, Math.PI * 2);
+      ctx.arc(4.5, -3.5, 2.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    /* status LEDs on chest */
+    ctx.fillStyle = "#00f2fe";
+    ctx.beginPath(); ctx.arc(-4, 9, 1.2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#5ad9a6";
+    ctx.beginPath(); ctx.arc(0, 9, 1.2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#ffaa00";
+    ctx.beginPath(); ctx.arc(4, 9, 1.2, 0, Math.PI * 2); ctx.fill();
+
+    ctx.restore();
+
+    ctx.globalAlpha = 0.8;
+    hudBox(rx - 25, ry - 30, 50, 56, "#00a3c4");
+    hudChip(rx - 25, ry - 47, "robot " + DET.robot.val + " · edge_ai", "#00a3c4");
   }
 
   /* A beetle crawling slowly along the bottom edge: the bug that gets
@@ -707,7 +758,7 @@
   }
 
   /* What the detector sees in the scene:
-     - Light theme: rubber duck (top-left), floating kite (central drift), crawling bug.
+     - Light theme: tethered kite (top-left), floating robot (central drift), crawling bug.
      - Dark theme: astronaut (central drift), saucer cow abduction, crawling bug. */
   function drawCvOverlay() {
     var light = lightOn();
@@ -719,20 +770,20 @@
 
     ctx.save();
     if (light) {
-      drawDuck();
+      drawKite();
     } else {
       drawUfoAbduction();
     }
     drawBug();
     ctx.restore();
 
-    /* central drift: floating kite in light mode, astronaut in dark mode */
+    /* central drift: floating robot in light mode, astronaut in dark mode */
     var ax = w * (0.5 + 0.34 * Math.sin(t * 0.0016));
     var ay = h * (0.52 + 0.28 * Math.sin(t * 0.0023 + 1.2));
     var arot = Math.sin(t * 0.0011) * 0.35 + 0.2;
 
     if (light) {
-      drawKite(ax, ay, arot);
+      drawFloatingRobot(ax, ay, arot);
     } else {
       drawAstronaut(ax, ay, arot, 0.75);
       ctx.globalAlpha = 0.8;
