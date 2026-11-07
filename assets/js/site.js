@@ -299,15 +299,11 @@
 })();
 
 /* ---------------------------------------------------------------------
-   Background scene: a neural-network synapse field behind the whole
-   site (glowing nodes and links, cursor-reactive, ported from the
-   helper portfolio's neural canvas). The kept floating items are drawn
-   over it, still read through the computer-vision overlay: the
-   kite/bug/saucer/coffee crew and the astronaut, shared by both
-   themes; the duck floats in light theme only.
-   Nothing follows the cursor except the synapse field itself.
-   Runs in both themes with a per-theme palette; static single frame
-   under reduced motion.
+   Background scene: nebula dust and floating cast drawn through the
+   computer-vision overlay (the kite/bug/saucer/coffee crew and the
+   astronaut, shared by both themes; the duck floats in light theme only).
+   Starfield and neural particles retired. Runs in both themes; static
+   single frame under reduced motion.
    --------------------------------------------------------------------- */
 (function () {
   if (!window.matchMedia) return;
@@ -333,33 +329,10 @@
     canvas.style.width = w + "px";
     canvas.style.height = h + "px";
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    initNeural();
     if (!raf) { render(false); }
   }
 
   function rand(min, max) { return Math.random() * (max - min) + min; }
-
-  /* 1. Neural synapse field (port of the helper portfolio's neural
-     canvas): drifting glowing nodes that link up when close and
-     scatter from the cursor. */
-  var neural = [];
-  var mouse = { x: -9999, y: -9999, radius: 150 };
-
-  function initNeural() {
-    neural = [];
-    var count = Math.min(80, Math.max(35, Math.floor((w * h) / 18000)));
-    for (var n = 0; n < count; n++) {
-      neural.push({
-        x: rand(0, w),
-        y: rand(0, h),
-        vx: rand(-0.4, 0.4),
-        vy: rand(-0.4, 0.4),
-        radius: rand(1, 3),
-        color: Math.random() > 0.3 ? "#00f2fe" : "#9d4edd"
-      });
-    }
-  }
-
 
   var nebulae = [
     { x: 0.15, y: 0.25, r: 190, color: "rgba(77, 0, 153, 0.05)" },
@@ -367,16 +340,6 @@
   ];
 
   var t = 0;
-
-  /* The pointer only drives the neural field reaction. */
-  window.addEventListener("pointermove", function (e) {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-  }, { passive: true });
-  window.addEventListener("mouseleave", function () {
-    mouse.x = -9999;
-    mouse.y = -9999;
-  }, { passive: true });
 
   /* 6. Detector readouts: confidences re-sampled a few times a second
      so the chips read as live inference instead of a static label. */
@@ -400,22 +363,6 @@
   function step() {
     t++;
     if (t % 12 === 0) jitterDets();
-
-    /* neural synapse nodes: drift, bounce off the edges, scatter from
-       the cursor's 150px influence radius */
-    neural.forEach(function (n) {
-      n.x += n.vx;
-      n.y += n.vy;
-      if (n.x < 0 || n.x > w) n.vx *= -1;
-      if (n.y < 0 || n.y > h) n.vy *= -1;
-      var mdx = mouse.x - n.x, mdy = mouse.y - n.y;
-      var mdist = Math.sqrt(mdx * mdx + mdy * mdy) || 1;
-      if (mdist < mouse.radius) {
-        var force = (mouse.radius - mdist) / mouse.radius;
-        n.x -= (mdx / mdist) * force * 3;
-        n.y -= (mdy / mdist) * force * 3;
-      }
-    });
   }
 
 
@@ -857,37 +804,6 @@
       ctx.beginPath();
       ctx.arc(w * neb.x, h * neb.y, neb.r, 0, Math.PI * 2);
       ctx.fill();
-    });
-
-    /* neural synapse links */
-    for (var a = 0; a < neural.length; a++) {
-      for (var b = a + 1; b < neural.length; b++) {
-        var ndx = neural[a].x - neural[b].x, ndy = neural[a].y - neural[b].y;
-        var nl = Math.sqrt(ndx * ndx + ndy * ndy);
-        if (nl < 130) {
-          var la = (1 - nl / 130) * 0.22;
-          ctx.strokeStyle = light
-            ? "rgba(20, 110, 170, " + (la * 0.85).toFixed(3) + ")"
-            : "rgba(0, 242, 254, " + la.toFixed(3) + ")";
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(neural[a].x, neural[a].y);
-          ctx.lineTo(neural[b].x, neural[b].y);
-          ctx.stroke();
-        }
-      }
-    }
-
-    /* neural synapse nodes, glowing like the helper portfolio's */
-    neural.forEach(function (n) {
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
-      var nc = light ? (n.color === "#00f2fe" ? "#0aa2c0" : "#7a22ff") : n.color;
-      ctx.fillStyle = nc;
-      ctx.shadowBlur = 8;
-      ctx.shadowColor = nc;
-      ctx.fill();
-      ctx.shadowBlur = 0;
     });
 
     drawCvOverlay();
