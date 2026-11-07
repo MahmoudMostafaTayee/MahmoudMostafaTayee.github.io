@@ -3207,10 +3207,9 @@ html { color-scheme: light; }
 }
 
 /* Background: the canvas scene in site.js paints the whole backdrop —
-   the neural synapse field plus the kept floating items (star system
-   top-left, binary black holes, astronaut, scout ship). The old CSS
-   starfield layers were retired when the neural background moved in.
-   Dark theme only. */
+   the neural synapse field plus the kept floating items (binary black
+   holes, astronaut, scout ship). The old CSS starfield layers were
+   retired when the neural background moved in. Dark theme only. */
 @media (prefers-reduced-motion: reduce) {
   [data-theme="dark"] .type-target { animation: none; }
 }
@@ -3289,7 +3288,7 @@ html { color-scheme: light; }
   color: #fff;
   box-shadow: 0 0 16px rgba(255, 0, 127, 0.45);
 }
-/* Space canvas sits between the CSS star layers and the nebula glows */
+/* Space canvas sits behind the content and in front of the theme glows */
 .space-canvas {
   position: fixed;
   inset: 0;

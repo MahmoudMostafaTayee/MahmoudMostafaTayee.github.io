@@ -339,20 +339,7 @@
 
   function rand(min, max) { return Math.random() * (max - min) + min; }
 
-  /* 1. Starfield */
-  var stars = [];
-  for (var i = 0; i < 150; i++) {
-    stars.push({
-      x: rand(0, 1), y: rand(0, 1),
-      radius: Math.random() * 1.2 + 0.1,
-      opacity: Math.random() * 0.5 + 0.2,
-      speedY: Math.random() * 0.08 + 0.02,
-      twinkleSpeed: Math.random() * 0.04 + 0.008,
-      twinklePhase: Math.random() * Math.PI
-    });
-  }
-
-  /* 2. Neural synapse field (port of the helper portfolio's neural
+  /* 1. Neural synapse field (port of the helper portfolio's neural
      canvas): drifting glowing nodes that link up when close and
      scatter from the cursor. */
   var neural = [];
@@ -428,11 +415,6 @@
         n.x -= (mdx / mdist) * force * 3;
         n.y -= (mdy / mdist) * force * 3;
       }
-    });
-    stars.forEach(function (s) {
-      s.y += s.speedY / h;
-      s.twinklePhase += s.twinkleSpeed;
-      if (s.y > 1.02) { s.y = -0.02; s.x = Math.random(); }
     });
   }
 
@@ -571,9 +553,9 @@
   }
 
   /* ---------------- Cast additions ----------------
-     The kite owns the top-left corner in light theme, standing in for
-     the star system; the duck, the bug, the saucer crew and the coffee
-     run in both themes. The alien has moved on to probe elsewhere. */
+     The kite owns the top-left corner in light theme; the duck, the
+     bug, the saucer crew and the coffee run in both themes. The alien
+     has moved on to probe elsewhere. */
 
   /* Kite tethered to the true top-left corner of the viewport. */
   function drawKite() {
@@ -906,17 +888,6 @@
       ctx.shadowColor = nc;
       ctx.fill();
       ctx.shadowBlur = 0;
-    });
-
-    /* stars */
-    stars.forEach(function (s) {
-      var liveOpacity = Math.max(0.05, Math.min(1, s.opacity + Math.sin(s.twinklePhase) * 0.2));
-      ctx.beginPath();
-      ctx.arc(s.x * w, s.y * h, s.radius, 0, Math.PI * 2);
-      ctx.fillStyle = light
-        ? "rgba(30, 46, 66, " + (liveOpacity * 0.45).toFixed(3) + ")"
-        : "rgba(255, 255, 255, " + liveOpacity + ")";
-      ctx.fill();
     });
 
     drawCvOverlay();
