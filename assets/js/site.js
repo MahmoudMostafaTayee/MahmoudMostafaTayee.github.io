@@ -507,7 +507,7 @@
   /* Kite tethered to the true top-left corner of the viewport. */
   function drawKite() {
     var light = lightOn();
-    var kx = w * 0.13 + Math.sin(t * 0.0011) * 16;
+    var kx = Math.max(70, w * 0.085) + Math.sin(t * 0.0011) * 14;
     var ky = h * 0.165 + Math.sin(t * 0.0016 + 1.1) * 10;
     var krot = 0.18 + Math.sin(t * 0.0013) * 0.12;
 
@@ -652,7 +652,7 @@
   /* Saucer with a tractor beam; the cow is half-way up and mildly
      upset about it. */
   function drawUfoAbduction() {
-    var ux = w * 0.84 + Math.sin(t * 0.0009) * 18;
+    var ux = Math.min(w - 60, w * 0.90) + Math.sin(t * 0.0009) * 14;
     var uy = h * 0.20 + Math.sin(t * 0.0015 + 0.9) * 7;
 
     /* beam */
